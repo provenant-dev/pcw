@@ -127,8 +127,15 @@ if __name__ == '__main__':
         if os.path.exists(rerunner):
             print("Detected rerunner; removing.")
             os.remove(rerunner)
-        if len(sys.argv) == 2 and sys.argv[1] == '--clean':
-            os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
+        if len(sys.argv) == 2 and sys.argv[1] == '--reset':
+            if input("""Resetting state is destructive. It removes your history, all your
+AIDs, and all your keys. All credentials you've received or issued will become
+unusable, and all multisigs where you are a participant will lose your input.
+It is basically like creating a brand new wallet. Type "yes" to confirm. """).strip().lower() != 'yes':
+                print("Abandoning request to reset.")
+            else:
+                print("Resetting state")
+                os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                 print("Wallet software updated. Requesting re-launch.")
@@ -152,7 +159,7 @@ if __name__ == '__main__':
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
         print("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
-        print(f"--- Exited script early. Run {__file__} with --clean to reset.\n")
+        print(f"--- Exited script early. Run {__file__} with --reset to reset.\n")
         sys.exit(1)
     except:
         print("--- Failure:")
