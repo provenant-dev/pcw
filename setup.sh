@@ -127,7 +127,7 @@ if __name__ == '__main__':
         if os.path.exists(rerunner):
             print("Detected rerunner; removing.")
             os.remove(rerunner)
-        if len(sys.argv) == 2 and sys.arg[1] == '--clean':
+        if len(sys.argv) == 2 and sys.argv[1] == '--clean':
             os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
