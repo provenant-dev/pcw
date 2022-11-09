@@ -98,7 +98,7 @@ If you're asked to select services to restart, accept defaults and choose OK.
 
 
 if __name__ == '__main__':
-    my_folder = os.path.abspath(os.dirname(__file__))
+    my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
         owner = personalize()
