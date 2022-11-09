@@ -104,6 +104,7 @@ if __name__ == '__main__':
     try:
         if refresh_repo("https://github.com/provenant-dev/pcw.git"):
             print("Wallet software was updated. Please log off by typing 'exit' and then log back in.")
+            sys.exit(1)
         else:
             owner = personalize()
             patch_os()
@@ -120,3 +121,4 @@ Next command to run:
     source keripy/venv/bin/activate""")
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
+        sys.exit(1)
