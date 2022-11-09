@@ -119,7 +119,7 @@ def guarantee_venv():
 
 
 if __name__ == '__main__':
-    print("Configuring wallet.")
+    print("\n--- Doing wallet maintenance.")
     sys.stdout.flush()
     rerunner = '.rerun'
     os.chdir(os.path.expanduser("~/"))
@@ -150,8 +150,13 @@ if __name__ == '__main__':
                 backup_file(source_to_patch)
                 my_folder = os.path.abspath(os.path.dirname(__file__))
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
-        print("Exiting with success.")
+        print("--- Maintenance tasks succeeded.\n")
         sys.exit(0)
     except KeyboardInterrupt:
-        print("Exited script early. Run with --clean to start fresh.")
+        print(f"--- Exited script early. Run {__file__} with --clean to reset.\n")
         sys.exit(1)
+    except:
+        print("--- Failure:")
+        import traceback
+        traceback.print_exc()
+        print("---\n")
