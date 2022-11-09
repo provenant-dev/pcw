@@ -8,7 +8,7 @@ import sys
 
 
 def ask(question):
-    return input(r'\033[1;31m>>\033[0m ' + question + ' ').strip()
+    return input('\033[1;31m>>\033[0m ' + question + '\n   ').strip()
 
 
 def backup_file(fname, once_only=True):
@@ -131,7 +131,8 @@ if __name__ == '__main__':
             if input("""Resetting state is destructive. It removes your history, all your
 AIDs, and all your keys. All credentials you've received or issued will become
 unusable, and all multisigs where you are a participant will lose your input.
-It is basically like creating a brand new wallet. Type "yes" to confirm. """).strip().lower() != 'yes':
+It is basically like creating a brand new wallet. Type "yes" to confirm.
+""").strip().lower() != 'yes':
                 print("Abandoning request to reset.")
             else:
                 print("Resetting state. Log out and log back in to begin again.")
