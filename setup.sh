@@ -51,13 +51,13 @@ def refresh_repo(url):
     if os.path.isdir(repo_name):
         if time.time() - last_run(log_file) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
-            run(f"cd {repo_name} && git pull >~/{log_file}")
+            run(f"cd {repo_name} && git pull >~/{log_file} 2>&1")
             with open(log_file, "rt") as f:
                 result = f.read().strip()
             fetched_anything = bool(result != "Already up to date.")
     else:
         print(f"\nInstalling {repo_name}.\n")
-        run(f"git clone {url} >~/{log_file}")
+        run(f"git clone {url} >~/{log_file} 2>&1")
     return fetched_anything
 
 
@@ -97,9 +97,9 @@ def patch_os(cache_secs=86400):
         return
     print("Making sure your wallet OS is fully patched.")
     time.sleep(5)
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >~/{log_file}")
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >>~/{log_file}")
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file}")
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >~/{log_file} 2>&1")
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >>~/{log_file} 2>&1")
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file} 2>&1")
 
 
 def guarantee_venv():
