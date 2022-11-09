@@ -50,7 +50,7 @@ def refresh_repo(url):
     if os.path.exists(log_file):
         os.remove(log_file)
     if os.path.isdir(repo_name):
-        if time.time() - last_run(log_file) > cache_secs:
+        if time_since(log_file) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
             run(f"cd {repo_name} && git pull >~/{log_file} 2>&1")
             with open(log_file, "rt") as f:
@@ -85,23 +85,23 @@ def personalize():
     return owner
 
 
-def last_run(log_file):
+def time_since(log_file):
+    now = time.time()
     if os.path.isfile(log_file):
-        return os.stat(log_file).st_mtime
-    return 0
+        elapsed = now - os.stat(log_file).st_mtime
+    else:
+        elapsed = now
+    print(f"elapsed for {log_file} = {elapsed}")
+    return elapsed
 
 
 def patch_os(cache_secs=86400):
     log_file = "apt.log"
-    if os.path.exists(log_file):
-        os.remove(log_file)
-    if time.time() - last_run(log_file) < cache_secs:
-        return
-    print("Making sure your wallet OS is fully patched.")
-    time.sleep(5)
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >~/{log_file} 2>&1")
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >>~/{log_file} 2>&1")
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file} 2>&1")
+    if time_since(log_file) > cache_secs:
+        print("Making sure your wallet OS is fully patched.")
+        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >~/{log_file} 2>&1")
+        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >>~/{log_file} 2>&1")
+        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file} 2>&1")
 
 
 def guarantee_venv():
