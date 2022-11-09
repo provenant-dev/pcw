@@ -8,7 +8,7 @@ import sys
 
 
 def ask(question):
-    return input(r'\e[1;31m>>\e[0m ' + question + ' ').strip()
+    return input(r'\033[1;31m>>\033[0m ' + question + ' ').strip()
 
 
 def backup_file(fname, once_only=True):
