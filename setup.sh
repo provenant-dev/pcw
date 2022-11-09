@@ -42,6 +42,7 @@ def run(cmd):
 
 
 def refresh_repo(url):
+    fetched_anything = True
     cache_secs = 8 * 60 * 60
     repo_name = url[url.rfind('/') + 1:-4]
     log_file = repo_name + '.log'
@@ -49,9 +50,12 @@ def refresh_repo(url):
         if time.time() - last_run(log_file) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
             run(f"cd {repo_name} && git pull >~/{log_file}")
+            with open(log_file, "wt") as f:
+                fetched_anything = f.read().strip() != "Already up to date."
     else:
         print(f"\nInstalling {repo_name}.\n")
         run(f"git clone {url} >~/{log_file}")
+    return fetched_anything
 
 
 def get_variable(variable, script):
@@ -97,15 +101,21 @@ if __name__ == '__main__':
     my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
-        owner = personalize()
-        patch_os()
-        refresh_repo("https://github.com/provenant-dev/keripy.git")
-        source_to_patch = 'vlei-qvi/source.sh'
-        first_patch = not restore_from_backup(source_to_patch)
-        refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
-        backup_file(source_to_patch)
-        if first_patch:
-            print("Patching source.sh")
-        shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
+        if refresh_repo("https://github.com/provenant-dev/pwc.git"):
+            os.system("pwc/setup.sh")
+        else:
+            owner = personalize()
+            patch_os()
+            refresh_repo("https://github.com/provenant-dev/keripy.git")
+            source_to_patch = 'vlei-qvi/source.sh'
+            first_patch = not restore_from_backup(source_to_patch)
+            refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
+            backup_file(source_to_patch)
+            if first_patch:
+                print("Patching source.sh")
+            shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
+            print("""
+Next command to run:
+    source keripy/venv/bin/activate""")
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
