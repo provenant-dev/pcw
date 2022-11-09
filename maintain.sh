@@ -8,7 +8,7 @@ import sys
 
 
 def ask(question):
-    return input('  ' + question + ' ').strip()
+    return input(r'\e[1;31m>>\e[0m ' + question + ' ').strip()
 
 
 def backup_file(fname, once_only=True):
@@ -159,7 +159,7 @@ It is basically like creating a brand new wallet. Type "yes" to confirm. """).st
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
         print("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
-        print(f"--- Exited script early. Run {__file__} with --reset to reset.\n")
+        print(f"\n--- Exited script early. Run {__file__} --reset to reset.\n")
         sys.exit(1)
     except:
         print("--- Failure:")
