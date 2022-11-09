@@ -106,6 +106,7 @@ def patch_os(cache_secs=86400):
 
 def guarantee_venv():
     if not os.path.isdir("keripy/venv"):
+        print("Creating venv for keripy.")
         os.chdir("keripy")
         try:
             os.system("python3 -m venv venv >/dev/null")
@@ -121,6 +122,7 @@ if __name__ == '__main__':
             os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
+                print("Wallet software updated. Re-launching.")
                 os.system("touch .rerun")
             else:
                 owner = personalize()
