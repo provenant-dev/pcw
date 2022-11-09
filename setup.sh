@@ -121,8 +121,7 @@ if __name__ == '__main__':
             os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
-                print("Wallet software was updated. Please log off by typing 'exit' and then log back in.")
-                sys.exit(1)
+                os.system("touch .rerun")
             else:
                 owner = personalize()
                 patch_os()

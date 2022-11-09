@@ -1,4 +1,11 @@
-if ~/pcw/setup.sh; then
+~/pcw/setup.sh
+setup_err = $?
+if test -f ".rerun"; then
+  rm .rerun
+  ~/pcw/setup.sh
+  setup_err = $?
+fi
+if test $setup_err -eq 0; then
   if test -f ".bashrc-changed"; then
     source .bashrc
     rm .bashrc-changed
