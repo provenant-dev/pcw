@@ -128,7 +128,7 @@ if __name__ == '__main__':
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                 print("Wallet software updated. Requesting re-launch.")
-                os.system("touch {rerunner}")
+                os.system(f"touch {rerunner}")
             else:
                 print("personalizing")
                 owner = personalize()
