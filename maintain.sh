@@ -133,9 +133,9 @@ if __name__ == '__main__':
             os.remove(rerunner)
         if len(sys.argv) == 2 and sys.argv[1] == '--reset':
             if ask("""Resetting state is destructive. It removes your history, all your
-   AIDs, and all your keys. All credentials you've received or issued will become
-   unusable, and all multisigs where you are a participant will lose your input.
-   It is basically like creating a brand new wallet. Type "yes" to confirm.""").lower() == "yes":
+   AIDs, and all your keys. All credentials you've received or issued become
+   unusable, and all multisigs where you are a participant lose your input.
+   It is basically like creating a brand new wallet. Type "yes" to confirm.""").lower() != "yes":
                 print("Abandoning request to reset.")
             else:
                 print("Resetting state. Log out and log back in to begin again.")
