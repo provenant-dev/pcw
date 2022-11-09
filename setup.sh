@@ -118,6 +118,8 @@ if __name__ == '__main__':
     my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
+        if os.path.exists('.rerun'):
+            os.remove('.rerun')
         if len(sys.argv) == 2 and sys.arg[1] == '--clean':
             os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
