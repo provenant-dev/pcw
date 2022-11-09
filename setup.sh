@@ -137,14 +137,17 @@ if __name__ == '__main__':
                 refresh_repo("https://github.com/provenant-dev/keripy.git")
                 print("guaranteeing venv")
                 guarantee_venv()
+
                 source_to_patch = 'vlei-qvi/source.sh'
-                first_patch = not restore_from_backup(source_to_patch)
+                # Undo any active patch that we might have against source.sh.
+                # so git won't complain about merge conflicts or unstashed files.
+                restore_from_backup(source_to_patch)
                 print("fetching vlei-qvi")
                 refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
+                # (Re-)apply the patch.
                 backup_file(source_to_patch)
-                if first_patch:
-                    print("Patching source.sh")
-                shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
+                shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
+        print("Exiting with success.")
         sys.exit(0)
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
