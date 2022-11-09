@@ -102,6 +102,15 @@ def patch_os(cache_secs=86400):
     run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file}")
 
 
+def guarantee_venv():
+    if not os.path.isdir("keripy/venv"):
+        os.chdir("keripy")
+        try:
+            os.system("python3 -m venv venv")
+        finally:
+            os.chdir(os.path.expanduser("~/"))
+
+
 if __name__ == '__main__':
     my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
@@ -113,6 +122,7 @@ if __name__ == '__main__':
             owner = personalize()
             patch_os()
             refresh_repo("https://github.com/provenant-dev/keripy.git")
+            guarantee_venv()
             source_to_patch = 'vlei-qvi/source.sh'
             first_patch = not restore_from_backup(source_to_patch)
             refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
