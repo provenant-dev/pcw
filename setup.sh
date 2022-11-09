@@ -46,6 +46,8 @@ def refresh_repo(url):
     cache_secs = 8 * 60 * 60
     repo_name = url[url.rfind('/') + 1:-4]
     log_file = repo_name + '.log'
+    if os.path.exists(log_file):
+        os.remove(log_file)
     if os.path.isdir(repo_name):
         if time.time() - last_run(log_file) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
@@ -89,6 +91,8 @@ def last_run(log_file):
 
 def patch_os(cache_secs=86400):
     log_file = "apt.log"
+    if os.path.exists(log_file):
+        os.remove(log_file)
     if time.time() - last_run(log_file) < cache_secs:
         return
     print("Making sure your wallet OS is fully patched.")
