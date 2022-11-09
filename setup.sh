@@ -42,16 +42,24 @@ def run(cmd):
     return exitcode
 
 
+def get_repo_name(url):
+    return url[url.rfind('/') + 1:-4]
+
+
+def get_log_path_for_repo(url):
+    return get_repo_name(url) + '.log'
+
+
 def refresh_repo(url):
     fetched_anything = True
     cache_secs = 8 * 60 * 60
-    repo_name = url[url.rfind('/') + 1:-4]
-    log_file = repo_name + '.log'
+    repo_name = get_repo_name(url)
+    log_path = get_log_path_for_repo(url)
     if os.path.isdir(repo_name):
-        if time_since(log_file) > cache_secs:
+        if time_since(log_path) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
             run(f"cd {repo_name} && git pull >~/{log_file} 2>&1")
-            with open(log_file, "rt") as f:
+            with open(log_path, "rt") as f:
                 result = f.read().strip()
             fetched_anything = bool(result != "Already up to date.")
     else:
@@ -127,6 +135,8 @@ if __name__ == '__main__':
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                 print("Wallet software updated. Requesting re-launch.")
                 os.system(f"touch {rerunner}")
+                # Give file buffers time to flush.
+                time.sleep(1)
             else:
                 owner = personalize()
                 patch_os()
