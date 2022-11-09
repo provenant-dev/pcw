@@ -8,7 +8,10 @@ import sys
 
 
 def ask(question):
-    return input('\033[1;31m>>\033[0m ' + question + '\n   ').strip()
+    sys.stdout.write('\033[1;31m>>\033[0m \033[1;33m' + question + '\033[0m\n   \033[0;33m')
+    answer = input().strip()
+    sys.stdout.write('\033[0m')
+    return answer
 
 
 def backup_file(fname, once_only=True):
@@ -119,7 +122,7 @@ def guarantee_venv():
 
 
 if __name__ == '__main__':
-    print("\n--- Doing wallet maintenance.")
+    print("\n--- Doing wallet maintenance.\033[2;37m")
     sys.stdout.flush()
     rerunner = '.rerun'
     os.chdir(os.path.expanduser("~/"))
@@ -158,12 +161,12 @@ It is basically like creating a brand new wallet. Type "yes" to confirm.
                 backup_file(source_to_patch)
                 my_folder = os.path.abspath(os.path.dirname(__file__))
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
-        print("--- Maintenance tasks succeeded.\n")
+        print("\033[0m--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
-        print(f"\n--- Exited script early. Run {__file__} --reset to reset.\n")
+        print(f"\033[0m\n--- Exited script early. Run {__file__} --reset to reset.\n")
         sys.exit(1)
     except:
-        print("--- Failure:")
+        print("\033[0m--- Failure:")
         import traceback
         traceback.print_exc()
         print("---\n")
