@@ -71,6 +71,7 @@ def get_variable(variable, script):
 
 def personalize():
     bashrc = ".bashrc"
+    semaphore = bashrc + '-changed'
     backup_file(bashrc)
     with open(bashrc, 'rt') as f:
         script = f.read()
@@ -80,7 +81,7 @@ def personalize():
         script = f'OWNER="{owner}"\n' + fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
-        print("\nPlease run the following command to refresh your wallet config:\n  source ~/.bashrc\n")
+        os.system('touch {semaphore}')
     return owner
 
 
@@ -116,21 +117,24 @@ if __name__ == '__main__':
     my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
-        if refresh_repo("https://github.com/provenant-dev/pcw.git"):
-            print("Wallet software was updated. Please log off by typing 'exit' and then log back in.")
-            sys.exit(1)
+        if len(sys.argv) == 2 and sys.arg[1] == '--clean':
+            os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
-            owner = personalize()
-            patch_os()
-            refresh_repo("https://github.com/provenant-dev/keripy.git")
-            guarantee_venv()
-            source_to_patch = 'vlei-qvi/source.sh'
-            first_patch = not restore_from_backup(source_to_patch)
-            refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
-            backup_file(source_to_patch)
-            if first_patch:
-                print("Patching source.sh")
-            shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
+            if refresh_repo("https://github.com/provenant-dev/pcw.git"):
+                print("Wallet software was updated. Please log off by typing 'exit' and then log back in.")
+                sys.exit(1)
+            else:
+                owner = personalize()
+                patch_os()
+                refresh_repo("https://github.com/provenant-dev/keripy.git")
+                guarantee_venv()
+                source_to_patch = 'vlei-qvi/source.sh'
+                first_patch = not restore_from_backup(source_to_patch)
+                refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
+                backup_file(source_to_patch)
+                if first_patch:
+                    print("Patching source.sh")
+                shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
         sys.exit(1)
