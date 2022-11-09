@@ -38,7 +38,7 @@ def fix_prompt(script):
 def run(cmd):
     exitcode = os.system(cmd)
     if exitcode:
-        print("\nSystem command exited with code %d. Command was:\n  %s" % (exitcode, cmd))
+        print("System command exited with code %d. Command was:\n  %s" % (exitcode, cmd))
     return exitcode
 
 
@@ -55,13 +55,13 @@ def refresh_repo(url):
     repo_name = get_repo_name(url)
     log_path = get_log_path_for_repo(url)
     if os.path.isdir(repo_name):
-        print(f"\nChecking for {repo_name} updates.\n")
+        print(f"Checking for {repo_name} updates.")
         run(f"cd {repo_name} && git pull >~/{log_path} 2>&1")
         with open(log_path, "rt") as f:
             result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
     else:
-        print(f"\nInstalling {repo_name}.\n")
+        print(f"Installing {repo_name}.")
         run(f"git clone {url} >~/{log_path} 2>&1")
     return fetched_anything
 
@@ -95,7 +95,7 @@ def time_since(log_file):
         elapsed = now - os.stat(log_file).st_mtime
     else:
         elapsed = now
-    print(f"elapsed for {log_file} = {elapsed}")
+    #print(f"elapsed for {log_file} = {elapsed}")
     return elapsed
 
 
@@ -119,7 +119,7 @@ def guarantee_venv():
 
 
 if __name__ == '__main__':
-    print("\n\n\n---------- starting setup")
+    print("Configuring wallet.")
     sys.stdout.flush()
     rerunner = '.rerun'
     os.chdir(os.path.expanduser("~/"))
@@ -153,5 +153,5 @@ if __name__ == '__main__':
         print("Exiting with success.")
         sys.exit(0)
     except KeyboardInterrupt:
-        print("\nExited script early. Run with --clean to start fresh.")
+        print("Exited script early. Run with --clean to start fresh.")
         sys.exit(1)
