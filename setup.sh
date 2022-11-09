@@ -101,8 +101,8 @@ if __name__ == '__main__':
     my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
-        if refresh_repo("https://github.com/provenant-dev/pwc.git"):
-            os.system("pwc/setup.sh")
+        if refresh_repo("https://github.com/provenant-dev/pcw.git"):
+            os.system("pcw/setup.sh")
         else:
             owner = personalize()
             patch_os()
