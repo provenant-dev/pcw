@@ -134,7 +134,7 @@ unusable, and all multisigs where you are a participant will lose your input.
 It is basically like creating a brand new wallet. Type "yes" to confirm. """).strip().lower() != 'yes':
                 print("Abandoning request to reset.")
             else:
-                print("Resetting state")
+                print("Resetting state. Log out and log back in to begin again.")
                 os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
