@@ -1,0 +1,18 @@
+if ~/pcw/setup.sh; then
+  if test -f ".bashrc-changed"; then
+    source .bashrc
+    rm .bashrc-changed
+  fi
+  source keripy/venv/bin/activate
+    cd vlei-qvi
+else
+  printf "Wallet didn't configure itself completely as you logged in.\n"
+  printf "You may attempt to continue by running the following two\n"
+  printf "commands:\n"
+  printf "\n"
+  printf "  source keripy/venv/bin/activate\n"
+  printf "  cd vlei-qvi\n"
+  printf "\n"
+  printf "You can also inspect *.log files or contact support with\n"
+  printf "those files and any error messages shown on the screen.\n"
+fi

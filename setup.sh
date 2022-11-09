@@ -108,7 +108,7 @@ def guarantee_venv():
     if not os.path.isdir("keripy/venv"):
         os.chdir("keripy")
         try:
-            os.system("python3 -m venv venv")
+            os.system("python3 -m venv venv >/dev/null")
         finally:
             os.chdir(os.path.expanduser("~/"))
 
