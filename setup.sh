@@ -130,9 +130,7 @@ if __name__ == '__main__':
                 print("Wallet software updated. Requesting re-launch.")
                 os.system(f"touch {rerunner}")
             else:
-                print("personalizing")
                 owner = personalize()
-                print("patching os")
                 patch_os()
                 print("fetching keripy")
                 refresh_repo("https://github.com/provenant-dev/keripy.git")
