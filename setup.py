@@ -1,6 +1,7 @@
 import os
 import shutil
 import re
+import time
 
 
 def ask(question):
@@ -73,7 +74,10 @@ Making sure your wallet OS is fully patched. This is a security best practice.
 If you're asked to select services to restart, accept defaults and choose OK.
 
 """)
-    run("sleep 10 && sudo apt update && sudo apt upgrade")
+    time.sleep(10)
+    run("sudo DEBIAN_FRONTEND=noninteractive apt-get update >~/apt.log")
+    run("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade >>~/apt.log")
+    run("sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/apt.log")
 
 
 if __name__ == '__main__':
