@@ -115,8 +115,8 @@ def guarantee_venv():
 
 
 if __name__ == '__main__':
+    print("\n\n\n---------- starting setup")
     rerunner = '.rerun'
-    my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
         if os.path.exists(rerunner):
@@ -146,6 +146,7 @@ if __name__ == '__main__':
                 refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
                 # (Re-)apply the patch.
                 backup_file(source_to_patch)
+                my_folder = os.path.abspath(os.path.dirname(__file__))
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
         print("Exiting with success.")
         sys.exit(0)
