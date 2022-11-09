@@ -102,7 +102,7 @@ if __name__ == '__main__':
     os.chdir(os.path.expanduser("~/"))
     try:
         if refresh_repo("https://github.com/provenant-dev/pcw.git"):
-            os.system("pcw/setup.sh")
+            print("Wallet software was updated. Please log off by typing 'exit' and then log back in.")
         else:
             owner = personalize()
             patch_os()
