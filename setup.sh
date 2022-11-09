@@ -56,13 +56,13 @@ def refresh_repo(url):
     log_path = get_log_path_for_repo(url)
     if os.path.isdir(repo_name):
         print(f"\nChecking for {repo_name} updates.\n")
-        run(f"cd {repo_name} && git pull >~/{log_file} 2>&1")
+        run(f"cd {repo_name} && git pull >~/{log_path} 2>&1")
         with open(log_path, "rt") as f:
             result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
     else:
         print(f"\nInstalling {repo_name}.\n")
-        run(f"git clone {url} >~/{log_file} 2>&1")
+        run(f"git clone {url} >~/{log_path} 2>&1")
     return fetched_anything
 
 
