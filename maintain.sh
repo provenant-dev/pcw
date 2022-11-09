@@ -88,6 +88,7 @@ def personalize():
     if not owner:
         owner = ask("What is your first and last name?")
         script = f'OWNER="{owner}"\n' + fix_prompt(script)
+
         with open(bashrc, 'wt') as f:
             f.write(script)
         os.system(f"touch {semaphore}")
@@ -141,7 +142,7 @@ if __name__ == '__main__':
                 print("Abandoning request to reset.")
             else:
                 print("Resetting state. Log out and log back in to begin again.")
-                os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
+                os.system('rm -rf keripy vlei-qvi ~/.keri && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                 print("Wallet software updated. Requesting re-launch.")
@@ -162,7 +163,11 @@ if __name__ == '__main__':
                 # (Re-)apply the patch.
                 backup_file(source_to_patch)
                 my_folder = os.path.abspath(os.path.dirname(__file__))
+                with open(os.path.join(my_folder, 'source.sh'), "rt") as f:
+                    source_script = f.read()
+                source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"')
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
+
         print("\033[0m--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         print(f"\033[0m\n--- Exited script early. Run {__file__} --reset to reset.\n")
