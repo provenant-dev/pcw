@@ -24,7 +24,7 @@ def fix_prompt(script):
     new_lines = []
     for line in lines:
         if prompt_pat.match(line):
-            line = line.replace('\\u@\\h', "${OWNER}'s wallet")
+            line = line.replace('\\u@\\h', "${OWNER}\\047s wallet")
         new_lines.append(line)
     return '\n'.join(new_lines)
 
@@ -37,14 +37,16 @@ def run(cmd):
 def refresh_repo(url):
     repo_name = url[url.rfind('/') + 1:-4]
     if os.path.isdir(repo_name):
+        print("Checking for software updates.\n")
         run(f"cd {repo_name} && git pull")
     else:
+        print("Installing software.\n")
         run(f"git clone {url}")
 
 
 def get_variable(variable, script):
     var_pat = re.compile(r'^\s*' + variable + r'\s*=\s*([a-zA-Z0-9].*?)\n', re.MULTILINE)
-    m = var_pat.search(txt)
+    m = var_pat.search(script)
     if m:
         return m.group(1)
 
@@ -57,15 +59,26 @@ def personalize():
     owner = get_variable("OWNER", script)
     if not owner:
         owner = ask("What is your first and last name?")
-        script = f"OWNER={owner}\n" + fix_prompt(script)
+        script = f'OWNER="{owner}"\n' + fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
-        print("Please run the following command to refresh your wallet config:\n  source .bashrc")
+        print("\nPlease run the following command to refresh your wallet config:\n  source ~/.bashrc")
+
+
+def patch_os():
+    print("""Making sure your wallet OS is fully patched. This is a security best practice.
+If you're asked to select services to restart, accept defaults and choose OK.
+
+""")
+    run("pause 10 && sudo apt update && sudo apt upgrade")
 
 
 if __name__ == '__main__':
     os.chdir(os.path.expanduser("~/"))
     try:
         personalize()
+        patch_os()
+        refresh_repo("https://github.com/provenant-dev/keripy.git")
+        refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
