@@ -151,7 +151,6 @@ if __name__ == '__main__':
                 my_folder = os.path.abspath(os.path.dirname(__file__))
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
         print("--- Maintenance tasks succeeded.\n")
-        sys.exit(0)
     except KeyboardInterrupt:
         print(f"--- Exited script early. Run {__file__} with --clean to reset.\n")
         sys.exit(1)
