@@ -115,24 +115,31 @@ def guarantee_venv():
 
 
 if __name__ == '__main__':
+    rerunner = '.rerun'
     my_folder = os.path.abspath(os.path.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
-        if os.path.exists('.rerun'):
-            os.remove('.rerun')
+        if os.path.exists(rerunner):
+            print("Detected rerunner; removing.")
+            os.remove(rerunner)
         if len(sys.argv) == 2 and sys.arg[1] == '--clean':
             os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                 print("Wallet software updated. Requesting re-launch.")
-                os.system("touch .rerun")
+                os.system("touch {rerunner}")
             else:
+                print("personalizing")
                 owner = personalize()
+                print("patching os")
                 patch_os()
+                print("fetching keripy")
                 refresh_repo("https://github.com/provenant-dev/keripy.git")
+                print("guaranteeing venv")
                 guarantee_venv()
                 source_to_patch = 'vlei-qvi/source.sh'
                 first_patch = not restore_from_backup(source_to_patch)
+                print("fetching vlei-qvi")
                 refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
                 backup_file(source_to_patch)
                 if first_patch:
