@@ -109,7 +109,7 @@ def guarantee_venv():
         print("Creating venv for keripy.")
         os.chdir("keripy")
         try:
-            os.system("python3 -m venv venv >/dev/null")
+            os.system("python3 -m venv venv >/dev/null 2>&1")
         finally:
             os.chdir(os.path.expanduser("~/"))
 
@@ -122,7 +122,7 @@ if __name__ == '__main__':
             os.system('rm -rf keripy vlei-qvi && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
-                print("Wallet software updated. Re-launching.")
+                print("Wallet software updated. Requesting re-launch.")
                 os.system("touch .rerun")
             else:
                 owner = personalize()
@@ -136,6 +136,7 @@ if __name__ == '__main__':
                 if first_patch:
                     print("Patching source.sh")
                 shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
+        sys.exit(0)
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
         sys.exit(1)
