@@ -1,0 +1,15 @@
+{
+  "dt": "2022-01-20T12:57:59.823350+00:00",
+  "iurls": [
+    "http://49.12.190.139:5623/oobi?name=gleif-0",
+    "http://139.99.193.43:5623/oobi?name=gleif-1",
+    "http://20.3.144.86:5623/oobi?name=gleif-2",
+    "http://13.245.160.59:5623/oobi?name=gleif-3",
+    "http://47.242.47.124:5623/oobi?name=gleif-4",
+    "http://witness1.stage.provenant.net:5631/oobi/BDno6jGtzjMdf5jvlo1qvbM8qIy6bSYb5xTPm5-2exLE/controller?name=prstage-1",
+    "http://witness2.stage.provenant.net:5631/oobi/BKDAV5YjMdBChiNAGrWH4CK8qVp22O-wbxxwAmbPyhO_/controller?name=prstage-2",
+    "http://witness3.stage.provenant.net:5631/oobi/BKaAZ4LI5XI-0j0aLvV-w3sRs51Y4JaR0i5m9fvCfTY9/controller?name=prstage-3"
+  ],
+  "durls": [
+  ]
+}
