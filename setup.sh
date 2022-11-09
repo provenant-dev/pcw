@@ -48,10 +48,10 @@ def refresh_repo(url):
     if os.path.isdir(repo_name):
         if time.time() - last_run(log_file) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
-            run(f"cd {repo_name} && git pull >{log_file}")
+            run(f"cd {repo_name} && git pull >~/{log_file}")
     else:
         print(f"\nInstalling {repo_name}.\n")
-        run(f"git clone {url} >{log_file}")
+        run(f"git clone {url} >~/{log_file}")
 
 
 def get_variable(variable, script):
@@ -86,14 +86,10 @@ def patch_os(cache_secs=86400):
     log_file = "apt.log"
     if time.time() - last_run(log_file) < cache_secs:
         return
-    print("""
-Making sure your wallet OS is fully patched. This is a security best practice.
-If you're asked to select services to restart, accept defaults and choose OK.
-
-""")
-    time.sleep(10)
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update >~/{log_file}")
-    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade >>~/{log_file}")
+    print("Making sure your wallet OS is fully patched.")
+    time.sleep(5)
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >~/{log_file}")
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >>~/{log_file}")
     run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file}")
 
 
@@ -105,9 +101,11 @@ if __name__ == '__main__':
         patch_os()
         refresh_repo("https://github.com/provenant-dev/keripy.git")
         source_to_patch = 'vlei-qvi/source.sh'
-        restore_from_backup(source_to_patch)
+        first_patch = not restore_from_backup(source_to_patch)
         refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
         backup_file(source_to_patch)
+        if first_patch:
+            print("Patching source.sh")
         shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
