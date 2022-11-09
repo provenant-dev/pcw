@@ -116,6 +116,7 @@ def guarantee_venv():
 
 if __name__ == '__main__':
     print("\n\n\n---------- starting setup")
+    sys.stdout.flush()
     rerunner = '.rerun'
     os.chdir(os.path.expanduser("~/"))
     try:
