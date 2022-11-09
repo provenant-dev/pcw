@@ -79,7 +79,7 @@ def personalize():
         script = f'OWNER="{owner}"\n' + fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
-        print("\nPlease run the following command to refresh your wallet config:\n  source ~/.bashrc")
+        print("\nPlease run the following command to refresh your wallet config:\n  source ~/.bashrc\n")
     return owner
 
 
@@ -130,9 +130,6 @@ if __name__ == '__main__':
             if first_patch:
                 print("Patching source.sh")
             shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
-            print("""
-Next command to run:
-    source keripy/venv/bin/activate""")
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
         sys.exit(1)
