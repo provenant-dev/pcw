@@ -124,6 +124,15 @@ def guarantee_venv():
             os.chdir(os.path.expanduser("~/"))
 
 
+def patch_source(owner, source_to_patch):
+    my_folder = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(my_folder, 'source.sh'), "rt") as f:
+        source_script = f.read()
+    source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"')
+    with open(source_to_patch, 'wt') as f:
+        f.write(source_script)
+
+
 if __name__ == '__main__':
     print("\n--- Doing wallet maintenance.")
     sys.stdout.write("\03\033[2;33m")
@@ -162,11 +171,7 @@ if __name__ == '__main__':
                 refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
                 # (Re-)apply the patch.
                 backup_file(source_to_patch)
-                my_folder = os.path.abspath(os.path.dirname(__file__))
-                with open(os.path.join(my_folder, 'source.sh'), "rt") as f:
-                    source_script = f.read()
-                source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"')
-                shutil.copyfile(os.path.join(my_folder, 'source.sh'), source_to_patch)
+                patch_source(owner, source_to_patch)
 
         print("\033[0m--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
