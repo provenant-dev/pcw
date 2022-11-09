@@ -62,6 +62,8 @@ def refresh_repo(url):
             with open(log_path, "rt") as f:
                 result = f.read().strip()
             fetched_anything = bool(result != "Already up to date.")
+        else:
+            fetched_anything = False
     else:
         print(f"\nInstalling {repo_name}.\n")
         run(f"git clone {url} >~/{log_file} 2>&1")
