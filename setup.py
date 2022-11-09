@@ -30,22 +30,24 @@ def fix_prompt(script):
 
 
 def run(cmd):
-    print(cmd)
-    return os.system(cmd)
+    exitcode = os.system(cmd)
+    if exitcode:
+        print("\nSystem command exited with code %d. Command was:\n  %s" % (exitcode, cmd))
+    return exitcode
 
 
 def refresh_repo(url):
     repo_name = url[url.rfind('/') + 1:-4]
     if os.path.isdir(repo_name):
-        print("Checking for software updates.\n")
+        print(f"\nChecking for {repo_name} updates.\n")
         run(f"cd {repo_name} && git pull")
     else:
-        print("Installing software.\n")
+        print(f"\nInstalling {repo_name}.\n")
         run(f"git clone {url}")
 
 
 def get_variable(variable, script):
-    var_pat = re.compile(r'^\s*' + variable + r'\s*=\s*([a-zA-Z0-9].*?)\n', re.MULTILINE)
+    var_pat = re.compile(r'^\s*' + variable + r'\s*=\s*"([^"]+)"\n', re.MULTILINE)
     m = var_pat.search(script)
     if m:
         return m.group(1)
@@ -66,11 +68,12 @@ def personalize():
 
 
 def patch_os():
-    print("""Making sure your wallet OS is fully patched. This is a security best practice.
+    print("""
+Making sure your wallet OS is fully patched. This is a security best practice.
 If you're asked to select services to restart, accept defaults and choose OK.
 
 """)
-    run("pause 10 && sudo apt update && sudo apt upgrade")
+    run("sleep 10 && sudo apt update && sudo apt upgrade")
 
 
 if __name__ == '__main__':
