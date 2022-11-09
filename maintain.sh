@@ -88,7 +88,7 @@ def personalize():
         script = f'OWNER="{owner}"\n' + fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
-        os.system('touch {semaphore}')
+        os.system(f"touch {semaphore}")
     return owner
 
 
