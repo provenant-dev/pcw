@@ -138,16 +138,13 @@ if __name__ == '__main__':
             else:
                 owner = personalize()
                 patch_os()
-                print("fetching keripy")
                 refresh_repo("https://github.com/provenant-dev/keripy.git")
-                print("guaranteeing venv")
                 guarantee_venv()
 
                 source_to_patch = 'vlei-qvi/source.sh'
                 # Undo any active patch that we might have against source.sh.
                 # so git won't complain about merge conflicts or unstashed files.
                 restore_from_backup(source_to_patch)
-                print("fetching vlei-qvi")
                 refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
                 # (Re-)apply the patch.
                 backup_file(source_to_patch)
