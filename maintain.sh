@@ -9,8 +9,10 @@ import sys
 
 def ask(question):
     sys.stdout.write('\033[1;31m>>\033[0m \033[1;33m' + question + '\033[0m\n   \033[0;33m')
+    sys.stdout.flush()
     answer = input().strip()
     sys.stdout.write('\033[0m')
+    sys.stdout.flush()
     return answer
 
 
