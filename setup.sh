@@ -50,7 +50,7 @@ def refresh_repo(url):
         if time.time() - last_run(log_file) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
             run(f"cd {repo_name} && git pull >~/{log_file}")
-            with open(log_file, "wt") as f:
+            with open(log_file, "rt") as f:
                 fetched_anything = f.read().strip() != "Already up to date."
     else:
         print(f"\nInstalling {repo_name}.\n")
