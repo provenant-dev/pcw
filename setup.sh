@@ -47,8 +47,6 @@ def refresh_repo(url):
     cache_secs = 8 * 60 * 60
     repo_name = url[url.rfind('/') + 1:-4]
     log_file = repo_name + '.log'
-    if os.path.exists(log_file):
-        os.remove(log_file)
     if os.path.isdir(repo_name):
         if time_since(log_file) > cache_secs:
             print(f"\nChecking for {repo_name} updates.\n")
