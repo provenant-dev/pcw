@@ -52,18 +52,14 @@ def get_log_path_for_repo(url):
 
 def refresh_repo(url):
     fetched_anything = True
-    cache_secs = 8 * 60 * 60
     repo_name = get_repo_name(url)
     log_path = get_log_path_for_repo(url)
     if os.path.isdir(repo_name):
-        if time_since(log_path) > cache_secs:
-            print(f"\nChecking for {repo_name} updates.\n")
-            run(f"cd {repo_name} && git pull >~/{log_file} 2>&1")
-            with open(log_path, "rt") as f:
-                result = f.read().strip()
-            fetched_anything = bool(result != "Already up to date.")
-        else:
-            fetched_anything = False
+        print(f"\nChecking for {repo_name} updates.\n")
+        run(f"cd {repo_name} && git pull >~/{log_file} 2>&1")
+        with open(log_path, "rt") as f:
+            result = f.read().strip()
+        fetched_anything = bool(result != "Already up to date.")
     else:
         print(f"\nInstalling {repo_name}.\n")
         run(f"git clone {url} >~/{log_file} 2>&1")
