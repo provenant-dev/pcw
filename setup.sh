@@ -42,13 +42,16 @@ def run(cmd):
 
 
 def refresh_repo(url):
+    cache_secs = 8 * 60 * 60
     repo_name = url[url.rfind('/') + 1:-4]
+    log_file = repo_name + '.log'
     if os.path.isdir(repo_name):
-        print(f"\nChecking for {repo_name} updates.\n")
-        run(f"cd {repo_name} && git pull")
+        if time.time() - last_run(log_file) > cache_secs:
+            print(f"\nChecking for {repo_name} updates.\n")
+            run(f"cd {repo_name} && git pull >{log_file}")
     else:
         print(f"\nInstalling {repo_name}.\n")
-        run(f"git clone {url}")
+        run(f"git clone {url} >{log_file}")
 
 
 def get_variable(variable, script):
@@ -73,19 +76,29 @@ def personalize():
     return owner
 
 
-def patch_os():
+def last_run(log_file):
+    if os.path.isfile(log_file):
+        return os.stat(log_file).st_mtime
+    return 0
+
+
+def patch_os(cache_secs=86400):
+    log_file = "apt.log"
+    if time.time() - last_run(log_file) < cache_secs:
+        return
     print("""
 Making sure your wallet OS is fully patched. This is a security best practice.
 If you're asked to select services to restart, accept defaults and choose OK.
 
 """)
     time.sleep(10)
-    run("sudo DEBIAN_FRONTEND=noninteractive apt-get update >~/apt.log")
-    run("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade >>~/apt.log")
-    run("sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/apt.log")
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update >~/{log_file}")
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade >>~/{log_file}")
+    run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file}")
 
 
 if __name__ == '__main__':
+    my_folder = os.path.abspath(os.dirname(__file__))
     os.chdir(os.path.expanduser("~/"))
     try:
         owner = personalize()
@@ -95,6 +108,6 @@ if __name__ == '__main__':
         restore_from_backup(source_to_patch)
         refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
         backup_file(source_to_patch)
-        shutil.copyfile('pwc/source.sh', 'vlei-qvi/source.sh')
+        shutil.copyfile(os.path.join(my_folder, 'source.sh'), 'vlei-qvi/source.sh')
     except KeyboardInterrupt:
         print("\nExited script early. Run with --clean to start fresh.")
