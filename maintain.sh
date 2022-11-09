@@ -122,7 +122,8 @@ def guarantee_venv():
 
 
 if __name__ == '__main__':
-    print("\n--- Doing wallet maintenance.\03\033[2;33m")
+    print("\n--- Doing wallet maintenance.")
+    sys.stdout.write("\03\033[2;33m")
     sys.stdout.flush()
     rerunner = '.rerun'
     os.chdir(os.path.expanduser("~/"))
