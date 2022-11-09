@@ -128,9 +128,8 @@ def patch_source(owner, source_to_patch):
     my_folder = os.path.abspath(os.path.dirname(__file__))
     with open(os.path.join(my_folder, 'source.sh'), "rt") as f:
         source_script = f.read()
-    source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"')
     with open(source_to_patch, 'wt') as f:
-        f.write(source_script)
+        f.write(source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"'))
 
 
 if __name__ == '__main__':
