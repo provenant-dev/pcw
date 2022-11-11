@@ -19,7 +19,7 @@ It is basically like creating a brand new wallet. Type "yes" to confirm."""
 RERUNNER = '.rerun'
 ESC_SEQ_PAT = re.compile(r"\\(?:e|033)\[[0-9;]+m")
 
-log = open(LOG_FILE, 'wt')
+log = open(LOG_FILE, 'at')
 term = blessings.Terminal()
 
 
@@ -162,15 +162,15 @@ def reset():
     run(f"rm {DATA_FOLDER}/*")
     log.close()
     os.system(f"mv {temp_log_fname} {LOG_FILE}")
-    globals()["log"] = open(LOG_FILE, "wt")
+    globals()["log"] = open(LOG_FILE, "at")
     run("rm -rf ~/keripy ~/vlei-qvi ~/.keri")
     run("mv ~/.bashrc.bak ~/.bashrc")
 
 
 def do_maintainance():
     os.chdir(os.path.expanduser("~/"))
-    log.write("\n\n" + "-" * 50 + "\nMaintenance script launched " + time.asctime())
-    cout("\n--- Doing wallet maintenance.\n")
+    log.write("\n\n" + "-" * 60 + "\nMaintenance script launched " + time.asctime())
+    cout("\n\n--- Doing wallet maintenance.\n")
     try:
         try:  # Inside this block, use dim color. Revert to normal text when block ends.
             cout(term.dim_yellow)
