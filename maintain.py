@@ -120,7 +120,8 @@ def add_scripts_to_path():
 def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
-    cout(term.normal + "\n--- Doing wallet maintenance.\n")
+    sys.stdout.write(term.normal)
+    cout("\n--- Doing wallet maintenance.\n")
     try:
         with TempColor(MAINTENANCE_COLOR):
             cout(term.dim_yellow)
@@ -163,7 +164,7 @@ def do_maintenance():
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
         sys.exit(1)
     except:
-        cout(term.red("--- Error.\n" + traceback.format_exc() + "---\n")
+        cout(term.red("--- Error.\n" + traceback.format_exc() + "---\n"))
 
 
 if __name__ == '__main__':
