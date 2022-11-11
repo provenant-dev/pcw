@@ -110,7 +110,7 @@ def add_scripts_to_path():
         src_path = os.path.join(scripts_path, script)
         if os.path.isfile(src_path):
             if bool(os.stat(src_path).st_mode & stat.S_IXUSR):
-                basename = os.path.splitext(basename)[0]
+                basename = os.path.splitext(script)[0]
                 dest_path = os.path.join(BIN_PATH, basename)
                 if not os.path.exists(dest_path):
                     log.write("Symlinking %s to %s." % (dest_path, src_path))

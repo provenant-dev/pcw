@@ -111,5 +111,3 @@ def get_shell_variable(variable, script):
     m = var_pat.search(script)
     if m:
         return m.group(1)
-
-
