@@ -86,17 +86,17 @@ def reset():
     run("mv ~/.bashrc.bak ~/.bashrc")
 
 
+def make_script(src_path, dest_path):
+    with open(dest_path, 'wt') as f:
+        file, folder = os.path.split(src_path)
+        folder = os.path.abspath(folder)
+        f.write("#!/bin/bash\ncd {folder}\n./{file}")
+
+
 def add_scripts_to_path():
     cout("Configuring commands.\n")
     if not os.path.exists(BIN_PATH):
         os.makedirs(BIN_PATH)
-    # Remove old, broken links.
-    for script in os.listdir(BIN_PATH):
-        dest_path = os.path.join(BIN_PATH, script)
-        if os.path.islink(dest_path) and not os.path.exists(dest_path):
-            log.write("Removing broken symlink %s." % dest_path)
-            os.unlink(dest_path)
-    # Add new symbolic links.
     scripts_path = os.path.expanduser("~/vlei-qvi/scripts")
     for script in os.listdir(scripts_path):
         src_path = os.path.join(scripts_path, script)
@@ -105,8 +105,8 @@ def add_scripts_to_path():
                 basename = os.path.splitext(script)[0]
                 dest_path = os.path.join(BIN_PATH, basename)
                 if not os.path.exists(dest_path):
-                    log.write("Symlinking %s to %s." % (dest_path, src_path))
-                    os.symlink(src_path, dest_path)
+                    log.write("Making command %s to run %s." % (dest_path, src_path))
+                    make_script(src_path, dest_path)
 
 
 def break_rerun_cycle():
