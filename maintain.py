@@ -67,13 +67,13 @@ def refresh_repo(url):
     repo_name = get_repo_name(url)
     log_path = get_log_path_for_repo(url)
     if os.path.isdir(repo_name):
-        print(f"Checking for {repo_name} updates.")
+        cout(f"Checking for {repo_name} updates.\n")
         run(f"cd {repo_name} && git pull >~/{log_path} 2>&1")
         with open(log_path, "rt") as f:
             result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
     else:
-        print(f"Installing {repo_name}.")
+        cout(f"Installing {repo_name}.\n")
         run(f"git clone {url} >~/{log_path} 2>&1")
     return fetched_anything
 
@@ -114,7 +114,7 @@ def time_since(log_file):
 def patch_os(cache_secs=86400):
     log_file = "apt.log"
     if time_since(log_file) > cache_secs:
-        print("Making sure your wallet OS is fully patched.")
+        cout("Making sure your wallet OS is fully patched.\n")
         run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >~/{log_file} 2>&1")
         run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >>~/{log_file} 2>&1")
         run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file} 2>&1")
@@ -122,7 +122,7 @@ def patch_os(cache_secs=86400):
 
 def guarantee_venv():
     if not os.path.isdir("keripy/venv"):
-        print("Creating venv for keripy.")
+        cout("Creating venv for keripy.\n")
         os.chdir("keripy")
         try:
             os.system("python3 -m venv venv >/dev/null 2>&1")
@@ -139,27 +139,25 @@ def patch_source(owner, source_to_patch):
 
 
 if __name__ == '__main__':
-    print("\n--- Doing wallet maintenance.")
-    sys.stdout.write("\03\033[2;33m")
-    sys.stdout.flush()
+    cout("\n--- Doing wallet maintenance." + term.dim_yellow + "\n")
     rerunner = '.rerun'
     os.chdir(os.path.expanduser("~/"))
     try:
         if os.path.exists(rerunner):
-            print("Detected rerunner; removing.")
+            cout("Detected rerunner; removing.\n")
             os.remove(rerunner)
         if len(sys.argv) == 2 and sys.argv[1] == '--reset':
             if ask("""Resetting state is destructive. It removes your history, all your
    AIDs, and all your keys. All credentials you've received or issued become
    unusable, and all multisigs where you are a participant lose your input.
    It is basically like creating a brand new wallet. Type "yes" to confirm.""").lower() != "yes":
-                print("Abandoning request to reset.")
+                cout("Abandoning request to reset.\n")
             else:
-                print("Resetting state. Log out and log back in to begin again.")
+                cout("Resetting state. Log out and log back in to begin again.\n")
                 os.system('rm -rf keripy vlei-qvi ~/.keri && mv .bashrc.bak .bashrc; rm *.log')
         else:
             if refresh_repo("https://github.com/provenant-dev/pcw.git"):
-                print("Wallet software updated. Requesting re-launch.")
+                cout("Wallet software updated. Requesting re-launch.\n")
                 os.system(f"touch {rerunner}")
                 # Give file buffers time to flush.
                 time.sleep(1)
@@ -178,12 +176,12 @@ if __name__ == '__main__':
                 backup_file(source_to_patch)
                 patch_source(owner, source_to_patch)
 
-        print("\033[0m--- Maintenance tasks succeeded.\n")
+        cout(term.normal + "--- Maintenance tasks succeeded.\n\n")
     except KeyboardInterrupt:
-        print(f"\033[0m\n--- Exited script early. Run {__file__} --reset to reset.\n")
+        cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset.\n\n" + term.normal)
         sys.exit(1)
     except:
-        print("\033[0m--- Failure:")
+        cout(term.bright_red + "--- Failure:" + term.normal + "\n")
         import traceback
         traceback.print_exc()
-        print("---\n")
+        cout(term.bright_red + "---" + term.normal + "\n\n")
