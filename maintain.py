@@ -1,18 +1,25 @@
-#!/usr/bin/env python3
-
 import os
 import shutil
 import re
 import time
 import sys
 
+from blessings import Terminal
+
+
+term = Terminal()
+
+
+def cout(txt):
+    sys.stdout.write(txt)
+    sys.stdout.flush()
+
 
 def ask(question):
-    sys.stdout.write('\033[1;31m>>\033[0m \033[1;33m' + question + '\033[0m\n   \033[0;33m')
-    sys.stdout.flush()
+    cout(term.bright_yellow + question + term.normal + '\n   ')
+    cout(term.bright_red + ">> " + term.yellow)
     answer = input().strip()
-    sys.stdout.write('\033[0m')
-    sys.stdout.flush()
+    cout(term.normal)
     return answer
 
 
@@ -43,7 +50,7 @@ def fix_prompt(script):
 def run(cmd):
     exitcode = os.system(cmd)
     if exitcode:
-        print("System command exited with code %d. Command was:\n  %s" % (exitcode, cmd))
+        cout(term.bright_red + "System command exited with code %d. Command was:" + term.normal + "\n  %s" % (exitcode, cmd))
     return exitcode
 
 
@@ -101,7 +108,6 @@ def time_since(log_file):
         elapsed = now - os.stat(log_file).st_mtime
     else:
         elapsed = now
-    #print(f"elapsed for {log_file} = {elapsed}")
     return elapsed
 
 
