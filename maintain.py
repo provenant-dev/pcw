@@ -88,7 +88,7 @@ def reset():
 
 def make_script(src_path, dest_path):
     with open(dest_path, 'wt') as f:
-        file, folder = os.path.split(src_path)
+        folder, file = os.path.split(src_path)
         folder = os.path.abspath(folder)
         f.write(f"#!/bin/bash\ncd {folder}\n./{file}")
     os.chmod(dest_path, SCRIPT_PERMISSIONS)
