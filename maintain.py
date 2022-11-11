@@ -208,7 +208,7 @@ def do_maintainance():
         cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset." + term.normal + "\n\n")
         sys.exit(1)
     except:
-        cout(term.bright_red + "--- Failure:" + term.normal + "\n\n")
+        cout(term.bright_red + "--- Failure:" + term.normal + "\n" + term.red)
         import traceback
         traceback.print_exc()
         cout(term.bright_red + "---" + term.normal + "\n\n")
