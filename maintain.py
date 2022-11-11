@@ -86,27 +86,25 @@ def reset():
     run("mv ~/.bashrc.bak ~/.bashrc")
 
 
-def make_script(src_path, dest_path):
+def make_script(src_path, dest_path, cwd):
+    src_path = os.path.abspath(src_path)
     with open(dest_path, 'wt') as f:
-        folder, file = os.path.split(src_path)
-        folder = os.path.abspath(folder)
-        f.write(f"#!/bin/bash\ncd {folder}\n./{file}\n")
+        f.write(f"#!/bin/bash\ncd {cwd}\n{src_path}\n")
     os.chmod(dest_path, SCRIPT_PERMISSIONS)
 
 
-def add_scripts_to_path():
+def add_scripts_to_path(folder, cwd):
     cout("Configuring commands.\n")
     if not os.path.exists(BIN_PATH):
         os.makedirs(BIN_PATH)
-    scripts_path = os.path.expanduser("~/vlei-qvi/scripts")
-    for script in os.listdir(scripts_path):
-        src_path = os.path.join(scripts_path, script)
+    for script in os.listdir(folder):
+        src_path = os.path.join(folder, script)
         if os.path.isfile(src_path):
             if bool(os.stat(src_path).st_mode & stat.S_IXUSR):
                 basename = os.path.splitext(script)[0]
                 dest_path = os.path.join(BIN_PATH, basename)
                 log.write("Making command %s to run %s." % (dest_path, src_path))
-                make_script(src_path, dest_path)
+                make_script(src_path, dest_path, cwd)
 
 
 def break_rerun_cycle():
@@ -159,7 +157,7 @@ def do_maintenance():
                     # (Re-)apply the patch.
                     backup_file(source_to_patch)
                     patch_source(owner, source_to_patch)
-                    add_scripts_to_path()
+                    add_scripts_to_path(os.path.expanduser("~/vlei-qvi"))
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
