@@ -17,7 +17,7 @@ and all your keys. All credentials you've received or issued become
 unusable, and all multisigs where you are a participant lose your input.
 It is basically like creating a brand new wallet. Type "yes" to confirm."""
 RERUNNER = '.rerun'
-ESC_SEQ_PAT = re.compile(r"\\(?:e|033)\[[0-9;]+m")
+ESC_SEQ_PAT = re.compile("(?:\007|\033)\\[[0-9;]+[Bm]")
 
 log = open(LOG_FILE, 'at')
 term = blessings.Terminal()
