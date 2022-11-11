@@ -15,7 +15,7 @@ Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. All credentials you've received or issued become
 unusable, and all multisigs where you are a participant lose your input.
 It is basically like creating a brand new wallet. Type "yes" to confirm."""
-RERUNNER = os.path.join(DATA_FOLDER, '.rerun')
+RERUNNER = os.path.expanduser('~/.rerun')
 
 
 def ensure_dependency(python_pkg):
@@ -62,7 +62,7 @@ def ask(question):
 def backup_file(fname, once_only=True):
     backup_name = fname + '.bak'
     if not os.path.isfile(backup_name) or not once_only:
-        log.write("Backing up %s to %s.\n" % (fname, backup_name)
+        log.write("Backing up %s to %s.\n" % (fname, backup_name))
         shutil.copyfile(fname, backup_name)
 
 
