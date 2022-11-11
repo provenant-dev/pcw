@@ -50,10 +50,10 @@ class TempColor:
         self.restore = restore if restore else term.normal
 
     def __enter__(self):
-        sys.stdout(self.color)
+        sys.stdout.write(self.color)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        sys.stdout(self.restore)
+        sys.stdout.write(self.restore)
 
 
 def cout(txt):
