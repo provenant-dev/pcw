@@ -1,42 +1,81 @@
+import importlib
 import os
-import shutil
 import re
-import time
+import shutil
 import sys
+import time
 
-from blessings import Terminal
+
+DATA_FOLDER = os.path.expanduser("~/.pwc-data")
+os.makedirs(DATA_FOLDER, exist_ok=True)
+LOG_FILE = os.path.join(DATA_FOLDER, "maintain.log")
+log = open(LOG_FILE, 'wt')
+RESET_PROMPT = """\
+Resetting state is destructive. It removes your history, all your AIDs,
+and all your keys. All credentials you've received or issued become
+unusable, and all multisigs where you are a participant lose your input.
+It is basically like creating a brand new wallet. Type "yes" to confirm."""
+RERUNNER = os.path.join(DATA_FOLDER, '.rerun')
 
 
-term = Terminal()
+def ensure_dependency(python_pkg):
+    more_tries = 1
+    while more_tries >= 0:
+        try:
+            globals()[python_pkg] = importlib.import_module(python_pkg)
+            return
+        except ModuleNotFoundError:
+            if more_tries == 0:
+                raise
+            run("pip3 install %s" % python_pkg)
+            more_tries -= 1
+
+
+# These modules aren't available without being explicitly installed.
+# Install them as the script runs rather than requiring pre-install.
+for item in ["blessings"]:
+    ensure_dependency(item)
+
+
+term = blessings.Terminal()
+
+
+ESC_SEQ_PAT = re.compile(r"\\(?:e|033)\[[0-9;]+m")
 
 
 def cout(txt):
     sys.stdout.write(txt)
     sys.stdout.flush()
+    log.write(ESC_SEQ_PAT.sub("", txt))
 
 
 def ask(question):
-    cout(term.bright_yellow + question + term.normal + '\n   ')
-    cout(term.bright_red + ">> " + term.yellow)
-    answer = input().strip()
-    cout(term.normal)
+    cout(term.bright_yellow(question) + '\n   ')
+    cout(term.bright_red + ">> " + term.white)
+    try:
+        answer = input().strip()
+    finally:
+        cout(term.normal)
     return answer
 
 
 def backup_file(fname, once_only=True):
     backup_name = fname + '.bak'
     if not os.path.isfile(backup_name) or not once_only:
+        log.write("Backing up %s to %s.\n" % (fname, backup_name)
         shutil.copyfile(fname, backup_name)
 
 
 def restore_from_backup(fname):
     backup_name = fname + '.bak'
     if os.path.isfile(backup_name):
+        log.write("Restoring %s from %s.\n" % (fname, backup_name))
         shutil.copyfile(backup_name, fname)
         return True
 
 
 def fix_prompt(script):
+    log.write("Fixing ")
     prompt_pat = re.compile(r'\s*PS1\s*=')
     lines = script.split('\n')
     new_lines = []
@@ -48,9 +87,9 @@ def fix_prompt(script):
 
 
 def run(cmd):
-    exitcode = os.system(cmd)
+    exitcode = os.system(cmd + f" >{LOG_FILE} 2>&1")
     if exitcode:
-        cout(term.bright_red + "System command exited with code %d. Command was:" + term.normal + "\n  %s" % (exitcode, cmd))
+        cout(term.bright_red + "System command exited with code %d. Command was:" + term.normal + "\n  %s\n" % (exitcode, cmd))
     return exitcode
 
 
@@ -58,23 +97,18 @@ def get_repo_name(url):
     return url[url.rfind('/') + 1:-4]
 
 
-def get_log_path_for_repo(url):
-    return get_repo_name(url) + '.log'
-
-
 def refresh_repo(url):
     fetched_anything = True
     repo_name = get_repo_name(url)
-    log_path = get_log_path_for_repo(url)
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
-        run(f"cd {repo_name} && git pull >~/{log_path} 2>&1")
+        run(f"cd {repo_name} && git pull")
         with open(log_path, "rt") as f:
             result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
     else:
         cout(f"Installing {repo_name}.\n")
-        run(f"git clone {url} >~/{log_path} 2>&1")
+        run(f"git clone {url}")
     return fetched_anything
 
 
@@ -115,9 +149,9 @@ def patch_os(cache_secs=86400):
     log_file = "apt.log"
     if time_since(log_file) > cache_secs:
         cout("Making sure your wallet OS is fully patched.\n")
-        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >~/{log_file} 2>&1")
-        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >>~/{log_file} 2>&1")
-        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y >>~/{log_file} 2>&1")
+        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y")
+        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y")
+        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y")
 
 
 def guarantee_venv():
@@ -125,7 +159,7 @@ def guarantee_venv():
         cout("Creating venv for keripy.\n")
         os.chdir("keripy")
         try:
-            os.system("python3 -m venv venv >/dev/null 2>&1")
+            run("python3 -m venv venv")
         finally:
             os.chdir(os.path.expanduser("~/"))
 
@@ -138,50 +172,67 @@ def patch_source(owner, source_to_patch):
         f.write(source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"'))
 
 
-if __name__ == '__main__':
+def reset():
+    log.close()
+    temp_log_fname = "~/.log"
+    os.system(f"mv {LOG_FILE} {temp_log_fname}")
+    log = open(temp_log_fname, "wt")
+    run(f"rm {DATA_FOLDER}/*")
+    log.close()
+    os.system(f"mv {temp_log_fname} {LOG_FILE}")
+    globals()["log"] = open(LOG_FILE, "wt")
+    run("rm -rf ~/keripy ~/vlei-qvi ~/.keri")
+    run("mv ~/.bashrc.bak ~/.bashrc")
+
+
+def do_maintainance():
+    log.write("\n\n" + "-" * 50 + "\nMaintenance script launched " + time.asctime()))
     cout("\n--- Doing wallet maintenance." + term.dim_yellow + "\n")
-    rerunner = '.rerun'
-    os.chdir(os.path.expanduser("~/"))
     try:
-        if os.path.exists(rerunner):
-            cout("Detected rerunner; removing.\n")
-            os.remove(rerunner)
-        if len(sys.argv) == 2 and sys.argv[1] == '--reset':
-            if ask("""Resetting state is destructive. It removes your history, all your
-   AIDs, and all your keys. All credentials you've received or issued become
-   unusable, and all multisigs where you are a participant lose your input.
-   It is basically like creating a brand new wallet. Type "yes" to confirm.""").lower() != "yes":
-                cout("Abandoning request to reset.\n")
+        os.chdir(os.path.expanduser("~/"))
+        try:
+            if os.path.exists(RERUNNER):
+                cout("Detected rerun flag; removing.\n")
+                os.remove(RERUNNER)
+            if len(sys.argv) == 2 and sys.argv[1] == '--reset':
+                if ask(RESET_PROMPT).lower() != "yes":
+                    cout("Abandoning request to reset.\n")
+                else:
+                    cout("Resetting state. Log out and log back in to begin again.\n")
+                    reset()
             else:
-                cout("Resetting state. Log out and log back in to begin again.\n")
-                os.system('rm -rf keripy vlei-qvi ~/.keri && mv .bashrc.bak .bashrc; rm *.log')
-        else:
-            if refresh_repo("https://github.com/provenant-dev/pcw.git"):
-                cout("Wallet software updated. Requesting re-launch.\n")
-                os.system(f"touch {rerunner}")
-                # Give file buffers time to flush.
-                time.sleep(1)
-            else:
-                owner = personalize()
-                patch_os()
-                refresh_repo("https://github.com/provenant-dev/keripy.git")
-                guarantee_venv()
+                if refresh_repo("https://github.com/provenant-dev/pcw.git"):
+                    cout("Wallet software updated. Requesting re-launch.\n")
+                    run(f"touch {RERUNNER}")
+                    # Give file buffers time to flush.
+                    time.sleep(1)
+                else:
+                    owner = personalize()
+                    patch_os()
+                    refresh_repo("https://github.com/provenant-dev/keripy.git")
+                    guarantee_venv()
 
-                source_to_patch = 'vlei-qvi/source.sh'
-                # Undo any active patch that we might have against source.sh.
-                # so git won't complain about merge conflicts or unstashed files.
-                restore_from_backup(source_to_patch)
-                refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
-                # (Re-)apply the patch.
-                backup_file(source_to_patch)
-                patch_source(owner, source_to_patch)
+                    source_to_patch = 'vlei-qvi/source.sh'
+                    # Undo any active patch that we might have against source.sh.
+                    # so git won't complain about merge conflicts or unstashed files.
+                    restore_from_backup(source_to_patch)
+                    refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
+                    # (Re-)apply the patch.
+                    backup_file(source_to_patch)
+                    patch_source(owner, source_to_patch)
 
-        cout(term.normal + "--- Maintenance tasks succeeded.\n\n")
-    except KeyboardInterrupt:
-        cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset.\n\n" + term.normal)
-        sys.exit(1)
-    except:
-        cout(term.bright_red + "--- Failure:" + term.normal + "\n")
-        import traceback
-        traceback.print_exc()
-        cout(term.bright_red + "---" + term.normal + "\n\n")
+            cout(term.normal + "--- Maintenance tasks succeeded.\n\n")
+        except KeyboardInterrupt:
+            cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset.\n\n" + term.normal)
+            sys.exit(1)
+        except:
+            cout(term.bright_red + "--- Failure:" + term.normal + "\n")
+            import traceback
+            traceback.print_exc()
+            cout(term.bright_red + "---" + term.normal + "\n\n")
+    finally:
+        print(term.normal)
+
+if __name__ == '__main__':
+   do_maintainance()
+
