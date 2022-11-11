@@ -1,9 +1,9 @@
-import importlib
 import os
 import re
 import shutil
 import sys
 import time
+import traceback
 
 import blessings
 
@@ -201,15 +201,14 @@ def do_maintainance():
                     # (Re-)apply the patch.
                     backup_file(source_to_patch)
                     patch_source(owner, source_to_patch)
-            cout(term.normal + "--- Maintenance tasks succeeded.\n\n")
         finally:
             sys.stdout.write(term.normal)
+        cout("--- Maintenance tasks succeeded.\n\n")
     except KeyboardInterrupt:
         cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset." + term.normal + "\n\n")
         sys.exit(1)
     except:
         cout(term.red + "--- Failure:")
-        import traceback
         cout(traceback.format_exc())
         cout("---" + term.normal + "\n\n")
 
