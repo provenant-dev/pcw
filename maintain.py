@@ -105,9 +105,8 @@ def add_scripts_to_path():
             if bool(os.stat(src_path).st_mode & stat.S_IXUSR):
                 basename = os.path.splitext(script)[0]
                 dest_path = os.path.join(BIN_PATH, basename)
-                if not os.path.exists(dest_path):
-                    log.write("Making command %s to run %s." % (dest_path, src_path))
-                    make_script(src_path, dest_path)
+                log.write("Making command %s to run %s." % (dest_path, src_path))
+                make_script(src_path, dest_path)
 
 
 def break_rerun_cycle():
