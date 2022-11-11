@@ -179,7 +179,7 @@ def reset():
 def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
-    cout("\n\n--- Doing wallet maintenance.\n")
+    cout("\n--- Doing wallet maintenance.\n")
     try:
         try:  # Inside this block, use dim color. Revert to normal text when block ends.
             cout(term.dim_yellow)
@@ -214,14 +214,14 @@ def do_maintenance():
                     patch_source(owner, source_to_patch)
         finally:
             sys.stdout.write(term.normal)
-        cout("--- Maintenance tasks succeeded.\n\n")
+        cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
-        cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset." + term.normal + "\n\n")
+        cout(term.red + "--- Exited script early. Run maintain --reset to clean up." + term.normal + "\n")
         sys.exit(1)
     except:
-        cout(term.red + "--- Failure:")
+        cout(term.red + "--- Error.\n")
         cout(traceback.format_exc())
-        cout("---" + term.normal + "\n\n")
+        cout("---" + term.normal + "\n")
 
 
 if __name__ == '__main__':
