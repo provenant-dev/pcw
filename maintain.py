@@ -9,6 +9,7 @@ import blessings
 
 
 LOG_FILE = os.path.expanduser("~/.maintain.log")
+PATCH_CHECK_FILE = os.path.expanduser("~/.patch-check")
 RESET_PROMPT = """\
 Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. All credentials you've received or issued become
@@ -138,11 +139,12 @@ def time_since(log_file):
 
 
 def patch_os(cache_secs=86400):
-    if time_since(log_file) > cache_secs:
+    if time_since(PATCH_CHECK_FILE) > cache_secs:
         cout("Making sure your wallet OS is fully patched.\n")
-        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y")
-        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y")
-        run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y")
+        os.system(f"rm {PATCH_CHECK_FILE}; touch {PATCH_CHECK_FILE}")
+        run("sudo DEBIAN_FRONTEND=noninteractive apt-get update -y")
+        run("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y")
+        run("sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y")
 
 
 def guarantee_venv():
