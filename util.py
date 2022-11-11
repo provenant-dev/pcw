@@ -8,7 +8,7 @@ import blessings
 
 
 LOG_FILE = os.path.expanduser("~/.maintain.log")
-PATCH_CHECK_FILE = os.path.expanduser("~/.patch-check")
+PATCH_CHECK_FILE = os.path.expanduser("~/.os-patch-check")
 RESET_PROMPT = """\
 Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. All credentials you've received or issued become
