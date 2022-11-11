@@ -82,6 +82,7 @@ def patch_source(owner, source_to_patch):
 
 
 def reset():
+    global log
     log.close()
     temp_log_fname = "~/.log"
     os.system(f"mv {LOG_FILE} {temp_log_fname}")
@@ -89,7 +90,7 @@ def reset():
     run(f"rm {DATA_FOLDER}/*")
     log.close()
     os.system(f"mv {temp_log_fname} {LOG_FILE}")
-    globals()["log"] = open(LOG_FILE, "at")
+    log = open(LOG_FILE, "at")
     run("rm -rf ~/keripy ~/vlei-qvi ~/.keri")
     run("mv ~/.bashrc.bak ~/.bashrc")
 
@@ -133,10 +134,10 @@ def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
     sys.stdout.write(term.normal)
-    cout("\n--- Doing wallet maintenance.\n")
+    cout("\n--- Doing wallet maintenance.")
     try:
         with TempColor(MAINTENANCE_COLOR):
-            cout(term.dim_yellow)
+            cout("\n")
             if os.path.exists(RERUNNER):
                 cout("Detected rerun flag; removing.\n")
                 break_rerun_cycle()
