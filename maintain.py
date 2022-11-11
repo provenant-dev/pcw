@@ -82,15 +82,6 @@ def patch_source(owner, source_to_patch):
 
 
 def reset():
-    global log
-    log.close()
-    temp_log_fname = "~/.log"
-    os.system(f"mv {LOG_FILE} {temp_log_fname}")
-    log = open(temp_log_fname, "wt")
-    run(f"rm {DATA_FOLDER}/*")
-    log.close()
-    os.system(f"mv {temp_log_fname} {LOG_FILE}")
-    log = open(LOG_FILE, "at")
     run("rm -rf ~/keripy ~/vlei-qvi ~/.keri")
     run("mv ~/.bashrc.bak ~/.bashrc")
 
