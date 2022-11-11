@@ -117,6 +117,18 @@ def add_scripts_to_path():
                     os.symlink(src_path, dest_path)
 
 
+def break_rerun_cycle():
+    # Simply deleting the rerunner should work. However,
+    # testing showed that sometimes the file wasn't quite
+    # deletable -- so switch to a slower but more reliable
+    # method where we first rename, then delete.
+    bak = RERUNNER + '.bak'
+    if os.path.exists(bak):
+        os.remove(bak)
+    os.rename(RERUNNER, bak)
+    os.remove(bak)
+
+
 def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
@@ -127,11 +139,7 @@ def do_maintenance():
             cout(term.dim_yellow)
             if os.path.exists(RERUNNER):
                 cout("Detected rerun flag; removing.\n")
-                bak = RERUNNER + '.bak'
-                if os.file.exists(bak):
-                    os.remove(bak)
-                os.rename(RERUNNER, bak)
-                os.remove(bak)
+                break_rerun_cycle()
             if len(sys.argv) == 2 and sys.argv[1] == '--reset':
                 if ask(RESET_PROMPT).lower() != "yes":
                     cout("Abandoning request to reset.\n")
