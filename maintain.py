@@ -126,7 +126,11 @@ def do_maintenance():
             cout(term.dim_yellow)
             if os.path.exists(RERUNNER):
                 cout("Detected rerun flag; removing.\n")
-                os.remove(RERUNNER)
+                bak = RERUNNER + '.bak'
+                if os.file.exists(bak):
+                    os.remove(bak)
+                os.rename(RERUNNER, bak)
+                os.remove(bak)
             if len(sys.argv) == 2 and sys.argv[1] == '--reset':
                 if ask(RESET_PROMPT).lower() != "yes":
                     cout("Abandoning request to reset.\n")
