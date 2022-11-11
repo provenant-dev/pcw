@@ -21,6 +21,8 @@ BIN_PATH = os.path.expanduser("~/bin")
 log = open(LOG_FILE, 'at')
 term = blessings.Terminal()
 
+MAINTENANCE_COLOR = term.dim_yellow
+
 
 class TempWorkingDir:
     """
@@ -38,6 +40,22 @@ class TempWorkingDir:
         os.chdir(self.reset)
 
 
+class TempColor:
+    """
+    Changed working directory until python context is reset, then
+    changes back.
+    """
+    def __init__(self, color, restore=None):
+        self.color = color
+        self.restore = restore if restore else term.normal
+
+    def __enter__(self):
+        sys.stdout(self.color)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout(self.restore)
+
+
 def cout(txt):
     sys.stdout.write(txt)
     sys.stdout.flush()
@@ -47,18 +65,18 @@ def cout(txt):
 
 def ask(question):
     cout(term.bright_yellow(question) + '\n   ')
-    cout(term.bright_red + ">> " + term.white)
-    try:
+    cout(term.bright_red + ">> ")
+    with TempColor(term.white, MAINTENANCE_COLOR):
         answer = input().strip()
-    finally:
-        cout(term.normal)
     return answer
 
 
 def run(cmd):
-    exitcode = os.system(cmd + f" >{LOG_FILE} 2>&1")
+    exitcode = os.system(cmd + f" >.last-run 2>&1")
     if exitcode:
-        cout(term.bright_red + "System command exited with code %d. Command was:" + term.normal + "\n  %s\n" % (exitcode, cmd))
+        cout(term.red + "System command exited with code %d. Command was:" + term.normal + "\n  %s\n" % (exitcode, cmd))
+
+        cout()
     return exitcode
 
 

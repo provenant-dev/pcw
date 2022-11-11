@@ -122,7 +122,7 @@ def do_maintenance():
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
     cout(term.normal + "\n--- Doing wallet maintenance.\n")
     try:
-        try:  # Inside this block, use dim color. Revert to normal text when block ends.
+        with TempColor(MAINTENANCE_COLOR):
             cout(term.dim_yellow)
             if os.path.exists(RERUNNER):
                 cout("Detected rerun flag; removing.\n")
@@ -158,16 +158,12 @@ def do_maintenance():
                     backup_file(source_to_patch)
                     patch_source(owner, source_to_patch)
                     add_scripts_to_path()
-        finally:
-            sys.stdout.write(term.normal)
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
-        cout(term.red + "--- Exited script early. Run maintain --reset to clean up." + term.normal + "\n")
+        cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
         sys.exit(1)
     except:
-        cout(term.red + "--- Error.\n")
-        cout(traceback.format_exc())
-        cout("---" + term.normal + "\n")
+        cout(term.red("--- Error.\n" + traceback.format_exc() + "---\n")
 
 
 if __name__ == '__main__':
