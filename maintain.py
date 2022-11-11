@@ -91,7 +91,7 @@ def make_script(src_path, dest_path):
         file, folder = os.path.split(src_path)
         folder = os.path.abspath(folder)
         f.write(f"#!/bin/bash\ncd {folder}\n./{file}")
-    os.chmod(dest_path, stat.S_IXUSR)
+    os.chmod(dest_path, SCRIPT_PERMISSIONS)
 
 
 def add_scripts_to_path():

@@ -3,6 +3,7 @@ import re
 import shutil
 import sys
 import time
+import stat
 
 import blessings
 
@@ -22,6 +23,7 @@ log = open(LOG_FILE, 'at')
 term = blessings.Terminal()
 
 MAINTENANCE_COLOR = term.dim_yellow
+SCRIPT_PERMISSIONS = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH
 
 
 class TempWorkingDir:
