@@ -97,7 +97,7 @@ def reset():
 def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
-    cout("\n--- Doing wallet maintenance.\n")
+    cout(term.normal + "\n--- Doing wallet maintenance.\n")
     try:
         try:  # Inside this block, use dim color. Revert to normal text when block ends.
             cout(term.dim_yellow)
