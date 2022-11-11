@@ -133,6 +133,7 @@ def do_maintenance():
                 cout("Detected rerun flag; removing.\n")
                 break_rerun_cycle()
             if len(sys.argv) == 2 and sys.argv[1] == '--reset':
+                cout("Wallet reset requested.\n" + term.normal)
                 if ask(RESET_PROMPT).lower() != "yes":
                     cout("Abandoning request to reset.\n")
                 else:

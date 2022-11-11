@@ -64,8 +64,10 @@ def cout(txt):
 
 
 def ask(question):
+    # Undo dimness of maintenance text.
+    sys.stdout.write(term.normal)
     cout(term.yellow(question) + "\n")
-    cout(term.bright_red(">> "))
+    cout(term.red(">> "))
     with TempColor(term.white, MAINTENANCE_COLOR):
         answer = input().strip()
     return answer
