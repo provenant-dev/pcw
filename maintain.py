@@ -8,7 +8,7 @@ import time
 import blessings
 
 
-DATA_FOLDER = os.path.expanduser("~/.pwc-data")
+DATA_FOLDER = os.path.expanduser("~/.maintenance-data")
 os.makedirs(DATA_FOLDER, exist_ok=True)
 LOG_FILE = os.path.join(DATA_FOLDER, "maintain.log")
 RESET_PROMPT = """\
@@ -16,7 +16,7 @@ Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. All credentials you've received or issued become
 unusable, and all multisigs where you are a participant lose your input.
 It is basically like creating a brand new wallet. Type "yes" to confirm."""
-RERUNNER = os.path.expanduser('~/.rerun')
+RERUNNER = '.rerun'
 ESC_SEQ_PAT = re.compile(r"\\(?:e|033)\[[0-9;]+m")
 
 log = open(LOG_FILE, 'wt')
@@ -86,6 +86,7 @@ def refresh_repo(url):
         run(f"cd {repo_name} && git pull >{git_log} 2>&1")
         with open(git_log, "rt") as f:
             result = f.read().strip()
+        os.remove(git_log)
         fetched_anything = bool(result != "Already up to date.")
         log.write(result)
     else:
@@ -128,7 +129,6 @@ def time_since(log_file):
 
 
 def patch_os(cache_secs=86400):
-    log_file = "apt.log"
     if time_since(log_file) > cache_secs:
         cout("Making sure your wallet OS is fully patched.\n")
         run(f"sudo DEBIAN_FRONTEND=noninteractive apt-get update -y")
