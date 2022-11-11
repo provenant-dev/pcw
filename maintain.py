@@ -8,9 +8,7 @@ import time
 import blessings
 
 
-DATA_FOLDER = os.path.expanduser("~/.maintenance-data")
-os.makedirs(DATA_FOLDER, exist_ok=True)
-LOG_FILE = os.path.join(DATA_FOLDER, "maintain.log")
+LOG_FILE = os.path.expanduser("~/.maintain.log")
 RESET_PROMPT = """\
 Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. All credentials you've received or issued become
@@ -80,7 +78,7 @@ def get_repo_name(url):
 def refresh_repo(url):
     fetched_anything = True
     repo_name = get_repo_name(url)
-    git_log = os.path.join(DATA_FOLDER, f"git-pull-{repo_name}.log")
+    git_log = f".git-pull-{repo_name}.log"
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
         run(f"cd {repo_name} && git pull >{git_log} 2>&1")
@@ -115,7 +113,7 @@ def personalize():
 
         with open(bashrc, 'wt') as f:
             f.write(script)
-        os.system(f"touch {semaphore}")
+        run(f"touch {semaphore}")
     return owner
 
 
