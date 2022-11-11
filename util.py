@@ -16,6 +16,7 @@ unusable, and all multisigs where you are a participant lose your input.
 It is basically like creating a brand new wallet. Type "yes" to confirm."""
 RERUNNER = '.rerun'
 ESC_SEQ_PAT = re.compile("(?:\007|\033)\\[[0-9;]+[Bm]")
+BIN_PATH = os.path.expanduser("~/bin")
 
 log = open(LOG_FILE, 'at')
 term = blessings.Terminal()

@@ -6,11 +6,11 @@ printf "\033[0;34m"
 printf "        ╔═╗╔═╗╦ ╦\n"
 printf "        ╠═╝║  ║║║\n"
 printf "        ╩  ╚═╝╚╩╝\n"
-# set foreground color to gray
-printf "\033[38;5;238m"
+# set foreground color to white
+printf "\033[0;37m"
 printf "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 # set foreground color to blue
 printf "\033[0;34m"
 printf "Provenant Command-Line Wallet\n"
 # set foreground color to gray
-printf "\033[38;5;238m"
+printf "\033[0;37m"

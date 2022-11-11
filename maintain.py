@@ -1,4 +1,4 @@
-import re
+import stat
 import traceback
 
 from util import *
@@ -94,6 +94,28 @@ def reset():
     run("mv ~/.bashrc.bak ~/.bashrc")
 
 
+def add_scripts_to_path():
+    cout("Configuring commands.\n")
+    if not os.path.exists(BIN_PATH):
+        os.makedirs(BIN_PATH)
+    # Remove old, broken links.
+    for script in os.listdir(BIN_PATH):
+        dest_path = os.path.join(BIN_PATH, script)
+        if os.path.islink(dest_path) and not os.path.exists(dest_path):
+            log.write("Removing broken symlink %s." % dest_path)
+            os.unlink(dest_path)
+    # Add new symbolic links.
+    scripts_path = os.path.expanduser("~/vlei-qvi/scripts")
+    for script in os.listdir(scripts_path):
+        src_path = os.path.join(scripts_path, script)
+        if os.path.isfile(script) && (os.stat(script).st_mode & stat.S_IXUSR):
+            basename = os.path.basename(script)
+            dest_path = os.path.join(BIN_PATH, basename)
+            if not os.path.exists(dest_path):
+                log.write("Symlinking %s to %s." % (dest_path, src_path))
+                os.symlink(src_path, dest_path)
+
+
 def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
@@ -130,6 +152,7 @@ def do_maintenance():
                     # (Re-)apply the patch.
                     backup_file(source_to_patch)
                     patch_source(owner, source_to_patch)
+                    add_scripts_to_path()
         finally:
             sys.stdout.write(term.normal)
         cout("--- Maintenance tasks succeeded.\n")
