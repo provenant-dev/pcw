@@ -76,7 +76,7 @@ def ask(question):
 def run(cmd):
     exitcode = os.system(cmd + f" >.last-run 2>&1")
     if exitcode:
-        with TempColor(term.red):
+        with TempColor(term.normal + term.red, MAINTENANCE_COLOR):
             cout("System command exited with code %d. Command was:\n  %s\n" % (exitcode, cmd))
             with open('.last-run', 'wt') as f:
                 output = f.read()
