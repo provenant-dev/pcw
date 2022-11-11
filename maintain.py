@@ -76,16 +76,27 @@ def get_repo_name(url):
     return url[url.rfind('/') + 1:-4]
 
 
+class TempWorkingDir:
+    def __init__(self, path):
+        self.reset = os.getcwd()
+        self.path = path
+    def __enter__(self):
+        os.chdir(self.path)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        os.chdir(self.reset)
+
+
 def refresh_repo(url):
     fetched_anything = True
     repo_name = get_repo_name(url)
-    git_log = f".git-pull-{repo_name}.log"
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
-        run(f"cd {repo_name} && git pull >{git_log} 2>&1")
-        with open(git_log, "rt") as f:
-            result = f.read().strip()
-        os.remove(git_log)
+        git_log = f".git-pull-{repo_name}.log"
+        with TempWorkingDir(repo_name):
+            run(f"git pull >{git_log} 2>&1")
+            with open(git_log, "rt") as f:
+                result = f.read().strip()
+            os.remove(git_log)
         fetched_anything = bool(result != "Already up to date.")
         log.write(result)
     else:
@@ -111,7 +122,6 @@ def personalize():
     if not owner:
         owner = ask("What is your first and last name?")
         script = f'OWNER="{owner}"\n' + fix_prompt(script)
-
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
@@ -166,9 +176,9 @@ def reset():
     run("mv ~/.bashrc.bak ~/.bashrc")
 
 
-def do_maintainance():
+def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
-    log.write("\n\n" + "-" * 60 + "\nMaintenance script launched " + time.asctime())
+    log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
     cout("\n\n--- Doing wallet maintenance.\n")
     try:
         try:  # Inside this block, use dim color. Revert to normal text when block ends.
@@ -215,5 +225,5 @@ def do_maintainance():
 
 
 if __name__ == '__main__':
-   do_maintainance()
+   do_maintenance()
 
