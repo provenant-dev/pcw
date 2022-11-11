@@ -108,12 +108,13 @@ def add_scripts_to_path():
     scripts_path = os.path.expanduser("~/vlei-qvi/scripts")
     for script in os.listdir(scripts_path):
         src_path = os.path.join(scripts_path, script)
-        if os.path.isfile(script) and (os.stat(script).st_mode & stat.S_IXUSR):
-            basename = os.path.basename(script)
-            dest_path = os.path.join(BIN_PATH, basename)
-            if not os.path.exists(dest_path):
-                log.write("Symlinking %s to %s." % (dest_path, src_path))
-                os.symlink(src_path, dest_path)
+        if os.path.isfile(src_path):
+            if bool(os.stat(src_path).st_mode & stat.S_IXUSR):
+                basename = os.path.splitext(basename)[0]
+                dest_path = os.path.join(BIN_PATH, basename)
+                if not os.path.exists(dest_path):
+                    log.write("Symlinking %s to %s." % (dest_path, src_path))
+                    os.symlink(src_path, dest_path)
 
 
 def do_maintenance():
