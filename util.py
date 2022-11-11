@@ -64,8 +64,8 @@ def cout(txt):
 
 
 def ask(question):
-    cout(term.bright_yellow(question) + '\n   ')
-    cout(term.bright_red + ">> ")
+    cout(term.yellow(question) + "\n")
+    cout(term.bright_red(">> "))
     with TempColor(term.white, MAINTENANCE_COLOR):
         answer = input().strip()
     return answer
