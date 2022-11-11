@@ -5,42 +5,22 @@ import shutil
 import sys
 import time
 
+import blessings
+
 
 DATA_FOLDER = os.path.expanduser("~/.pwc-data")
 os.makedirs(DATA_FOLDER, exist_ok=True)
 LOG_FILE = os.path.join(DATA_FOLDER, "maintain.log")
-log = open(LOG_FILE, 'wt')
 RESET_PROMPT = """\
 Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. All credentials you've received or issued become
 unusable, and all multisigs where you are a participant lose your input.
 It is basically like creating a brand new wallet. Type "yes" to confirm."""
 RERUNNER = os.path.expanduser('~/.rerun')
-
-
-def ensure_dependency(python_pkg):
-    more_tries = 1
-    while more_tries >= 0:
-        try:
-            globals()[python_pkg] = importlib.import_module(python_pkg)
-            return
-        except ModuleNotFoundError:
-            if more_tries == 0:
-                raise
-            run("pip3 install %s" % python_pkg)
-            more_tries -= 1
-
-
-# These modules aren't available without being explicitly installed.
-# Install them as the script runs rather than requiring pre-install.
-for item in ["blessings"]:
-    ensure_dependency(item)
-
-
-term = blessings.Terminal()
-
-
 ESC_SEQ_PAT = re.compile(r"\\(?:e|033)\[[0-9;]+m")
+
+log = open(LOG_FILE, 'wt')
+term = blessings.Terminal()
 
 
 def cout(txt):
