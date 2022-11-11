@@ -157,7 +157,7 @@ def do_maintenance():
                     # (Re-)apply the patch.
                     backup_file(source_to_patch)
                     patch_source(owner, source_to_patch)
-                    add_scripts_to_path(os.path.expanduser("~/vlei-qvi"))
+                    add_scripts_to_path(os.path.expanduser("~/vlei-qvi/scripts"), os.path.expanduser("~/vlei-qvi"))
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
