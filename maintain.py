@@ -54,7 +54,10 @@ def personalize():
 def patch_os(cache_secs=86400):
     if time_since(PATCH_CHECK_FILE) > cache_secs:
         cout("Making sure your wallet OS is fully patched.\n")
-        os.system(f"rm {PATCH_CHECK_FILE}; touch {PATCH_CHECK_FILE}")
+        if os.path.isfile(PATCH_CHECK_FILE):
+            os.remove(PATCH_CHECK_FILE)
+        with open(PATCH_CHECK_FILE, "wt"):
+            pass
         run("sudo DEBIAN_FRONTEND=noninteractive apt-get update -y")
         run("sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y")
         run("sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y")
