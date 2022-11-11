@@ -166,11 +166,12 @@ def reset():
 
 
 def do_maintainance():
+    os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nMaintenance script launched " + time.asctime())
-    cout("\n--- Doing wallet maintenance." + term.dim_yellow + "\n")
+    cout("\n--- Doing wallet maintenance.\n")
     try:
-        os.chdir(os.path.expanduser("~/"))
-        try:
+        try:  # Inside this block, use dim color. Revert to normal text when block ends.
+            cout(term.dim_yellow)
             if os.path.exists(RERUNNER):
                 cout("Detected rerun flag; removing.\n")
                 os.remove(RERUNNER)
@@ -200,18 +201,18 @@ def do_maintainance():
                     # (Re-)apply the patch.
                     backup_file(source_to_patch)
                     patch_source(owner, source_to_patch)
-
             cout(term.normal + "--- Maintenance tasks succeeded.\n\n")
-        except KeyboardInterrupt:
-            cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset.\n\n" + term.normal)
-            sys.exit(1)
-        except:
-            cout(term.bright_red + "--- Failure:" + term.normal + "\n")
-            import traceback
-            traceback.print_exc()
-            cout(term.bright_red + "---" + term.normal + "\n\n")
-    finally:
-        print(term.normal)
+        finally:
+            sys.stdout.write(term.normal)
+    except KeyboardInterrupt:
+        cout(term.bright_red + "--- Exited script early. Run {__file__} --reset to reset." + term.normal + "\n\n")
+        sys.exit(1)
+    except:
+        cout(term.bright_red + "--- Failure:" + term.normal + "\n\n")
+        import traceback
+        traceback.print_exc()
+        cout(term.bright_red + "---" + term.normal + "\n\n")
+
 
 if __name__ == '__main__':
    do_maintainance()
