@@ -80,12 +80,14 @@ def get_repo_name(url):
 def refresh_repo(url):
     fetched_anything = True
     repo_name = get_repo_name(url)
+    git_log = os.path.join(DATA_FOLDER, f"git-pull-{repo_name}.log")
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
-        run(f"cd {repo_name} && git pull")
-        with open(log_path, "rt") as f:
+        run(f"cd {repo_name} && git pull >{git_log} 2>&1")
+        with open(git_log, "rt") as f:
             result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
+        log.write(result)
     else:
         cout(f"Installing {repo_name}.\n")
         run(f"git clone {url}")
