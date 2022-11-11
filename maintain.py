@@ -186,7 +186,7 @@ def reset():
 
 
 def do_maintainance():
-    log.write("\n\n" + "-" * 50 + "\nMaintenance script launched " + time.asctime()))
+    log.write("\n\n" + "-" * 50 + "\nMaintenance script launched " + time.asctime())
     cout("\n--- Doing wallet maintenance." + term.dim_yellow + "\n")
     try:
         os.chdir(os.path.expanduser("~/"))
