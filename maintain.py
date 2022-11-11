@@ -91,12 +91,12 @@ def refresh_repo(url):
     repo_name = get_repo_name(url)
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
-        git_log = f".git-pull-{repo_name}.log"
+        git_log = os.path.expanduser(f"~/.git-pull-{repo_name}.log")
         with TempWorkingDir(repo_name):
-            run(f"git pull >{git_log} 2>&1")
+            os.system(f"git pull >{git_log} 2>&1")
             with open(git_log, "rt") as f:
                 result = f.read().strip()
-            os.remove(git_log)
+        os.remove(git_log)
         fetched_anything = bool(result != "Already up to date.")
         log.write(result)
     else:
