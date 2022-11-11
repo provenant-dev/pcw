@@ -25,6 +25,7 @@ def cout(txt):
     sys.stdout.write(txt)
     sys.stdout.flush()
     log.write(ESC_SEQ_PAT.sub("", txt))
+    log.flush()
 
 
 def ask(question):
