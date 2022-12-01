@@ -1,5 +1,3 @@
-import getpass
-import stat
 import traceback
 
 from util import *

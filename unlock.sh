@@ -5,7 +5,7 @@ while true
 do
     printf "Enter 21-char passcode to unlock wallet: "
     read -s TYPED_PASSCODE
-    hash=`echo "$TYPED_PASSCODE" | sha256sum | cut -f1 -d' '`
+    hash=`printf "$TYPED_PASSCODE" | sha256sum | cut -f1 -d' '`
     if [ "$1" = "--debug" ]; then printf "Hash of that passcode = $hash.\n"; fi
     if [ "$hash" = "$saved_hash" ]; then
       break
