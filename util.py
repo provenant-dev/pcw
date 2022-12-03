@@ -14,7 +14,7 @@ import blessings
 LOG_FILE = os.path.expanduser("~/.maintain.log")
 PATCH_CHECK_FILE = os.path.expanduser("~/.os-patch-check")
 SALT_FILE = os.path.expanduser("~/vlei-qvi/salt")
-RESET_PROMPT = """\
+RESET_PROMPT = """
 Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. It breaks any connections you've built by exchanging
 OOBIs. Any credentials you've received or issued become unusable, and all
@@ -26,7 +26,7 @@ it in your password manager.
 This is basically like creating a brand new wallet.
 
 Type "yes" to confirm, or anything else to cancel."""
-PROTECT_PROMPT = """\
+PROTECT_PROMPT = """
 This wallet has high stakes. You need strong protections around it.
 
 You have an SSH key and instructions that allow you to connect remotely.
@@ -150,7 +150,7 @@ PASSCODE_SIZE = 21
 PASSCODE_CHARS = string.ascii_lowercase + string.ascii_uppercase + '123456789'
 
 
-def get_passcode(tymth, tock=0.0):
+def get_passcode():
     code = []
     for x in range(PASSCODE_SIZE):
         code.append(PASSCODE_CHARS[secrets.randbelow(len(PASSCODE_CHARS))])
@@ -165,4 +165,5 @@ def protect():
     sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
     input()
     term.move_up()
-    term.clear_eol()
+    sys.stdout.write(" " * term.width - 1 + '\n')
+
