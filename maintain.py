@@ -85,8 +85,9 @@ def patch_source(owner, source_to_patch):
 
 
 def reset():
-    run("rm -rf ~/keripy ~/vlei-qvi ~/.keri")
-    run("mv ~/.bashrc.bak ~/.bashrc")
+    run("rm -rf ~/keripy ~/vlei-qvi ~/xar ~/.keri")
+    if os.path.exists(os.path.expanduser("~/bashrc.bak")):
+        run("mv ~/.bashrc.bak ~/.bashrc")
 
 
 def make_script(src_path, dest_path, cwd):
