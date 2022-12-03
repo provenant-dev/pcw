@@ -1,3 +1,4 @@
+import getpass
 import stat
 import traceback
 
@@ -16,9 +17,9 @@ def fix_prompt(script):
     return '\n'.join(new_lines)
 
 
-def refresh_repo(url):
+def refresh_repo(url, folder=None):
     fetched_anything = True
-    repo_name = url[url.rfind('/') + 1:-4]
+    repo_name = folder if folder else url[url.rfind('/') + 1:-4]
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
         git_log = os.path.expanduser(f"~/.git-pull-{repo_name}.log")
@@ -28,10 +29,10 @@ def refresh_repo(url):
                 result = f.read().strip()
         os.remove(git_log)
         fetched_anything = bool(result != "Already up to date.")
-        log.write(result)
+        log.write(result + '\n')
     else:
         cout(f"Installing {repo_name}.\n")
-        run(f"git clone {url}")
+        run(f"git clone {url} {repo_name}")
     return fetched_anything
 
 
@@ -48,6 +49,8 @@ def personalize():
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
+    if not is_protected():
+        protect()
     return owner
 
 
@@ -103,7 +106,7 @@ def add_scripts_to_path(folder, cwd):
             if bool(os.stat(src_path).st_mode & stat.S_IXUSR):
                 basename = os.path.splitext(script)[0]
                 dest_path = os.path.join(BIN_PATH, basename)
-                log.write("Making command %s to run %s." % (dest_path, src_path))
+                log.write("Making command %s to run %s.\n" % (dest_path, src_path))
                 make_script(src_path, dest_path, cwd)
 
 
@@ -144,20 +147,20 @@ def do_maintenance():
                     # Give file buffers time to flush.
                     time.sleep(1)
                 else:
-                    owner = personalize()
                     patch_os()
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
                     guarantee_venv()
 
-                    source_to_patch = 'vlei-qvi/source.sh'
+                    source_to_patch = 'xar/source.sh'
                     # Undo any active patch that we might have against source.sh.
                     # so git won't complain about merge conflicts or unstashed files.
                     restore_from_backup(source_to_patch)
-                    refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
+                    refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
                     # (Re-)apply the patch.
                     backup_file(source_to_patch)
+                    owner = personalize()
                     patch_source(owner, source_to_patch)
-                    add_scripts_to_path(os.path.expanduser("~/vlei-qvi/scripts"), os.path.expanduser("~/vlei-qvi"))
+                    add_scripts_to_path(os.path.expanduser("~/xar/scripts"), os.path.expanduser("~/xar"))
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))

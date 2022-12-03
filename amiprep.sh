@@ -44,4 +44,5 @@ if maintain --reset; then
   nuke ~/keripy
   nuke ~/.cache
   nuke ~/bin
+  mkdir ~/bin
 fi

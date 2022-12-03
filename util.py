@@ -1,8 +1,10 @@
+import getpass
 import os
 import re
 import shutil
 import sys
 import time
+import secrets
 import stat
 
 import blessings
@@ -10,11 +12,33 @@ import blessings
 
 LOG_FILE = os.path.expanduser("~/.maintain.log")
 PATCH_CHECK_FILE = os.path.expanduser("~/.os-patch-check")
+SALT_FILE = os.path.expanduser("~/vlei-qvi/salt")
 RESET_PROMPT = """\
 Resetting state is destructive. It removes your history, all your AIDs,
-and all your keys. All credentials you've received or issued become
-unusable, and all multisigs where you are a participant lose your input.
-It is basically like creating a brand new wallet. Type "yes" to confirm."""
+and all your keys. It breaks any connections you've built by exchanging
+OOBIs. Any credentials you've received or issued become unusable, and all
+multisig schemes where you are a member lose your contribution. They may
+have to be rebuilt, which means that others may be affected by the operation.
+Your passcode is also reset, so you will have to choose a new one and re-save
+it in your password manager.
+
+This is basically like creating a brand new wallet.
+
+Type "yes" to confirm, or anything else to cancel."""
+PROTECT_PROMPT = """\
+This wallet has high stakes. You need strong protections around it.
+
+You have an SSH key and instructions that allow you to connect remotely.
+Once you're in the wallet, its data has a secondary protection: it's
+encrypted at rest, protected by your passcode and a salt. We generate both
+randomly. The salt is stored, but the passcode is something you must
+remember on your own and supply each time you login. We recommend that
+you store it in a password manager like LastPass or 1Password. Your wallet
+will be unusable without it, and Provenant has no way to recover if you
+forget it, since we do not keep a copy for you.
+
+Your passcode is:
+  """
 RERUNNER = '.rerun'
 ESC_SEQ_PAT = re.compile("(?:\007|\033)\\[[0-9;]+[Bm]")
 BIN_PATH = os.path.expanduser("~/bin")
@@ -115,3 +139,29 @@ def get_shell_variable(variable, script):
     m = var_pat.search(script)
     if m:
         return m.group(1)
+
+
+def is_protected():
+    return os.path.isfile(SALT_FILE)
+
+
+PASSCODE_SIZE = 21
+PASSCODE_CHARS = string.ascii_lowercase + string.ascii_uppercase + '123456789'
+
+
+def get_passcode(tymth, tock=0.0):
+    code = []
+    for x in range(PASSCODE_SIZE):
+        code.append(PASSCODE_CHARS[secrets.randbelow(len(PASSCODE_CHARS))])
+    return "".join(code)
+
+
+def protect():
+    # Undo dimness of maintenance text.
+    sys.stdout.write(term.normal)
+    cout(term.yellow(PROTECT_PROMPT))
+    sys.stdout.write(term.red(get_passcode()))
+    sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
+    input()
+    term.move_up()
+    term.clear_eol()

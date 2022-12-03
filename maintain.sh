@@ -14,6 +14,7 @@ if test $maintain_err -eq 0; then
     source .bashrc
   fi
   # Activate the virtual environment in keripy so kli is in path
+  printf "\nSetting up virtual environment."
   cd ~/keripy
   source venv/bin/activate >~/venv.log 2>&1 && pip install -r requirements.txt >~/requirements.log 2>&1
   # Even though blessings is installed in the OS, it's not installed
@@ -22,8 +23,9 @@ if test $maintain_err -eq 0; then
   pip install blessings >/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
+    printf "\nEnter passcode to unlock wallet: "
+    read -s passcode
     printf "\nWallet is ready.\n\n"
-    # Change to the folder where we can run prepared scripts
   else
     printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\n"
   fi

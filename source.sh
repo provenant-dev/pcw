@@ -7,7 +7,7 @@
 ##################################################################
 
 # Change to the name you want to use for your local database environment.
-export QAR_NAME="QAR"
+export QAR_NAME="LAR"
 
 # Change to the name you want for the alias for your local QAR AID
 export QAR_ALIAS=""
@@ -20,6 +20,8 @@ set_passcode() {
     ret=$?
     if [ $ret -eq 1 ]; then
       echo "Generating passcode"
+      try="$(printf '%s' "$pc" | sha256sum | cut -f
+1 -d' ')"
       kli passcode generate > passcode
     fi
 }
