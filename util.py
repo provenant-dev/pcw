@@ -27,16 +27,20 @@ This is basically like creating a brand new wallet.
 
 Type "yes" to confirm, or anything else to cancel."""
 PROTECT_PROMPT = """
-This wallet has high stakes. You need strong protections around it.
+This wallet has high stakes. You need strong protections around it, because
+it is the basis for controlling your personal and corporate identity.
 
-You have an SSH key and instructions that allow you to connect remotely.
-Once you're in the wallet, its data has a secondary protection: it's
-encrypted at rest, protected by your passcode and a salt. We generate both
-randomly. The salt is stored, but the passcode is something you must
-remember on your own and supply each time you login. We recommend that
-you store it in a password manager like LastPass or 1Password. Your wallet
-will be unusable without it, and Provenant has no way to recover if you
-forget it, since we do not keep a copy for you.
+You are responsible for two of these layers. One is the SSH key that
+you created. Combined with the connection instructions we provide, this
+key should keep your data safe, all on its own.
+
+However, once you're in the wallet, we add a final layer of protection: your
+data is encrypted at rest, protected by a passcode and a salt. We generate
+both of these values randomly to guarantee their entropy. Your salt is stored,
+but the passcode is something you must remember on your own and supply each
+time you login. We recommend that you store it in a password manager like
+LastPass or 1Password. Your wallet will be unusable without it, and Provenant
+has no way to recover if you forget it, since we do not keep a copy for you.
 
 Your passcode is:
   """
@@ -154,7 +158,7 @@ def get_passcode():
     code = []
     for x in range(PASSCODE_SIZE):
         code.append(PASSCODE_CHARS[secrets.randbelow(len(PASSCODE_CHARS))])
-    return "".join(code)
+    return "".join(code).encode("ASCII")
 
 
 def protect():
@@ -164,12 +168,13 @@ def protect():
     passcode = get_passcode()
     sys.stdout.write(term.red(passcode))
     sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
+    term.move(x=1)
     input()
     term.move_up()
     print(" " * (term.width - 1))
-    sha = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
+    digest = hashlib.sha256(passcode).hexdigest()
     with open(PASSCODE_FILE, 'wt') as f:
-        f.write(sha)
+        f.write(digest)
 
 
 
