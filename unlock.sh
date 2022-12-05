@@ -12,8 +12,13 @@ do
       set +e
       break
     else
-      hint="${TYPED_PASSCODE:0:2}...${TYPED_PASSCODE:-2:2}"
-      printf "Passcode %s doesn't match.\n" $hint
+      len=${#TYPED_PASSCODE}
+      if [ $len -lt 5 ]; then
+        hint="${TYPED_PASSCODE:0:1}..."
+      else
+        hint="${TYPED_PASSCODE:0:2}...${TYPED_PASSCODE: -2:2}"
+      fi
+      printf "Passcode %s (%d chars) doesn't match.\n" $hint ${#TYPED_PASSCODE}
     fi
 done
 
