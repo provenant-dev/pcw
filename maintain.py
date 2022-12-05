@@ -10,7 +10,7 @@ def fix_prompt(script):
     new_lines = []
     for line in lines:
         if prompt_pat.match(line):
-            line = line.replace('\\u@\\h', "${OWNER}\\047s wallet")
+            line = line.replace('\\u@\\h', "${OWNER}:${CTX}")
         new_lines.append(line)
     return '\n'.join(new_lines)
 
@@ -42,8 +42,10 @@ def personalize():
         script = f.read()
     owner = get_shell_variable("OWNER", script)
     if not owner:
-        owner = ask("What is your first and last name?")
-        script = f'OWNER="{owner}"\n' + fix_prompt(script)
+        owner = ask("What is your first and last name?").strip()
+        ctx = ask("Is this wallet for use in dev, stage, or production contexts?").strip().lower()[0]
+        ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'production'
+        script = f'OWNER="{owner}"\n' + f'CTX="{ctx}"\n' + fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
