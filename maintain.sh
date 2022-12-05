@@ -16,7 +16,7 @@ if test $maintain_err -eq 0; then
     source .bashrc
   fi
   # Activate the virtual environment in keripy so kli is in path
-  printf "\nSetting up virtual environment."
+  printf "\nSetting up virtual environment.\n"
   cd ~/keripy
   source venv/bin/activate >~/venv.log 2>&1 && pip install -r requirements.txt >~/requirements.log 2>&1
   # Even though blessings is installed in the OS, it's not installed
