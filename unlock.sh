@@ -12,7 +12,8 @@ do
       set +e
       break
     else
-      printf "Passcode doesn't match.\n"
+      hint="${TYPED_PASSCODE:0:2}...${TYPED_PASSCODE:-2:2}"
+      printf "Passcode %s doesn't match.\n" $hint
     fi
 done
 
