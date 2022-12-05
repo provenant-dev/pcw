@@ -10,7 +10,13 @@ def fix_prompt(script):
     new_lines = []
     for line in lines:
         if prompt_pat.match(line):
-            line = line.replace('\\u@\\h', "${OWNER}:${CTX}")
+            # Is this a color prompt?
+            if "033" in line:
+                # Typical colored prompt on ubuntu:
+                # PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+                line = line.replace('\\u@\\h', "${OWNER}\\033[00m:\\033[01;31m${CTX}")
+            else:
+                line = line.replace('\\u@\\h', "${OWNER}:${CTX}")
         new_lines.append(line)
     return '\n'.join(new_lines)
 
