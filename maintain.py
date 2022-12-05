@@ -85,7 +85,7 @@ def patch_source(owner, source_to_patch):
 
 
 def reset():
-    run("rm -rf ~/keripy ~/vlei-qvi ~/xar ~/.keri")
+    run("rm -rf ~/keripy ~/vlei-qvi ~/xar ~/.keri ~/.passcode-hash")
     if os.path.exists(os.path.expanduser("~/bashrc.bak")):
         run("mv ~/.bashrc.bak ~/.bashrc")
 
@@ -142,7 +142,7 @@ def do_maintenance():
                 if ask(RESET_PROMPT).lower() != "yes":
                     cout("Abandoning request to reset.\n")
                 else:
-                    cout("Resetting state. Log out and log back in to begin again.\n")
+                    cout("\nResetting state. Log out and log back in to begin again.\n")
                     reset()
             else:
                 if refresh_repo("https://github.com/provenant-dev/pcw.git"):

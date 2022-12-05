@@ -25,9 +25,7 @@ if test $maintain_err -eq 0; then
   pip install blessings >/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
-    printf "\nEnter passcode to unlock wallet: "
-    read -s passcode
-    printf "\nWallet is ready.\n\n"
+    source ~/pcw/unlock.sh && printf "\nWallet is ready.\n\n"
   else
     printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\n"
   fi

@@ -1,4 +1,4 @@
-import getpass
+import hashlib
 import os
 import re
 import shutil
@@ -13,7 +13,7 @@ import blessings
 
 LOG_FILE = os.path.expanduser("~/.maintain.log")
 PATCH_CHECK_FILE = os.path.expanduser("~/.os-patch-check")
-SALT_FILE = os.path.expanduser("~/vlei-qvi/salt")
+PASSCODE_FILE = os.path.expanduser("~/.passcode-hash")
 RESET_PROMPT = """
 Resetting state is destructive. It removes your history, all your AIDs,
 and all your keys. It breaks any connections you've built by exchanging
@@ -143,7 +143,7 @@ def get_shell_variable(variable, script):
 
 
 def is_protected():
-    return os.path.isfile(SALT_FILE)
+    return os.path.isfile(PASSCODE_FILE)
 
 
 PASSCODE_SIZE = 21
@@ -161,9 +161,17 @@ def protect():
     # Undo dimness of maintenance text.
     sys.stdout.write(term.normal)
     cout(term.yellow(PROTECT_PROMPT))
-    sys.stdout.write(term.red(get_passcode()))
+    passcode = get_passcode()
+    sys.stdout.write(term.red(passcode))
     sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
     input()
     term.move_up()
-    sys.stdout.write(" " * term.width - 1 + '\n')
+    print(" " * term.width - 1)
+    sha = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
+    with open(PASSCODE_FILE, 'wt') as f:
+        f.write(sha)
+
+
+
+
 

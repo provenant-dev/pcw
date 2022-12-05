@@ -7,7 +7,7 @@
 ##################################################################
 
 # Change to the name you want to use for your local database environment.
-export QAR_NAME="LAR"
+export QAR_NAME="XAR"
 
 # Change to the name you want for the alias for your local QAR AID
 export QAR_ALIAS=""
@@ -28,7 +28,7 @@ set_passcode() {
 export -f set_passcode >/dev/null 2>&1
 
 get_passcode() {
-    echo $(head -n 1 passcode)
+    echo $TYPED_PASSCODE
 }
 export -f get_passcode >/dev/null 2>&1
 
