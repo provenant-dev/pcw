@@ -17,9 +17,9 @@ def fix_prompt(script):
                 plain = "\\033[00m"
                 bar = plain + " | "
                 c = "\\033[01;"
-                line = f"{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX$LOCKED_WARNING{plain}:\w\$ "
+                line = f"PS1=\"{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX$LOCKED_WARNING{plain}:{c}34m\w{plain}\$ \""
             else:
-                line = "PCW | $OWNER | $CTX$LOCKED_WARNING:\w\$ "
+                line = "PS1=\"PCW | $OWNER | $CTX$LOCKED_WARNING:\w\$ \""
         new_lines.append(line)
     return '\n'.join(new_lines)
 
