@@ -119,9 +119,9 @@ def break_rerun_cycle():
     bak = RERUNNER + '.bak'
     if os.path.exists(bak):
         os.remove(bak)
-    print("Renaming {RERUNNER} to {bak}")
+    print(f"Renaming {RERUNNER} to {bak}")
     os.rename(RERUNNER, bak)
-    print("Removing {bak}")
+    print(f"Removing {bak}")
     os.remove(bak)
     os.system("ls ~/.rerun*")
 
