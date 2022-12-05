@@ -11,6 +11,7 @@ rm -f ~/.log
 rm -f ~/.sudo_as_admin_successful
 rm -f ~/.viminfo
 rm -f ~/.python_history
+rm -f ~/.passcode-hash
 rm -f ~/*.log
 rm -f ~/.maintain.log
 rm -rf ~/vlei-qvi
