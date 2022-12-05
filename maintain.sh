@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
 
-=======
->>>>>>> b383f10 (add maintain.sh that can be sourced from .profile)
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.
 for i in 1 2 3; do
@@ -19,10 +16,7 @@ if test $maintain_err -eq 0; then
     source .bashrc
   fi
   # Activate the virtual environment in keripy so kli is in path
-<<<<<<< HEAD
   printf "\nSetting up virtual environment.\n"
-=======
->>>>>>> b383f10 (add maintain.sh that can be sourced from .profile)
   cd ~/keripy
   source venv/bin/activate >~/venv.log 2>&1 && pip install -r requirements.txt >~/requirements.log 2>&1
   # Even though blessings is installed in the OS, it's not installed
@@ -31,12 +25,7 @@ if test $maintain_err -eq 0; then
   pip install blessings >/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
-<<<<<<< HEAD
     source ~/pcw/unlock.sh --debug && printf "\nWallet is ready.\n\n"
-=======
-    printf "\nWallet is ready.\n\n"
-    # Change to the folder where we can run prepared scripts
->>>>>>> b383f10 (add maintain.sh that can be sourced from .profile)
   else
     printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\n"
   fi
@@ -55,7 +44,3 @@ else
   printf "those files plus any error messages shown on the screen.\n"
 fi
 cd ~/
-<<<<<<< HEAD
-=======
-alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
->>>>>>> b383f10 (add maintain.sh that can be sourced from .profile)
