@@ -166,7 +166,7 @@ def protect():
     sys.stdout.write(term.normal)
     cout(term.yellow(PROTECT_PROMPT))
     passcode = get_passcode()
-    sys.stdout.write(term.red(passcode))
+    sys.stdout.write(term.red(passcode.encode("ASCII")))
     sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
     term.move(x=1)
     input()

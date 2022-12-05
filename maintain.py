@@ -141,8 +141,9 @@ def do_maintenance():
                 if ask(RESET_PROMPT).lower() != "yes":
                     cout("Abandoning request to reset.\n")
                 else:
-                    cout("\nResetting state. Log out and log back in to begin again.\n")
+                    cout("\nResetting state.\n")
                     reset()
+                    cout(term.white("You must log out and log back in again to start over.\n"))
             else:
                 if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                     cout("Wallet software updated. Requesting re-launch.\n")
