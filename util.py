@@ -166,7 +166,7 @@ def protect():
     sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
     input()
     term.move_up()
-    print(" " * term.width - 1)
+    print(" " * (term.width - 1))
     sha = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
     with open(PASSCODE_FILE, 'wt') as f:
         f.write(sha)
