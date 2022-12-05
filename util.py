@@ -158,7 +158,7 @@ def get_passcode():
     code = []
     for x in range(PASSCODE_SIZE):
         code.append(PASSCODE_CHARS[secrets.randbelow(len(PASSCODE_CHARS))])
-    return "".join(code).encode("ASCII")
+    return "".join(code)
 
 
 def protect():
@@ -166,16 +166,15 @@ def protect():
     sys.stdout.write(term.normal)
     cout(term.yellow(PROTECT_PROMPT))
     passcode = get_passcode()
-    sys.stdout.write(term.red(passcode.encode("ASCII")))
+    sys.stdout.write(term.red(passcode))
     sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
     term.move(x=1)
     input()
     term.move_up()
     print(" " * (term.width - 1))
-    digest = hashlib.sha256(passcode).hexdigest()
+    digest = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
     with open(PASSCODE_FILE, 'wt') as f:
         f.write(digest)
-
 
 
 
