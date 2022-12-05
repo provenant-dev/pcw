@@ -1,3 +1,6 @@
+alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
+LOCKED_WARNING=""
+
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.
 for i in 1 2 3; do
@@ -14,16 +17,15 @@ if test $maintain_err -eq 0; then
     source .bashrc
   fi
   # Activate the virtual environment in keripy so kli is in path
-  cd ~/keripy
-  source venv/bin/activate >~/venv.log 2>&1 && pip install -r requirements.txt >~/requirements.log 2>&1
+  printf "\nActivating virtual environment...\n"
+  cd ~/keripy && source venv/bin/activate >~/venv.log 2>&1 && pip install -r requirements.txt >~/requirements.log 2>&1; cd ~/
   # Even though blessings is installed in the OS, it's not installed
   # in the venv. Force it to be there as well, so we can run our
   # maintenance script cleanly.
   pip install blessings >/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
-    printf "\nWallet is ready.\n\n"
-    # Change to the folder where we can run prepared scripts
+    source ~/pcw/unlock.sh && printf "\nWallet is ready.\n\n"
   else
     printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\n"
   fi
@@ -42,4 +44,3 @@ else
   printf "those files plus any error messages shown on the screen.\n"
 fi
 cd ~/
-alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'

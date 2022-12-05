@@ -2,31 +2,34 @@
 
 ##################################################################
 ##                                                              ##
-##          Initialization script for a Provenant Wallet        ##
+##       Init script for a Provenant Command-Line Wallet        ##
 ##                                                              ##
 ##################################################################
 
-# Change to the name you want to use for your local database environment.
-export QAR_NAME="QAR"
+# The name you want to use for your local database.
+export QAR_NAME="XAR"
 
-# Change to the name you want for the alias for your local QAR AID
-export QAR_ALIAS=""
+# The name you want for the alias for your local QAR AID
+export QAR_ALIAS="me"
+
+# Change to the name you want for the alias for your group multisig AID
+export QAR_AID_ALIAS="my-org"
+
+# Change to the name you want for the registry for your QVI
+export QAR_REG_NAME="my-org-registry"
 
 # Set current working directory for all scripts that must access files
 QAR_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+export QAR_SCRIPT_DIR="${QAR_DIR}/scripts"
+export QAR_DATA_DIR="${QAR_DIR}/data"
+
 set_passcode() {
-    head -n 1 passcode >/dev/null 2>&1
-    ret=$?
-    if [ $ret -eq 1 ]; then
-      echo "Generating passcode"
-      kli passcode generate > passcode
-    fi
 }
 export -f set_passcode >/dev/null 2>&1
 
 get_passcode() {
-    echo $(head -n 1 passcode)
+    echo $TYPED_PASSCODE
 }
 export -f get_passcode >/dev/null 2>&1
 

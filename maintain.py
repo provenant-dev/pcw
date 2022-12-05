@@ -1,4 +1,3 @@
-import stat
 import traceback
 
 from util import *
@@ -11,14 +10,24 @@ def fix_prompt(script):
     new_lines = []
     for line in lines:
         if prompt_pat.match(line):
-            line = line.replace('\\u@\\h', "${OWNER}\\047s wallet")
+            prefix = line[:line.find['='] + 1]
+            # Is this a color prompt?
+            # Typical colored prompt on ubuntu:
+            #     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+            if "033" in line:
+                plain = "\\033[00m"
+                bar = plain + " | "
+                c = "\\033[01;"
+                line = prefix + "'{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX$LOCKED_WARNING{plain}:{c}34m\w{plain}\$ '"
+            else:
+                line = prefix + "'PCW | $OWNER | $CTX$LOCKED_WARNING:\w\$ '"
         new_lines.append(line)
     return '\n'.join(new_lines)
 
 
-def refresh_repo(url):
+def refresh_repo(url, folder=None):
     fetched_anything = True
-    repo_name = url[url.rfind('/') + 1:-4]
+    repo_name = folder if folder else url[url.rfind('/') + 1:-4]
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
         git_log = os.path.expanduser(f"~/.git-pull-{repo_name}.log")
@@ -28,10 +37,10 @@ def refresh_repo(url):
                 result = f.read().strip()
         os.remove(git_log)
         fetched_anything = bool(result != "Already up to date.")
-        log.write(result)
+        log.write(result + '\n')
     else:
         cout(f"Installing {repo_name}.\n")
-        run(f"git clone {url}")
+        run(f"git clone {url} {repo_name}")
     return fetched_anything
 
 
@@ -43,11 +52,15 @@ def personalize():
         script = f.read()
     owner = get_shell_variable("OWNER", script)
     if not owner:
-        owner = ask("What is your first and last name?")
-        script = f'OWNER="{owner}"\n' + fix_prompt(script)
+        owner = ask("What is your first and last name?").strip()
+        ctx = ask("Is this wallet for use in dev, stage, or production contexts?").strip().lower()[0]
+        ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'production'
+        script = f'OWNER="{owner}"\n' + f'CTX="{ctx}"\n' + fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
+    if not is_protected():
+        protect()
     return owner
 
 
@@ -82,8 +95,9 @@ def patch_source(owner, source_to_patch):
 
 
 def reset():
-    run("rm -rf ~/keripy ~/vlei-qvi ~/.keri")
-    run("mv ~/.bashrc.bak ~/.bashrc")
+    run("rm -rf ~/keripy ~/vlei-qvi ~/xar ~/.keri ~/.passcode-hash")
+    if os.path.exists(os.path.expanduser("~/bashrc.bak")):
+        run("mv ~/.bashrc.bak ~/.bashrc")
 
 
 def make_script(src_path, dest_path, cwd):
@@ -103,7 +117,7 @@ def add_scripts_to_path(folder, cwd):
             if bool(os.stat(src_path).st_mode & stat.S_IXUSR):
                 basename = os.path.splitext(script)[0]
                 dest_path = os.path.join(BIN_PATH, basename)
-                log.write("Making command %s to run %s." % (dest_path, src_path))
+                log.write("Making command %s to run %s.\n" % (dest_path, src_path))
                 make_script(src_path, dest_path, cwd)
 
 
@@ -115,7 +129,9 @@ def break_rerun_cycle():
     bak = RERUNNER + '.bak'
     if os.path.exists(bak):
         os.remove(bak)
+    #print(f"Renaming {RERUNNER} to {bak}")
     os.rename(RERUNNER, bak)
+    #print(f"Removing {bak}")
     os.remove(bak)
 
 
@@ -135,8 +151,9 @@ def do_maintenance():
                 if ask(RESET_PROMPT).lower() != "yes":
                     cout("Abandoning request to reset.\n")
                 else:
-                    cout("Resetting state. Log out and log back in to begin again.\n")
+                    cout("\nResetting state.\n")
                     reset()
+                    cout(term.normal + term.red("You must log out and log back in again to start over.\n"))
             else:
                 if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                     cout("Wallet software updated. Requesting re-launch.\n")
@@ -144,20 +161,20 @@ def do_maintenance():
                     # Give file buffers time to flush.
                     time.sleep(1)
                 else:
-                    owner = personalize()
                     patch_os()
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
                     guarantee_venv()
 
-                    source_to_patch = 'vlei-qvi/source.sh'
+                    source_to_patch = 'xar/source.sh'
                     # Undo any active patch that we might have against source.sh.
                     # so git won't complain about merge conflicts or unstashed files.
                     restore_from_backup(source_to_patch)
-                    refresh_repo("https://github.com/provenant-dev/vlei-qvi.git")
+                    refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
                     # (Re-)apply the patch.
                     backup_file(source_to_patch)
+                    owner = personalize()
                     patch_source(owner, source_to_patch)
-                    add_scripts_to_path(os.path.expanduser("~/vlei-qvi/scripts"), os.path.expanduser("~/vlei-qvi"))
+                    add_scripts_to_path(os.path.expanduser("~/xar/scripts"), os.path.expanduser("~/xar"))
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
