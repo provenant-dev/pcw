@@ -11,12 +11,15 @@ def fix_prompt(script):
     for line in lines:
         if prompt_pat.match(line):
             # Is this a color prompt?
+            # Typical colored prompt on ubuntu:
+            # PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
             if "033" in line:
-                # Typical colored prompt on ubuntu:
-                # PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-                line = line.replace('\\u@\\h', "${OWNER}\\033[00m:\\033[01;31m${CTX}")
+                plain = "\\033[00m"
+                bar = plain + " | "
+                c = "\\033[01;"
+                line = f"{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX$LOCKED_WARNING{plain}:\w\$ "
             else:
-                line = line.replace('\\u@\\h', "${OWNER}:${CTX}")
+                line = "PCW | $OWNER | $CTX$LOCKED_WARNING:\w\$ "
         new_lines.append(line)
     return '\n'.join(new_lines)
 
@@ -149,7 +152,7 @@ def do_maintenance():
                 else:
                     cout("\nResetting state.\n")
                     reset()
-                    cout(term.red("You must log out and log back in again to start over.\n"))
+                    cout(term.normal + term.red("You must log out and log back in again to start over.\n"))
             else:
                 if refresh_repo("https://github.com/provenant-dev/pcw.git"):
                     cout("Wallet software updated. Requesting re-launch.\n")
