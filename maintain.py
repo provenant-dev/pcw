@@ -10,7 +10,7 @@ def fix_prompt(script):
     new_lines = []
     for line in lines:
         if prompt_pat.match(line):
-            prefix = line[:line.find['='] + 1]
+            prefix = line[:line.find('=') + 1]
             # Is this a color prompt?
             # Typical colored prompt on ubuntu:
             #     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
@@ -18,7 +18,7 @@ def fix_prompt(script):
                 plain = "\\033[00m"
                 bar = plain + " | "
                 c = "\\033[01;"
-                line = prefix + "'{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX$LOCKED_WARNING{plain}:{c}34m\w{plain}\$ '"
+                line = prefix + f"'{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX$LOCKED_WARNING{plain}:{c}34m\w{plain}\$ '"
             else:
                 line = prefix + "'PCW | $OWNER | $CTX$LOCKED_WARNING:\w\$ '"
         new_lines.append(line)
