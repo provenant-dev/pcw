@@ -1,0 +1,29 @@
+{
+  "dt": "2022-01-20T12:57:59.823350+00:00",
+  "iurls": [
+    "http://witness1.main.provenant.net:5631/oobi/BNwSX8dtJ_Q-jlSIcgaL9phC2qT-PwNy_z1p-QSFPGMg/controller?name=prmain-1",
+    "http://witness2.main.provenant.net:5631/oobi/BK5BgSYAzXvkzZU03-8Fo_eWoVdvlwQexGavi205MKQN/controller?name=prmain-2",
+    "http://witness3.main.provenant.net:5631/oobi/BIHIg-sMesHIzbLzl8r9hq4797WZ8yKBidIKUKPrmEAk/controller?name=prmain-3",
+    "http://witness4.main.provenant.net:5631/oobi/BLBC0dK4vnEEMa3Gw_P9_rHow6BRmU5lIXUqxdbEKWKk/controller?name=prmain-4",
+    "http://witness5.main.provenant.net:5631/oobi/BOCWZuhoRHL_HpySDk450Shz2CNf9N5XNWmumlzvDGJj/controller?name=prmain-5",
+    "https://www.gleif.org/.well-known/keri/oobi/EDP1vHcw_wc4M__Fj53-cJaBnZZASd-aMTaSyWEQ-PC2?name=GLEIF%20RoOT",
+    "https://www.gleif.org/.well-known/keri/oobi/EINmHd5g7iV-UldkkkKyBIH052bIyxZNBn9pq-zNrYoS?name=GLEIF%20External",
+    "https://www.gleif.org/.well-known/keri/oobi/EFcrtYzHx11TElxDmEDx355zm7nJhbmdcIluw7UMbUIL?name=GLEIF%20Internal"
+  ],
+  "durls": [
+    "https://weboftrust.github.io/oobi/EH6ekLjSr8V32WyFbGe1zXjTzFs9PkTYmupJ9H65O14g",
+    "https://weboftrust.github.io/oobi/EEy9PkikFcANV1l7EHukCeXqrzT1hNZjGlUk7wuMO5jw",
+    "https://weboftrust.github.io/oobi/EBNaNu-M9P5cgrnfl2Fvymy4E_jvxxyjb70PRtiANlJy",
+    "https://weboftrust.github.io/oobi/ENPXp1vQzRF6JwIuS-mp2U8Uf1MoADoP_GqQ62VsDZWY",
+    "https://weboftrust.github.io/oobi/EKA57bKBKxr_kN7iN5i7lMUxpMG-s19dRcmov1iDxz-E",
+    "https://weboftrust.github.io/oobi/EBfdlu8R27Fbx-ehrqwImnK-8Cm79sqbAQ4MmvEAYqao"
+  ],
+  "wurls": [
+    "https://gleif-it.github.io/.well-known/keri/oobi/EDP1vHcw_wc4M__Fj53-cJaBnZZASd-aMTaSyWEQ-PC2",
+    "https://weboftrust.github.io/.well-known/keri/oobi/EDP1vHcw_wc4M__Fj53-cJaBnZZASd-aMTaSyWEQ-PC2",
+    "https://gleif-it.github.io/.well-known/keri/oobi/EINmHd5g7iV-UldkkkKyBIH052bIyxZNBn9pq-zNrYoS",
+    "https://weboftrust.github.io/.well-known/keri/oobi/EINmHd5g7iV-UldkkkKyBIH052bIyxZNBn9pq-zNrYoS",
+    "https://gleif-it.github.io/.well-known/keri/oobi/EFcrtYzHx11TElxDmEDx355zm7nJhbmdcIluw7UMbUIL",
+    "https://weboftrust.github.io/.well-known/keri/oobi/EFcrtYzHx11TElxDmEDx355zm7nJhbmdcIluw7UMbUIL"
+  ]
+}

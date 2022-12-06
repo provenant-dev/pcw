@@ -1,5 +1,6 @@
 import traceback
 
+import util
 from util import *
 
 
@@ -54,14 +55,18 @@ def personalize():
     if not owner:
         owner = ask("What is your first and last name?").strip()
         ctx = ask("Is this wallet for use in dev, stage, or production contexts?").strip().lower()[0]
-        ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'production'
+        ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
         script = f'OWNER="{owner}"\n' + f'CTX="{ctx}"\n' + fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
+    else:
+        ctx = get_shell_variable("CTX", script)
+        if not ctx:
+            ctx = 'prod'
     if not is_protected():
         protect()
-    return owner
+    return owner, ctx
 
 
 def patch_os(cache_secs=86400):
@@ -161,19 +166,28 @@ def do_maintenance():
                     # Give file buffers time to flush.
                     time.sleep(1)
                 else:
+                    owner, ctx = personalize()
                     patch_os()
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
                     guarantee_venv()
 
-                    source_to_patch = 'xar/source.sh'
-                    # Undo any active patch that we might have against source.sh.
-                    # so git won't complain about merge conflicts or unstashed files.
-                    restore_from_backup(source_to_patch)
+                    stash = os.path.isdir('xar')
+                    if stash:
+                        os.system("cd xar && git stash save")
                     refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
-                    # (Re-)apply the patch.
-                    backup_file(source_to_patch)
-                    owner = personalize()
-                    patch_source(owner, source_to_patch)
+                    if stash:
+                        os.system("cd xar && git stash pop")
+                    else:
+                        config_files = {
+                            'qar-config.json': 'scripts/keri/cf/',
+                            'qar-local-incept.json': 'scripts'
+                        }
+                        for fname, folder in config_files.items():
+                            prefix = 'prod' if ctx == 'prod' else 'stage'
+                            src = os.path.join(MY_FOLDER, prefix + '-' + fname)
+                            dest = os.path.join('xar', folder, fname)
+                            shutil.copyfile(src, dest)
+                        patch_source(owner, 'xar/source.sh')
                     add_scripts_to_path(os.path.expanduser("~/xar/scripts"), os.path.expanduser("~/xar"))
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:

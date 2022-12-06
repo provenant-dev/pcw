@@ -11,6 +11,7 @@ import stat
 import blessings
 
 
+MY_FOLDER = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.expanduser("~/.maintain.log")
 PATCH_CHECK_FILE = os.path.expanduser("~/.os-patch-check")
 PASSCODE_FILE = os.path.expanduser("~/.passcode-hash")
