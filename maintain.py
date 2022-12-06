@@ -17,12 +17,13 @@ def fix_prompt(script):
             if "033" in line:
                 plain = "\\[\\033[00m\\]"
                 bar = plain + " | "
+
                 def c(n):
                     return "\\[\\033[01;" + str(n) + "m\\]"
                 blue = c(34)
                 green = c(32)
                 red = c(31)
-                line = prefix + f"'{blue}PCW{bar}{green}$OWNER{bar}{red}$CTX{plain}:{blue}\w{plain}\$ '"
+                line = prefix + f"'{blue}PCW{bar}{green}$OWNER{plain}@{green}$ORG{bar}{red}$CTX{plain}:{blue}\w{plain}\$ '"
             else:
                 line = line.replace('\\u@\\h', "PCW | $OWNER | $CTX")
         new_lines.append(line)
@@ -54,12 +55,22 @@ def personalize():
     backup_file(bashrc)
     with open(bashrc, 'rt') as f:
         script = f.read()
-    owner = get_shell_variable("OWNER", script)
-    if not owner:
-        owner = ask("What is your first and last name?").strip()
-        ctx = ask("Is this wallet for use in dev, stage, or production contexts?").strip().lower()[0]
-        ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
-        script = f'OWNER="{owner}"\n' + f'CTX="{ctx}"\n' + fix_prompt(script)
+    s = script
+
+    def get_var(name, prompt, sh, xform=lambda x: x):
+        val = get_shell_variable(name, script)
+        if not val:
+            val = xform(ask(prompt).strip())
+            sh = f'{name}="{val}"\n' + script
+        return val, sh
+
+    owner, s = get_var("OWNER", "What is your first and last name?", s)
+    org, s = get_var("ORG", "What org do you represent (one word)?", s)
+    ctx, s = ask("CTX", "Is this wallet for use in dev, stage, or production contexts?")
+    ctx = ctx.lower()[0]
+    ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
+    if s != script:
+        script = fix_prompt(script)
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
@@ -67,9 +78,10 @@ def personalize():
         ctx = get_shell_variable("CTX", script)
         if not ctx:
             ctx = 'prod'
+        org = get_shell_variable("ORG", script)
     if not is_protected():
         protect()
-    return owner, ctx
+    return owner, org, ctx
 
 
 def patch_os(cache_secs=86400):
@@ -169,7 +181,7 @@ def do_maintenance():
                     # Give file buffers time to flush.
                     time.sleep(1)
                 else:
-                    owner, ctx = personalize()
+                    owner, org, ctx = personalize()
                     patch_os()
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
                     guarantee_venv()

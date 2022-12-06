@@ -26,8 +26,6 @@ if test $maintain_err -eq 0; then
   pip install blessings >/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
-    unlock
-    if test
     unlock && printf "\nReady. Try 'help' if you need guidance.\n\n"
   else
     printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\nSupport: vlei-support@provenant.net\n\n"
