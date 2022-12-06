@@ -2,7 +2,7 @@ saved_hash=`head -n 1 ~/.passcode-hash`
 if [ "$1" = "--debug" ]; then printf "Saved passcode hash = $saved_hash.\n"; fi
 printf "\n"
 hash=""
-trap 'printf "\r\033[0;31mWallet is locked and unusable for KERI tasks.\033[00m\n\n"' INT
+trap 'printf "\r\033[0;31mWallet is locked and unusable for KERI tasks.\033[00m\n\n" && return' INT
 while true
 do
     printf "\033[0;33mEnter 21-char passcode to unlock wallet:\033[00m "
