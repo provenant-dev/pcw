@@ -31,7 +31,7 @@ PROTECT_PROMPT = """
 This wallet has high stakes. You need strong protections around it, because
 it is the basis for controlling your personal and corporate identity.
 
-You are responsible for two of these layers. One is the SSH key that
+You are responsible for two of these protections. One is the SSH key that
 you created. Combined with the connection instructions we provide, this
 key should keep your data safe, all on its own.
 
