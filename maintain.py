@@ -18,9 +18,9 @@ def fix_prompt(script):
                 plain = "\\033[00m"
                 bar = plain + " | "
                 c = "\\033[01;"
-                line = prefix + f"'{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX$LOCKED_WARNING{plain}:{c}34m\w{plain}\$ '"
+                line = prefix + f"'{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX{plain}:{c}34m\w{plain}\$ '"
             else:
-                line = prefix + "'PCW | $OWNER | $CTX$LOCKED_WARNING:\w\$ '"
+                line = line.replace('\\u@\\h', "PCW | $OWNER | $CTX")
         new_lines.append(line)
     return '\n'.join(new_lines)
 

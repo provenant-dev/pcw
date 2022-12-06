@@ -8,6 +8,7 @@ do
     hash=`printf "$TYPED_PASSCODE" | sha256sum | cut -f1 -d' '`
     if [ "$1" = "--debug" ]; then printf "Hash of that passcode = $hash.\n"; fi
     if [ "$hash" = "$saved_hash" ]; then
+      printf "\nWallet unlocked.\n"
       break
     else
       len=${#TYPED_PASSCODE}

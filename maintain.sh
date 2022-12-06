@@ -1,5 +1,4 @@
 alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
-LOCKED_WARNING=""
 
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.
