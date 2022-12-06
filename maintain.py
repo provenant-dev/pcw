@@ -1,6 +1,5 @@
 import traceback
 
-import util
 from util import *
 
 
@@ -173,17 +172,17 @@ def do_maintenance():
 
                     stash = os.path.isdir('xar')
                     if stash:
-                        os.system("cd xar && git stash save")
+                        os.system("cd xar && git stash save >~/stash.log 2>&1")
                     refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
                     if stash:
-                        os.system("cd xar && git stash pop")
+                        os.system("cd xar && git stash pop >>~/stash.log 2>&1")
                     else:
                         config_files = {
                             'qar-config.json': 'scripts/keri/cf/',
                             'qar-local-incept.json': 'scripts'
                         }
+                        prefix = 'prod' if ctx == 'prod' else 'stage'
                         for fname, folder in config_files.items():
-                            prefix = 'prod' if ctx == 'prod' else 'stage'
                             src = os.path.join(MY_FOLDER, prefix + '-' + fname)
                             dest = os.path.join('xar', folder, fname)
                             shutil.copyfile(src, dest)
