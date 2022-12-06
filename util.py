@@ -168,15 +168,16 @@ def protect():
     # We want the log to contain almost, but not quite, what we write to the
     # screen, so that the passcode is not stored in the log.
 
-    # Undo dimness of maintenance text.
-    sys.stdout.write(term.normal)
-    with term.location():
+    # Temporarily undo dimness of maintenance text.
+    with TempColor(term.normal):
         cout(term.yellow(PROTECT_PROMPT))
         passcode = get_passcode()
         sys.stdout.write(term.red(passcode))
         sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
         input()
-    term.clear_eos()
+        sys.stdout.write(term.move_up + "  ")
+        cout("*" * 21)
+        sys.stdout.write(" " * (term.width - 24) + "\n")
     digest = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
     with open(PASSCODE_FILE, 'wt') as f:
         f.write(digest)
