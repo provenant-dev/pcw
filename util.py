@@ -36,7 +36,7 @@ this key should keep your data safe, all on its own.
 
 However, once you're in the wallet, there's a final layer of protection: your
 data is encrypted at rest, protected by a passcode and a salt. The passcode
-is something you must remember. You are prompted for it each you login, and
+is something you must remember. You are prompted for it with each login, and
 you cannot use the wallet for KERI tasks without it. We recommend that you
 store it in a password manager like LastPass or 1Password. Provenant has no
 way to recover if you forget it, since we do not keep a copy for you.

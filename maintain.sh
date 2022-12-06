@@ -25,22 +25,20 @@ if test $maintain_err -eq 0; then
   pip install blessings >/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
-    source ~/pcw/unlock.sh && printf "\nWallet is ready.\n\n"
+    source ~/pcw/unlock.sh && printf "\nWallet is ready. Try 'help' if you need guidance.\n\n"
   else
-    printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\n"
+    printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\nSupport: vlei-support@provenant.net\n\n"
   fi
 else
-  printf "\nWallet maintenance didn't succeed cleanly. This is not a\n"
-  printf "a good outcome, but it may be okay if you simply pressed\n"
-  printf "CTRL+C or otherwise interrupted a process that was not\n"
-  printf "strictly necessary.\n"
   printf "\n"
-  printf "You may attempt to continue by running the following\n"
-  printf "command:\n"
+  printf "Wallet maintenance didn't succeed cleanly. This is not a good outcome, but it\n"
+  printf "*might* be okay if you simply pressed CTRL+C during a process that wasn't\n"
+  printf "strictly necessary, or if you're doing development work on the wallet.\n"
   printf "\n"
-  printf "  source keripy/venv/bin/activate\n"
+  printf "You could attempt to continue by sourcing ~/keripy/venv/bin/activate, or you\n"
+  printf "could troubleshoot by inspecting ~/*.log files.\n"
   printf "\n"
-  printf "You can also inspect ~/*.log files or contact support with\n"
-  printf "those files plus any error messages shown on the screen.\n"
+  printf "If you're lost, contact support (vlei-support@provenant.net) with any error\n"
+  printf "messages shown on the screen.\n"
 fi
 cd ~/
