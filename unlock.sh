@@ -12,6 +12,7 @@ do
       printf "\rWallet unlocked."
       # Clear till end of line
       tput el
+      printf "\n\n"
       export TYPED_PASSCODE=$TYPED_PASSCODE
       break
     else
