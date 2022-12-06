@@ -12,11 +12,13 @@ rm -f ~/.sudo_as_admin_successful
 rm -f ~/.viminfo
 rm -f ~/.python_history
 rm -f ~/.passcode-hash
+rm -f ~/.os-patch-check
 rm -f ~/*.log
 rm -f ~/.maintain.log
 rm -rf ~/vlei-qvi
 rm -rf ~/xar
 rm -rf ~/keripy
 rm -rf ~/.cache
+rm -rf ~/.vim
 rm -rf ~/bin
 mkdir ~/bin
