@@ -1,5 +1,5 @@
 alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
-alias help='printf "Please load https://bit.ly/3Cx4zD2 in your browser."'
+alias help='printf "Please load https://bit.ly/3Cx4zD2 in your browser.\n"'
 alias unlock='source ~/pcw/unlock.sh'
 
 # Run the wallet maintenance script at least once, and
