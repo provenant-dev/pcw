@@ -75,11 +75,6 @@ def personalize():
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
-    else:
-        ctx = get_shell_variable("CTX", script)
-        if not ctx:
-            ctx = 'prod'
-        org = get_shell_variable("ORG", script)
     if not is_protected():
         protect()
     return owner, org, ctx
