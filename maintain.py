@@ -100,7 +100,7 @@ def patch_source(owner, source_to_patch):
 
 def reset():
     run("rm -rf ~/keripy ~/vlei-qvi ~/xar ~/.keri ~/.passcode-hash")
-    if os.path.exists(os.path.expanduser("~/bashrc.bak")):
+    if os.path.exists(os.path.expanduser("~/.bashrc.bak")):
         run("mv ~/.bashrc.bak ~/.bashrc")
 
 
