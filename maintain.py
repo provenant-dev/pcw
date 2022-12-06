@@ -50,19 +50,20 @@ def refresh_repo(url, folder=None):
     return fetched_anything
 
 
+def get_var(name, prompt, sh):
+    val = get_shell_variable(name, script)
+    if not val:
+        val = ask(prompt).strip()
+        sh = name + '="' + val + '"\n\n' + script
+    return val, sh
+
+
 def personalize():
     bashrc = ".bashrc"
     semaphore = bashrc + '-changed'
     backup_file(bashrc)
     with open(bashrc, 'rt') as f:
         script = f.read()
-
-    def get_var(name, prompt, sh, xform=lambda x: x):
-        val = get_shell_variable(name, script)
-        if not val:
-            val = xform(ask(prompt).strip())
-            sh = f'{name}="{val}"\n' + script
-        return val, sh
 
     owner, sh1 = get_var("OWNER", "What is your first and last name?", script)
     print("len script = %d" % len(sh1))
