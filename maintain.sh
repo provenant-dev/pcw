@@ -1,5 +1,6 @@
 alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
 alias help='printf "Please load https://bit.ly/3Cx4zD2 in your browser."'
+alias unlock='source ~/pcw/unlock.sh'
 
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.
@@ -17,7 +18,7 @@ if test $maintain_err -eq 0; then
     source .bashrc
   fi
   # Activate the virtual environment in keripy so kli is in path
-  printf "\nActivating virtual environment...\n"
+  printf "\nActivating virtual environment.\n"
   cd ~/keripy && source venv/bin/activate >~/venv.log 2>&1 && pip install -r requirements.txt >~/requirements.log 2>&1; cd ~/
   # Even though blessings is installed in the OS, it's not installed
   # in the venv. Force it to be there as well, so we can run our
@@ -25,7 +26,7 @@ if test $maintain_err -eq 0; then
   pip install blessings >/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
-    source ~/pcw/unlock.sh && printf "\nWallet is ready. Try 'help' if you need guidance.\n\n"
+    unlock && printf "\nReady. Try 'help' if you need guidance.\n\n"
   else
     printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\nSupport: vlei-support@provenant.net\n\n"
   fi
