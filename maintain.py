@@ -66,7 +66,7 @@ def personalize():
 
     owner, s = get_var("OWNER", "What is your first and last name?", s)
     org, s = get_var("ORG", "What org do you represent (one word)?", s)
-    ctx, s = ask("CTX", "Is this wallet for use in dev, stage, or production contexts?")
+    ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?")
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
