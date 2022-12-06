@@ -4,7 +4,7 @@ hash=""
 printf "\n"
 while true
 do
-    printf "\033[0;34mEnter 21-char passcode to unlock wallet:\033[00m "
+    printf "\n\033[0;31mEnter 21-char passcode to unlock wallet:\033[00m "
     read -s TYPED_PASSCODE
     # Erase previous line.
     printf "\n" && tput cuu1 && tput cuu1 && tput el
