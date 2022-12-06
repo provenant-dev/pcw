@@ -65,13 +65,19 @@ def personalize():
             sh = f'{name}="{val}"\n' + script
         return val, sh
 
+    print("len script = %d" % len(s))
     owner, s = get_var("OWNER", "What is your first and last name?", s)
+    print("len script = %d" % len(s))
     org, s = get_var("ORG", "What org do you represent (one word)?", s)
+    print("len script = %d" % len(s))
     ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
+    print("len script = %d" % len(s))
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
+        print("before fix len script = %d" % len(s))
         script = fix_prompt(s)
+        print("after fix len script = %d" % len(s))
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
