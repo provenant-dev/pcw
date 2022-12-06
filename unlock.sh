@@ -4,10 +4,10 @@ hash=""
 printf "\n"
 while true
 do
-    printf "\n\033[0;31mEnter 21-char passcode to unlock wallet:\033[00m "
+    printf "\n\033[0;93mEnter 21-char passcode to unlock wallet:\033[00m "
     read -s TYPED_PASSCODE
     # Erase previous line.
-    printf "\r" && tput cuu1 && tput cuu1 && tput el
+    printf "\r" && tput cuu1 && tput el
     hash=`printf "$TYPED_PASSCODE" | sha256sum | cut -f1 -d' '`
     if [ "$1" = "--debug" ]; then printf "Hash of that passcode = $hash.\n"; fi
     if [ "$hash" = "$saved_hash" ]; then
@@ -21,7 +21,7 @@ do
       else
         hint="${TYPED_PASSCODE:0:2}...${TYPED_PASSCODE: -2:2}"
       fi
-      printf "Passcode %s (%d chars) doesn't match.\n" $hint ${#TYPED_PASSCODE}
+      printf "\n\033[0;31mPasscode %s (%d chars) doesn't match.\033[00m\n" $hint ${#TYPED_PASSCODE}
     fi
 done
 
