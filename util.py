@@ -28,20 +28,18 @@ This is basically like creating a brand new wallet.
 
 Type "yes" to confirm, or anything else to cancel."""
 PROTECT_PROMPT = """
-This wallet has high stakes. You need strong protections around it, because
-it is the basis for controlling your personal and corporate identity.
+This wallet has high stakes. You need strong protections around it.
 
-You are responsible for two of these protections. One is the SSH key that
-you created. Combined with the connection instructions we provide, this
-key should keep your data safe, all on its own.
+You are responsible for two of these protections. One is the SSH key that you
+use for remote access. Combined with the connection instructions we provide,
+this key should keep your data safe, all on its own.
 
-However, once you're in the wallet, we add a final layer of protection: your
-data is encrypted at rest, protected by a passcode and a salt. We generate
-both of these values randomly to guarantee their entropy. Your salt is stored,
-but the passcode is something you must remember on your own and supply each
-time you login. We recommend that you store it in a password manager like
-LastPass or 1Password. Your wallet will be unusable without it, and Provenant
-has no way to recover if you forget it, since we do not keep a copy for you.
+However, once you're in the wallet, there's a final layer of protection: your
+data is encrypted at rest, protected by a passcode and a salt. The passcode
+is something you must remember. You are prompted for it each you login, and
+you cannot use the wallet for KERI tasks without it. We recommend that you
+store it in a password manager like LastPass or 1Password. Provenant has no
+way to recover if you forget it, since we do not keep a copy for you.
 
 Your passcode is:
   """
