@@ -24,10 +24,6 @@ QAR_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 export QAR_SCRIPT_DIR="${QAR_DIR}/scripts"
 export QAR_DATA_DIR="${QAR_DIR}/data"
 
-set_passcode() {
-}
-export -f set_passcode >/dev/null 2>&1
-
 get_passcode() {
     echo $TYPED_PASSCODE
 }
@@ -47,5 +43,4 @@ get_salt() {
 }
 export -f get_salt >/dev/null 2>&1
 
-set_passcode $1
 set_salt $1
