@@ -58,11 +58,11 @@ def personalize():
         script = f.read()
     s = script
 
-    def get_var(name, prompt, sh, xform=lambda x: x):
-        val = get_shell_variable(name, script)
+    def get_var(name, prompt, sh):
+        val = get_shell_variable(name, sh)
         if not val:
-            val = xform(ask(prompt).strip())
-            sh = f'{name}="{val}"\n' + script
+            val = ask(prompt).strip()
+            sh = name + '="' + val + '"\n\n' + sh
         return val, sh
 
     owner, s = get_var("OWNER", "What is your first and last name?", s)
@@ -71,9 +71,9 @@ def personalize():
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
-        script = fix_prompt(s)
+        s = fix_prompt(s)
         with open(bashrc, 'wt') as f:
-            f.write(script)
+            f.write(s)
         run(f"touch {semaphore}")
     if not is_protected():
         protect()
