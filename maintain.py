@@ -56,7 +56,6 @@ def personalize():
     backup_file(bashrc)
     with open(bashrc, 'rt') as f:
         script = f.read()
-    s = script
 
     def get_var(name, prompt, sh, xform=lambda x: x):
         val = get_shell_variable(name, script)
@@ -65,21 +64,20 @@ def personalize():
             sh = f'{name}="{val}"\n' + script
         return val, sh
 
-    print("len script = %d" % len(s))
-    owner, s = get_var("OWNER", "What is your first and last name?", s)
-    print("len script = %d" % len(s))
-    org, s = get_var("ORG", "What org do you represent (one word)?", s)
-    print("len script = %d" % len(s))
-    ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
-    print("len script = %d" % len(s))
+    owner, sh1 = get_var("OWNER", "What is your first and last name?", script)
+    print("len script = %d" % len(sh1))
+    org, sh2 = get_var("ORG", "What org do you represent (one word)?", sh1)
+    print("len script = %d" % len(sh2))
+    ctx, sh3 = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", sh2)
+    print("len script = %d" % len(sh3))
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
-    if s != script:
-        print("before fix len script = %d" % len(s))
-        script = fix_prompt(s)
-        print("after fix len script = %d" % len(s))
+    if sh3 != script:
+        print("before fix len script = %d" % len(sh3))
+        sh4 = fix_prompt(sh3)
+        print("after fix len script = %d" % len(sh4))
         with open(bashrc, 'wt') as f:
-            f.write(script)
+            f.write(sh4)
         run(f"touch {semaphore}")
     if not is_protected():
         protect()
