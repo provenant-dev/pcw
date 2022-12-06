@@ -1,4 +1,5 @@
 alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
+alias help='printf "Please load https://bit.ly/3Cx4zD2 in your browser."'
 
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.
