@@ -23,9 +23,10 @@ def fix_prompt(script):
                 blue = c(34)
                 green = c(32)
                 red = c(31)
-                line = prefix + f"'{blue}PCW{bar}{green}$OWNER{plain} @ {green}$ORG{bar}{red}$CTX{plain}:{blue}\w{plain}\$ '"
+                at = f"{plain} @ {green}"
+                line = prefix + f"'{blue}PCW{bar}{green}$OWNER{at}$ORG{bar}{red}$CTX{plain}:{blue}\w{plain}\$ '"
             else:
-                line = line.replace('\\u@\\h', "PCW | $OWNER | $CTX")
+                line = line.replace('\\u@\\h', "PCW | $OWNER @ $ORG | $CTX")
         new_lines.append(line)
     return '\n'.join(new_lines)
 
@@ -70,7 +71,7 @@ def personalize():
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
-        script = fix_prompt(script)
+        script = fix_prompt(s)
         with open(bashrc, 'wt') as f:
             f.write(script)
         run(f"touch {semaphore}")
