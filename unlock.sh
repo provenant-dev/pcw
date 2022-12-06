@@ -9,6 +9,7 @@ do
     if [ "$1" = "--debug" ]; then printf "Hash of that passcode = $hash.\n"; fi
     if [ "$hash" = "$saved_hash" ]; then
       printf "\nWallet unlocked.\n"
+      export TYPED_PASSCODE=$TYPED_PASSCODE
       break
     else
       len=${#TYPED_PASSCODE}
