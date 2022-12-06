@@ -170,14 +170,13 @@ def protect():
 
     # Undo dimness of maintenance text.
     sys.stdout.write(term.normal)
-    cout(term.yellow(PROTECT_PROMPT))
-    passcode = get_passcode()
-    sys.stdout.write(term.red(passcode))
-    sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
-    input()
-    sys.stdout.write(term.move_up + "  ")
-    cout("*" * 21)
-    sys.stdout.write(" " * (term.width - 24) + "\n")
+    with term.location():
+        cout(term.yellow(PROTECT_PROMPT))
+        passcode = get_passcode()
+        sys.stdout.write(term.red(passcode))
+        sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode."))
+        input()
+    term.clear_eos()
     digest = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
     with open(PASSCODE_FILE, 'wt') as f:
         f.write(digest)
