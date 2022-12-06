@@ -15,10 +15,14 @@ def fix_prompt(script):
             # Typical colored prompt on ubuntu:
             #     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
             if "033" in line:
-                plain = "\\033[00m"
+                plain = "\\[\\033[00m\\]"
                 bar = plain + " | "
-                c = "\\033[01;"
-                line = prefix + f"'{c}34mPCW{bar}{c}32m$OWNER{bar}{c}31m$CTX{plain}:{c}34m\w{plain}\$ '"
+                def c(n):
+                    return "\\[\\033[01;" + str(n) + "m\\]"
+                blue = c(34)
+                green = c(32)
+                red = c(31)
+                line = prefix + f"'{blue}PCW{bar}{green}$OWNER{bar}{red}$CTX{plain}:{blue}\w{plain}\$ '"
             else:
                 line = line.replace('\\u@\\h', "PCW | $OWNER | $CTX")
         new_lines.append(line)
