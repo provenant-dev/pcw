@@ -56,6 +56,7 @@ def personalize():
     backup_file(bashrc)
     with open(bashrc, 'rt') as f:
         script = f.read()
+    s = script
 
     def get_var(name, prompt, sh):
         val = get_shell_variable(name, sh)
@@ -64,20 +65,15 @@ def personalize():
             sh = name + '="' + val + '"\n\n' + sh
         return val, sh
 
-    owner, sh1 = get_var("OWNER", "What is your first and last name?", script)
-    print("len script = %d" % len(sh1))
-    org, sh2 = get_var("ORG", "What org do you represent (one word)?", sh1)
-    print("len script = %d" % len(sh2))
-    ctx, sh3 = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", sh2)
-    print("len script = %d" % len(sh3))
+    owner, s = get_var("OWNER", "What is your first and last name?", s)
+    org, s = get_var("ORG", "What org do you represent (one word)?", s)
+    ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
-    if sh3 != script:
-        print("before fix len script = %d" % len(sh3))
-        sh4 = fix_prompt(sh3)
-        print("after fix len script = %d" % len(sh4))
+    if s != script:
+        s = fix_prompt(s)
         with open(bashrc, 'wt') as f:
-            f.write(sh4)
+            f.write(s)
         run(f"touch {semaphore}")
     if not is_protected():
         protect()
