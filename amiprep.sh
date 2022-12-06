@@ -1,5 +1,5 @@
 # Do we need to run the wallet reset command?
-if test -f ~/keripy; then
+if test -d ~/keripy; then
   if ! /usr/bin/env python3 ~/pcw/maintain.py --reset; then
     exit 1
   fi
