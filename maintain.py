@@ -119,7 +119,7 @@ def reset():
 def make_script(src_path, dest_path, cwd):
     src_path = os.path.abspath(src_path)
     with open(dest_path, 'wt') as f:
-        f.write(f"#!/bin/bash\ncd {cwd}\n{src_path}\n")
+        f.write(f'#!/bin/bash\ncd {cwd}\n{src_path} "$@"\n')
     os.chmod(dest_path, SCRIPT_PERMISSIONS)
 
 
