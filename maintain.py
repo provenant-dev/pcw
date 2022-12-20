@@ -200,6 +200,7 @@ def do_maintenance():
                             shutil.copyfile(src, dest)
                         patch_source(owner, 'xar/source.sh')
                     add_scripts_to_path(os.path.expanduser("~/xar/scripts"), os.path.expanduser("~/xar"))
+                    add_scripts_to_path(os.path.expanduser("~/pcw/bin"), os.path.expanduser("~/"))
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
