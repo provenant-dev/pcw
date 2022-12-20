@@ -1,0 +1,1 @@
+printf "Not yet implemented. For the time being, run generate-oobi for\na list of aliases, then CTRL+C to exit.\n"
