@@ -19,7 +19,7 @@ def change_var(txt, pat, new_val):
         txt += "\n" + new_val + "\n"
     return txt
 
-def update_file(fname, alias, reg)
+def update_file(fname, alias, reg):
     os.system(f'cp {fname} {fname}.bak')
     with open(fname, 'rt') as f:
         txt = f.read()
