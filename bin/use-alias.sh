@@ -1,39 +1,32 @@
 #! /bin/env python3
 
+import os
+import re
 import sys
 
 if len(sys.argv) != 3 or sys.argv[1] in ["?", "-h", "--h", "--help", "-?"]:
     print("use-alias <alias> <regname>")
     sys.exit(1)
 
-alias = sys.argv[1]
-reg = sys.argv[2]
-new_export = f'export QAR_AID_ALIAS="{alias}"'
-new_export2 = f'export QAR_REG_NAME="{reg}"'
+def var_pat(var):
+    return re.compile(r'^\s*export\s+' + var + r'\s*=([^\n]*)', re.M)
 
-import os
-import re
+def change_var(txt, pat, new_val):
+    m = pat.search(txt)
+    if m:
+        txt = txt[0:m.start()] + new_val + txt[m.end():]
+    else:
+        txt += "\n" + new_val + "\n"
+    return txt
 
-org_alias_pat = re.compile(r'^\s*export\s+QAR_AID_ALIAS\s*=([^\n]*)', re.M)
-org_reg_pat = re.compile(r'^\s*export\s+QAR_REG_NAME\s*=([^\n]*)', re.M)
-source_script = os.path.expanduser("~/xar/source.sh")
+def update_file(fname, alias, reg)
+    os.system(f'cp {fname} {fname}.bak')
+    with open(fname, 'rt') as f:
+        txt = f.read()
+    txt = change_var(txt, var_pat('QAR_AID_ALIAS'), f'export QAR_AID_ALIAS="{alias}"')
+    txt = change_var(txt, var_pat('QAR_REG_NAME'), f'export QAR_REG_NAME="{reg}"')
+    with open(fname, 'wt') as f:
+        f.write(txt)
+    print(f"Now acting as alias {alias} with registry {reg}.")
 
-with open(source_script, 'rt') as f:
-    txt = f.read()
-
-m = org_alias_pat.search(txt)
-if m:
-    txt = txt[0:m.start()] + new_export + txt[m.end():]
-else:
-    txt += "\n" + new_export + "\n"
-
-m = org_reg_pat.search(txt)
-if m:
-    txt = txt[0:m.start()] + new_export2 + "\n"
-else:
-    txt += "\n" + new_export2 + "\n"
-
-with open(source_script, 'wt') as f:
-    f.write(txt)
-
-print(f"Active alias is now {alias}.")
+update_file(os.path.expanduser("~/xar/source.sh"), sys.argv[1], sys.argv[2])

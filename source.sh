@@ -18,6 +18,10 @@ export QAR_AID_ALIAS="my-org"
 # Change to the name you want for the registry for your QVI
 export QAR_REG_NAME="my-org-registry"
 
+if [[ ! "$QAR_AID_ALIAS" =~ "my-org" ]]; then
+  printf "Running command with alias=$QAR_AID_ALIAS and registry=$QAR_REG_NAME"
+fi
+
 # Set current working directory for all scripts that must access files
 QAR_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
