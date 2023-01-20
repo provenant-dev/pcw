@@ -37,7 +37,7 @@ def run_git_cmd(cmd):
     fname = ".git.log"
     if os.path.isfile(fname):
         os.remove(fname)
-    exit_code = os.system(cmd + " >{fname} 2>&1")
+    exit_code = os.system(cmd + f" >{fname} 2>&1")
     if os.path.isfile(fname):
         os.remove(fname)
         with open(fname, 'rt') as f:
