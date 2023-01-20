@@ -1,4 +1,5 @@
 import os.path
+import re
 import traceback
 
 from util import *
@@ -32,6 +33,36 @@ def fix_prompt(script):
     return '\n'.join(new_lines)
 
 
+def run_git_cmd(cmd):
+    fname = ".git.log"
+    if os.path.isfile(fname):
+        os.remove(fname)
+    exit_code = os.system(cmd + " >{fname} 2>&1")
+    if os.path.isfile(fname):
+        os.remove(fname)
+        with open(fname, 'rt') as f:
+            output = f.read().strip() + '/n'
+    else:
+        output = ""
+    return exit_code, output
+
+
+last_commit_pat = re.compile(r"^commit\s+([a-zA-Z0-9]+)", re.MULTILINE)
+active_branch_pat = re.compile(r"^[*]\s*([^\n]+)", re.MULTILINE)
+
+
+def describe_code():
+    exit_code, last_commit_txt = run_git_cmd("git log -1")
+    m = last_commit_pat.search(last_commit_txt)
+    if m:
+        last_commit_txt = m.group(1)
+    exit_code, branch = run_git_cmd("git branch")
+    m = active_branch_pat.search(branch)
+    if m:
+        branch = m.group(1)
+    cout(f"branch = {branch}, last commit = {last_commit_txt}\n")
+
+
 def refresh_repo(url, folder=None):
     fetched_anything = True
     repo_name = folder if folder else url[url.rfind('/') + 1:-4]
@@ -46,7 +77,7 @@ def refresh_repo(url, folder=None):
                 result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
         if exit_code == 0:
-            cout("Code is up-to-date.\n")
+            cout("Code is up-to-date. " + describe_code())
         else:
             cout(term.red(result + '\n'))
         log.write(result + '\n')
