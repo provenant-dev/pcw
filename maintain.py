@@ -75,14 +75,14 @@ def refresh_repo(url, folder=None):
             exit_code = os.system(f"git pull >{git_log} 2>&1")
             with open(git_log, "rt") as f:
                 result = f.read().strip()
-        fetched_anything = bool(result != "Already up to date.")
-        if exit_code == 0:
-            if fetched_anything:
-                cout("Pulled new code; " + describe_code())
+            fetched_anything = bool(result != "Already up to date.")
+            if exit_code == 0:
+                if fetched_anything:
+                    cout("Pulled new code; " + describe_code())
+                else:
+                    cout("Already up-to-date; " + describe_code())
             else:
-                cout("Already up-to-date; " + describe_code())
-        else:
-            cout(term.red(result + '\n'))
+                cout(term.red(result + '\n'))
         log.write(result + '\n')
     else:
         cout(f"Installing {repo_name}.\n")
