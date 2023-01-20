@@ -46,7 +46,7 @@ def refresh_repo(url, folder=None):
                 result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
         if exit_code == 0:
-            cout("Code is up-to-date.")
+            cout("Code is up-to-date.\n")
         else:
             cout(term.red(result + '\n'))
         log.write(result + '\n')
