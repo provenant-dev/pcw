@@ -40,7 +40,7 @@ def run_git_cmd(cmd):
     exit_code = os.system(cmd + f" >{fname} 2>&1")
     if os.path.isfile(fname):
         with open(fname, 'rt') as f:
-            output = f.read().strip() + '/n'
+            output = f.read().strip() + '\n'
         os.remove(fname)
     else:
         output = ""
