@@ -60,7 +60,7 @@ def describe_code():
     m = active_branch_pat.search(branch)
     if m:
         branch = m.group(1)
-    cout(f"branch = {branch}, last commit = {last_commit_txt}\n")
+    return f"branch = {branch}, last commit = {last_commit_txt}\n"
 
 
 def refresh_repo(url, folder=None):
@@ -77,7 +77,7 @@ def refresh_repo(url, folder=None):
                 result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
         if exit_code == 0:
-            cout("Code is up-to-date. " + describe_code())
+            cout("Code is up-to-date; " + describe_code())
         else:
             cout(term.red(result + '\n'))
         log.write(result + '\n')
