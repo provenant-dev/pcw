@@ -1,3 +1,4 @@
+import os.path
 import traceback
 
 from util import *
@@ -37,7 +38,8 @@ def refresh_repo(url, folder=None):
     if os.path.isdir(repo_name):
         cout(f"Checking for {repo_name} updates.\n")
         git_log = os.path.expanduser(f"~/.git-pull-{repo_name}.log")
-        os.remove(git_log)
+        if os.path.isfile(git_log):
+            os.remove(git_log)
         with TempWorkingDir(repo_name):
             exit_code = os.system(f"git pull >{git_log} 2>&1")
             with open(git_log, "rt") as f:
