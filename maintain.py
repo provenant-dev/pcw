@@ -45,7 +45,9 @@ def refresh_repo(url, folder=None):
             with open(git_log, "rt") as f:
                 result = f.read().strip()
         fetched_anything = bool(result != "Already up to date.")
-        if exit_code != 0:
+        if exit_code == 0:
+            cout("Code is up-to-date.")
+        else:
             cout(term.red(result + '\n'))
         log.write(result + '\n')
     else:
