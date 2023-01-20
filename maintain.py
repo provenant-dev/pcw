@@ -55,7 +55,7 @@ def describe_code():
     exit_code, last_commit_txt = run_git_cmd("git log -1")
     m = last_commit_pat.search(last_commit_txt)
     if m:
-        last_commit_txt = m.group(1)
+        last_commit_txt = m.group(1)[:7]
     exit_code, branch = run_git_cmd("git branch")
     m = active_branch_pat.search(branch)
     if m:
