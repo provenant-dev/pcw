@@ -14,7 +14,7 @@ def _system_output(cmd):
         output = ""
     if exit_code != 0:
         print(f"Ran {cmd} and expected success. Got this instead:\n" + output)
-        sys.exit(1)
+        sys.exit(127)
     return output
 
 
@@ -45,6 +45,22 @@ def details_are_multisig(details):
 
 def is_multisig(alias):
     return details_are_multisig(details(alias))
+
+
+def subset(typ):
+    filtered = []
+    typ = typ.lower()[0]
+    aliases = _get_alias_dict()
+    if typ == 'a': # "all"
+        filter = lambda x: True
+    elif typ == 'm' # "multisig"
+        filter = lambda x: is_multisig(x)
+    else:
+        filter = lambda x: not is_multisig(x)
+    for alias, aid in aliases.items():
+        if filter(alias):
+            filtered.append(alias)
+    print(', '.join(filtered))
 
 
 if __name__ == '__main__':
