@@ -176,7 +176,7 @@ def set_or_update_shell_variable(variable, script, value, export=False, top=True
     if m:
         return script[:m.start()] + new_line + script[m.end():]
     else:
-        return new_line + script.lstrip() if top else script.rstrip() + new_line
+        return (new_line + script.lstrip()) if top else (script.rstrip() + new_line)
 
 
 def is_protected():

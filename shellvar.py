@@ -16,7 +16,7 @@ if __name__ == '__main__':
         sys.exit(1)
     with open(script, "rt") as f:
         txt = f.read()
-    new_txt = set_or_update_shell_variable(sys.argv[1], script, sys.argv[3], export)
+    new_txt = set_or_update_shell_variable(sys.argv[1], txt, sys.argv[3], export)
     os.system(f"cp {script} {script}.bak")
     with open(script, "wt") as f:
         f.write(new_txt)
