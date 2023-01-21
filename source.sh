@@ -2,24 +2,37 @@
 
 ##################################################################
 ##                                                              ##
-##       Init script for a Provenant Command-Line Wallet        ##
+##      Config script for a Provenant Command-Line Wallet       ##
 ##                                                              ##
 ##################################################################
 
-# The name you want to use for your local database.
-export QAR_NAME="XAR"
+# PCW code is based on GLEIF's vlei-qvi repo, which assumes that
+# the org whose identity is under management is a QVI (Qualified
+# vLEI Issuer), and that the person who owns the wallet is a QAR
+# (QVI Authorized Representative). Provenant's command-line wallet
+# is more generic, allowing the same scripts to be used for Legal
+# Entities represented by individuals who are LARs (LE
+# Authorized Representatives). To use GLEIF's scripts with minimal,
+# changes, we declare environment variables in their generic form,
+# and then map them to the values GLEIF's scripts expect.
 
-# The name you want for the alias for your local QAR AID
-export QAR_ALIAS="me"
+# What is the name of the DB where local state will be stored?
+DB_NAME="XAR"
+# The alias you will use locally to refer to the single-sig AID
+# that identifies you as an individual representative of your org.
+MY_ALIAS="me@my-org"
+# The alias you will use locally to refer to the multi-sig AID
+# that identifies your org to the outside world.
+MY_ORG_ALIAS="my-org"
 
-# Change to the name you want for the alias for your group multisig AID
-export QAR_AID_ALIAS="my-org"
-
-# Change to the name you want for the registry for your QVI
-export QAR_REG_NAME="my-org-registry"
+# Now map our choices into the variables expected by GLEIF scripts.
+export QAR_NAME=$DB_NAME
+export QAR_ALIAS=$MY_ALIAS
+export QAR_AID_ALIAS=$MY_ORG_ALIAS
+export QAR_REG_NAME="${MY_ORG_ALIAS}-registry"
 
 if [[ ! "$QAR_AID_ALIAS" =~ "my-org" ]]; then
-  printf "Running command with alias=$QAR_AID_ALIAS and registry=$QAR_REG_NAME"
+  printf "Org=$QAR_AID_ALIAS, personal=$QAR_ALIAS, registry=$QAR_REG_NAME\n"
 fi
 
 # Set current working directory for all scripts that must access files
