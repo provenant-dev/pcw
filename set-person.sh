@@ -6,7 +6,7 @@ else
 fi
 regex="(^| )${person}(,|$)"
 if [[ ! $singlesigs =~ $regex ]]; then
-  printf "Warning; ${person} is not a single-sig AID."
+  printf "\033[0;33mWarning; ${person} is not a single-sig AID.\033[00m\n"
 fi
 #python3 shellvar OWNER ~/.bashrc "$person"
 export OWNER="$person"
