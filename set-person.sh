@@ -4,7 +4,7 @@ if [ $# -lt 2 ]; then
 else
   person=$1
 fi
-regex = "(^| )${person}(,|$)"
+regex="(^| )${person}(,|$)"
 if [[ ! $singlesigs =~ $regex ]]; then
   printf "Warning; ${person} is not a single-sig AID."
 fi
