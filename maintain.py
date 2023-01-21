@@ -98,16 +98,20 @@ def personalize():
         script = f.read()
     s = script
 
-    def get_var(name, prompt, sh):
+    def get_var(name, prompt, sh, no_prompt=None):
         val = get_shell_variable(name, sh)
         if not val:
-            val = ask(prompt).strip()
+            if prompt:
+                val = ask(prompt).strip()
+            else:
+                val = no_prompt
             sh = name + '="' + val + '"\n\n' + sh
         return val, sh
 
     owner, s = get_var("OWNER", "What is your first and last name?", s)
     org, s = get_var("ORG", "What org do you represent (one word)?", s)
     ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
+    db, s = get_var("WALLET_DB_NAME", None, s, "XAR")
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
