@@ -5,7 +5,7 @@ import sys
 
 def _system_output(cmd):
     tmp = ".tmp-output"
-    exit_code = os.system(cmd + " >.output >{tmp} 2>&1")
+    exit_code = os.system(cmd + f" >{tmp} 2>&1")
     if os.path.isfile(tmp):
         with open(tmp, "rt") as f:
             output = f.read()
