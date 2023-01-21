@@ -6,10 +6,10 @@ if __name__ == '__main__':
     if len(sys.argv) < 4:
         print("shellvar VARIABLE SCRIPT VALUE [export]")
         sys.exit(1)
-        if len(sys.argv) > 4:
-            export = bool(sys.argv[4].lower()[0] == 'e')
-        else:
-            export = False
+    if len(sys.argv) > 4:
+        export = bool(sys.argv[4].lower()[0] == 'e')
+    else:
+        export = False
     script = os.path.expanduser(sys.argv[2])
     if not os.path.isfile(script):
         print(f"Script {script} does not exist.")
