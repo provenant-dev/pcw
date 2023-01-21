@@ -45,3 +45,5 @@ else
   printf "messages shown on the screen.\n"
 fi
 cd ~/
+pkli local watch
+
