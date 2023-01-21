@@ -86,6 +86,26 @@ class TempColor:
         sys.stdout.write(self.restore)
 
 
+def sys_call_with_output(cmd):
+    tmp = ".tmp-output"
+    exit_code = os.system(cmd + f" >{tmp} 2>&1")
+    if os.path.isfile(tmp):
+        with open(tmp, "rt") as f:
+            output = f.read()
+        os.remove(tmp)
+    else:
+        output = ""
+    return exit_code, output
+
+
+def sys_call_with_output_or_die(cmd):
+    exit_code, output = sys_call_with_output(cmd)
+    if exit_code != 0:
+        print(f"Ran {cmd}. Expected success; got code {exit_code} with this output instead:\n" + output)
+        sys.exit(127)
+    return output
+
+
 def cout(txt):
     sys.stdout.write(txt)
     sys.stdout.flush()
@@ -138,11 +158,25 @@ def time_since(file_modified):
     return elapsed
 
 
+def shell_variable_pat(variable):
+    return re.compile(r'^[ \t]*(?:export\s+)?' + variable + r'\s*=\s*"([^"]+)"[ \t]*(\n|\r|$)', re.MULTILINE)
+
+
 def get_shell_variable(variable, script):
-    var_pat = re.compile(r'^\s*' + variable + r'\s*=\s*"([^"]+)"\n', re.MULTILINE)
+    var_pat = shell_variable_pat(variable)
     m = var_pat.search(script)
     if m:
         return m.group(1)
+
+
+def set_or_update_shell_variable(variable, script, value, export=False, top=True):
+    var_pat = shell_variable_pat(variable)
+    new_line = ("export " if export else "") + f'{variable}="{value}"' + '\n'
+    m = var_pat.search(script)
+    if m:
+        return script[:m.start()] + new_line + script[m.end():]
+    else:
+        return new_line + script.lstrip() if top else script.rstrip() + new_line
 
 
 def is_protected():

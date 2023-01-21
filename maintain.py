@@ -6,7 +6,7 @@ from util import *
 
 
 def fix_prompt(script):
-    log.write("Fixing ")
+    log.write("Fixing prompt")
     prompt_pat = re.compile(r'\s*PS1\s*=')
     lines = script.split('\n')
     new_lines = []
@@ -33,30 +33,16 @@ def fix_prompt(script):
     return '\n'.join(new_lines)
 
 
-def run_git_cmd(cmd):
-    fname = ".git.log"
-    if os.path.isfile(fname):
-        os.remove(fname)
-    exit_code = os.system(cmd + f" >{fname} 2>&1")
-    if os.path.isfile(fname):
-        with open(fname, 'rt') as f:
-            output = f.read().strip() + '\n'
-        os.remove(fname)
-    else:
-        output = ""
-    return exit_code, output
-
-
 last_commit_pat = re.compile(r"^commit\s+([a-zA-Z0-9]+)", re.MULTILINE)
 active_branch_pat = re.compile(r"^[*]\s*([^\n]+)", re.MULTILINE)
 
 
 def describe_code():
-    exit_code, last_commit_txt = run_git_cmd("git log -1")
+    exit_code, last_commit_txt = sys_call_with_output("git log -1")
     m = last_commit_pat.search(last_commit_txt)
     if m:
         last_commit_txt = m.group(1)[:7]
-    exit_code, branch = run_git_cmd("git branch")
+    exit_code, branch = sys_call_with_output("git branch")
     m = active_branch_pat.search(branch)
     if m:
         branch = m.group(1)
@@ -108,7 +94,7 @@ def personalize():
             sh = name + '="' + val + '"\n\n' + sh
         return val, sh
 
-    owner, s = get_var("OWNER", "What is your first and last name?", s)
+    owner, s = get_var("OWNER", "What is your first name?", s)
     org, s = get_var("ORG", "What org do you represent (one word)?", s)
     ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
     db, s = get_var("WALLET_DB_NAME", None, s, "XAR")

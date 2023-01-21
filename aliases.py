@@ -1,21 +1,6 @@
-import os
 import re
 import sys
-
-
-def _system_output(cmd):
-    tmp = ".tmp-output"
-    exit_code = os.system(cmd + f" >{tmp} 2>&1")
-    if os.path.isfile(tmp):
-        with open(tmp, "rt") as f:
-            output = f.read()
-        os.remove(tmp)
-    else:
-        output = ""
-    if exit_code != 0:
-        print(f"Ran {cmd} and expected success. Got this instead:\n" + output)
-        sys.exit(127)
-    return output
+from util import sys_call_with_output_or_die
 
 
 _aliases = None
@@ -25,7 +10,7 @@ alias_item_pat = re.compile(r"^(.*?)[(](.*?)[)]", re.MULTILINE)
 def _get_alias_dict():
     global _aliases
     if _aliases is None:
-        aliases = _system_output("list-aliases")
+        aliases = sys_call_with_output_or_die("list-aliases")
         _aliases = {}
         for match in alias_item_pat.finditer(aliases):
             _aliases[match.group(1).strip()] = match.group(2).strip()
@@ -33,7 +18,7 @@ def _get_alias_dict():
 
 
 def details(alias):
-    return _system_output(f'pkli status --alias "{alias}"')
+    return sys_call_with_output_or_die(f'pkli status --alias "{alias}"')
 
 
 multikey_pat = re.compile(r"Public Keys:[ \t\r\n]+1[.]([^\r\n]+)[ \t\r\n]+2[.]")
@@ -65,7 +50,7 @@ def subset(typ):
 
 if __name__ == '__main__':
     func = globals()[sys.argv[1]]
-    answer = func(sys.argv[2])
+    answer = func(sys.argv[2] if len(sys.argv) > 2 else None)
     if isinstance(answer, str):
         print(answer)
     else:
