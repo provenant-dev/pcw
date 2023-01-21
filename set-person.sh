@@ -8,5 +8,5 @@ regex="(^| )${person}(,|$)"
 if [[ ! $singlesigs =~ $regex ]]; then
   printf "\033[0;33mWarning: ${person} is not the alias of a single-sig AID.\033[00m\n"
 fi
-#python3 ~/pcw/shellvar.py OWNER ~/.bashrc "$person"
+python3 ~/pcw/shellvar.py OWNER ~/.bashrc "$person"
 export OWNER="$person"
