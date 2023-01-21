@@ -1,5 +1,5 @@
 singlesigs=$(python3 ~/pcw/aliases.py subset singlesig)
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
   read -p "Which person alias ($singlesigs) do you want to activate? " -r person
 else
   person=$1
