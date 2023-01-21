@@ -28,7 +28,7 @@ def _get_alias_dict():
         aliases = _system_output("list-aliases")
         _aliases = {}
         for match in alias_item_pat.finditer(aliases):
-            _aliases[match.group(1)] = match.group(2)
+            _aliases[match.group(1).strip()] = match.group(2).strip()
     return _aliases
 
 
@@ -59,8 +59,8 @@ def subset(typ):
         filter = lambda x: not is_multisig(x)
     for alias, aid in aliases.items():
         if filter(alias):
-            filtered.append(alias)
-    print(', '.join(filtered))
+            filtered.append(alias.strip())
+    print(', '.join(sorted(filtered))
 
 
 if __name__ == '__main__':
