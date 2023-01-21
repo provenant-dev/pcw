@@ -60,7 +60,7 @@ def subset(typ):
     for alias, aid in aliases.items():
         if filter(alias):
             filtered.append(alias.strip())
-    print(', '.join(sorted(filtered))
+    print(', '.join(sorted(filtered)))
 
 
 if __name__ == '__main__':
