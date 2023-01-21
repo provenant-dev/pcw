@@ -53,7 +53,7 @@ def subset(typ):
     aliases = _get_alias_dict()
     if typ == 'a': # "all"
         filter = lambda x: True
-    elif typ == 'm' # "multisig"
+    elif typ == 'm': # "multisig"
         filter = lambda x: is_multisig(x)
     else:
         filter = lambda x: not is_multisig(x)
