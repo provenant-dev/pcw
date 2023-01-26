@@ -9,7 +9,7 @@
 # undesirable shutdown when the machine was just started, or on a brief disconnect.
 #
 # To enable, add this entry to /etc/crontab:
-# */30 *   * * *     /shutdown-if-inactive.sh >> /var/log/shutdown-if-inactive.log 2>&1
+# */30 *   * * *     /root/shutdown-if-inactive.sh >> /var/log/shutdown-if-inactive.log 2>&1
 #
 
 MARKER_FILE="/tmp/ssh-inactive-flag"
@@ -17,7 +17,7 @@ MARKER_FILE="/tmp/ssh-inactive-flag"
 STATUS=$(netstat | grep ssh | grep ESTABLISHED &>/dev/null)
 if [ $? -eq 0 ]; then
   STATUS="active"
-  echo $(date) ": active SSH connection"
+  #echo $(date) ": active SSH connection"
 else
   echo $(date) ": no active SSH connection"
   STATUS="inactive"
