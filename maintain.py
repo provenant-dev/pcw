@@ -91,7 +91,7 @@ def personalize():
                 val = ask(prompt).strip()
             else:
                 val = no_prompt
-            sh = name + '="' + val + '"\n\n' + sh
+            sh = "export " + name + '="' + val + '"\n\n' + sh
         return val, sh
 
     owner, s = get_var("OWNER", "What is your first name?", s)
