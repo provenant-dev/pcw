@@ -159,14 +159,14 @@ def time_since(file_modified):
 
 
 def shell_variable_pat(variable):
-    return re.compile(r'^[ \t]*(?:export\s+)?' + variable + r'\s*=\s*"([^"]+)"[ \t]*(\n|\r|$)', re.MULTILINE)
+    return re.compile(r'^[ \t]*(export\s+)?' + variable + r'\s*=\s*"([^"]+)"[ \t]*(\n|\r|$)', re.MULTILINE)
 
 
 def get_shell_variable(variable, script):
     var_pat = shell_variable_pat(variable)
     m = var_pat.search(script)
     if m:
-        return m.group(1)
+        return m.group(2), m.group(1).startswith("export"), m.start(), m.end()
 
 
 def set_or_update_shell_variable(variable, script, value, export=False, top=True):

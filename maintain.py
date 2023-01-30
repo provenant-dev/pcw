@@ -85,19 +85,21 @@ def personalize():
     s = script
 
     def get_var(name, prompt, sh, no_prompt=None):
-        val = get_shell_variable(name, sh)
-        if not val:
-            if prompt:
-                val = ask(prompt).strip()
-            else:
-                val = no_prompt
+        val, exported, start, end = get_shell_variable(name, sh)
+        if (not val) or (not exported):
+            if not val:
+                val = ask(prompt).strip() if prompt else no_prompt
+            else: # variable exists but was not exported; rewrite
+                sh = sh[:start] + sh[end:]
             sh = "export " + name + '="' + val + '"\n\n' + sh
         return val, sh
 
     owner, s = get_var("OWNER", "What is your first name?", s)
     org, s = get_var("ORG", "What org do you represent (one word)?", s)
     ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
-    db, s = get_var("WALLET_DB_NAME", None, s, "XAR")
+    _, s = get_var("WALLET_DB_NAME", None, s, "XAR")
+    _, s = get_var("S3_ACCESS_KEY_ID", "S3_ACCESS_KEY_ID (ask vlei-support@provenant.net)")
+    _, s = get_var("S3_SECRET_ACCESS_KEY", "S3_SECRET_ACCESS_KEY (ask vlei-support@provenant.net)")
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
@@ -128,6 +130,8 @@ def guarantee_venv():
         os.chdir("keripy")
         try:
             run("python3 -m venv venv")
+            # Add some extra dependencies needed by S3 script
+            run("pip3 install boto pyinotify")
         finally:
             os.chdir(os.path.expanduser("~/"))
 
