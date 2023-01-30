@@ -167,6 +167,7 @@ def get_shell_variable(variable, script):
     m = var_pat.search(script)
     if m:
         return m.group(2), m.group(1).startswith("export") if m.group(1) else False, m.start(), m.end()
+    return None, False, 0, 0
 
 
 def set_or_update_shell_variable(variable, script, value, export=False, top=True):
