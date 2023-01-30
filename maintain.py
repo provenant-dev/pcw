@@ -98,8 +98,8 @@ def personalize():
     org, s = get_var("ORG", "What org do you represent (one word)?", s)
     ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
     _, s = get_var("WALLET_DB_NAME", None, s, "XAR")
-    _, s = get_var("S3_ACCESS_KEY_ID", "S3_ACCESS_KEY_ID (ask vlei-support@provenant.net)")
-    _, s = get_var("S3_SECRET_ACCESS_KEY", "S3_SECRET_ACCESS_KEY (ask vlei-support@provenant.net)")
+    _, s = get_var("S3_ACCESS_KEY_ID", "S3_ACCESS_KEY_ID (ask vlei-support@provenant.net)", s)
+    _, s = get_var("S3_SECRET_ACCESS_KEY", "S3_SECRET_ACCESS_KEY (ask vlei-support@provenant.net)", s)
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
