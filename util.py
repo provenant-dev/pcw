@@ -300,12 +300,13 @@ AUTO_SHUTDOWN_LOG = "/var/log/shutdown-if-inactive.log"
 
 
 def configure_auto_shutdown():
-    print("Configuring auto shutdown behavior.")
     f = os.path.expanduser(SHUTDOWN_EXPLANATION_TAG)
     if not os.path.isfile(f):
+        print("Configuring auto shutdown behavior.")
         with open(f, "wb"): pass
-        if is_hosted_on_provenant_aws():
-            print(AUTO_SHUTDOWN_EXPLANATION)
-            os.system(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
-        else:
-            print(NO_AUTO_SHUTDOWN_EXPLANATION)
+        with TempColor(term.dim_white, MAINTENANCE_COLOR):
+            if is_hosted_on_provenant_aws():
+                print(AUTO_SHUTDOWN_EXPLANATION)
+                os.system(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
+            else:
+                print(NO_AUTO_SHUTDOWN_EXPLANATION)
