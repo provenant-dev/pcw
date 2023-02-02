@@ -226,7 +226,7 @@ def update_xar_code(ctx, owner):
     stash = os.path.isdir('xar')
     if stash:
         os.system("cd xar && git stash save >~/stash.log 2>&1")
-    updated = refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
+    updated = refresh_repo("https://github.com/provenant-dev/xar.git")
     if stash:
         os.system("cd xar && git stash pop >>~/stash.log 2>&1")
     return updated, not stash
