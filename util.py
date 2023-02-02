@@ -319,7 +319,7 @@ def configure_auto_shutdown():
         print(advice)
 
 
-UPGRADER_PAT = re.compile(r'^\d+[.].py$')
+UPGRADER_PAT = re.compile(r'^\d+[.]py$')
 UPGRADER_PATH = os.path.join(MY_FOLDER, "upgraders")
 
 
