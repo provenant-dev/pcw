@@ -217,11 +217,11 @@ def protect_by_passcode(hardcode=False):
     # screen, so that the passcode is not stored in the log.
 
     # Temporarily undo dimness of maintenance text.
-    with TempColor(term.normal):
+    with TempColor(term.normal, MAINTENANCE_COLOR):
         if hardcode:
             passcode = HARDCODED_PASSCODE
             cout(term.yellow(HARDCODED_PROTECT_PROMPT))
-            sys.stdout.write(term.red(passcode) + "\n")
+            sys.stdout.write(term.red(passcode) + "\n\n")
         else:
             cout(term.yellow(PROTECT_PROMPT))
             sys.stdout.write(term.red(passcode))
