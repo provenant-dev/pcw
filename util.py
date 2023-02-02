@@ -304,14 +304,14 @@ def configure_auto_shutdown():
     restart_url = os.path.expanduser(RESTART_URL)
     if not os.path.isfile(restart_url):
         print("Configuring auto shutdown behavior.")
-        with open(restart_url, "wb") as f:
+        with open(restart_url, "wt") as f:
             if is_hosted_on_provenant_aws():
                 f.write("https://start.wallet.provenant.net/youremail@your.org")
                 os.system(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
             else:
                 restart_url = ""
     else:
-        with open(restart_url, "rb") as f:
+        with open(restart_url, "rt") as f:
             restart_url = f.read().strip()
     with TempColor(term.dim_white, MAINTENANCE_COLOR):
         advice = AUTO_SHUTDOWN_EXPLANATION % restart_url if restart_url else NO_AUTO_SHUTDOWN_EXPLANATION
