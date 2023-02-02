@@ -317,3 +317,54 @@ def configure_auto_shutdown():
     with TempColor(term.dim_white, MAINTENANCE_COLOR):
         advice = AUTO_SHUTDOWN_EXPLANATION % restart_url if restart_url else NO_AUTO_SHUTDOWN_EXPLANATION
         print(advice)
+
+
+UPGRADER_PAT = re.compile(r'^\d+[.].py$')
+UPGRADER_PATH = os.path.join(MY_FOLDER, "upgraders")
+
+
+def _get_upgrader_files():
+    upgraders = []
+    for item in os.path.listdir(UPGRADER_PATH):
+        if UPGRADER_PAT.match(item):
+            upgraders.append(item)
+    return sorted(upgraders, key=lambda x: int(x[:-3]))
+
+
+def get_done_file_path(upgrader_path):
+    return upgrader_path[:-3] + '.done'
+
+
+def get_pending_upgraders():
+    pending = []
+    for u in get_upgraders():
+        u_path = os.path.join(UPGRADER_PATH, u)
+        done_path = get_done_file_path(u)
+        if not os.path.isfile(done_path):
+            pending.append(u_path)
+    return pending
+
+
+def run_upgrader(u):
+    done_file = get_done_file_path(u)
+    exit_code = os.system(f"python3 {u} >{done_file}")
+    if exit_code:
+        err_file = done_file[:-5] + '.err'
+        os.rename(done_file, err_file)
+        print(f"Errors during upgrade. See {err_file} for details.")
+    else:
+        num = os.path.split(u)[:-3]
+        print(f"Successfully ran upgrader/{num}.")
+
+
+def run_upgrade_scripts():
+    clean = None
+    pending = get_pending_upgraders()
+    clean = True if pending else None
+    for u in pending:
+        if not run_upgrader(u):
+            print("Upgrade script %s is failing. Troubleshoot with support.")
+            clean = False
+            break
+    if clean:
+        print("All upgrade scripts ran cleanly.")

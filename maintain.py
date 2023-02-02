@@ -134,14 +134,6 @@ def guarantee_venv():
             os.chdir(os.path.expanduser("~/"))
 
 
-def patch_source(owner, source_to_patch):
-    my_folder = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(my_folder, 'source.sh'), "rt") as f:
-        source_script = f.read()
-    with open(source_to_patch, 'wt') as f:
-        f.write(source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"'))
-
-
 def reset_wallet():
     run("rm -rf ~/keripy ~/vlei-qvi ~/xar ~/.keri ~/.passcode-hash")
     if os.path.exists(os.path.expanduser("~/.bashrc.bak")):
@@ -215,7 +207,7 @@ def patch_config(ctx):
     }
     prefix = 'prod' if ctx == 'prod' else 'stage'
     for fname, folder in config_files.items():
-        src = os.path.join(MY_FOLDER, prefix + '-' + fname)
+        src = os.path.join('xar', folder, prefix + '-' + fname)
         dest = os.path.join('xar', folder, fname)
         shutil.copyfile(src, dest)
 
@@ -239,7 +231,6 @@ def update_xar_code(ctx, owner):
         os.system("cd xar && git stash pop >>~/stash.log 2>&1")
     else:
         patch_config(ctx)
-        patch_source(owner, 'xar/source.sh')
     return updated, not stash
 
 
@@ -265,6 +256,11 @@ def do_maintenance():
                     # Script will be re-launched, doing remaining maintenance with new code.
                     pass
                 else:
+                    # As soon as we have clean PCW code, run any new upgrade scripts that
+                    # might need to do fixup of the wallet due to changes in how the
+                    # wallet is built.
+                    run_upgrade_scripts()
+
                     owner, org, ctx = personalize()
                     patch_os()
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
