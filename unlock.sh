@@ -1,3 +1,8 @@
+if [ "$CTX" = "dev" ] || [ "$CTX" = "stage"]; then
+  printf "Short-circuited passcode since this is not a production wallet.\n"
+  export TYPED_PASSCODE="111111111111111111111"
+  exit
+fi
 saved_hash=`head -n 1 ~/.passcode-hash`
 if [ "$1" = "--debug" ]; then printf "Saved passcode hash = $saved_hash.\n"; fi
 printf "\n"

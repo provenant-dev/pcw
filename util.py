@@ -221,9 +221,10 @@ def protect_by_passcode(hardcode=False):
         if hardcode:
             passcode = HARDCODED_PASSCODE
             cout(term.yellow(HARDCODED_PROTECT_PROMPT))
-            sys.stdout.write(term.red(passcode) + "\n\n")
+            sys.stdout.write(term.red(passcode) + "\n")
         else:
             cout(term.yellow(PROTECT_PROMPT))
+            passcode = get_passcode()
             sys.stdout.write(term.red(passcode))
             sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode.\n"))
             input()
