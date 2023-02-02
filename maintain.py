@@ -154,7 +154,7 @@ def reset_after_confirm():
     confirm = "yes"
     if os.getenv("CTX") not in ["dev", "stage"]:
         cout(term.red("\n\nTHIS IS A PRODUCTION WALLET. BE VERY, VERY CAREFUL!\n\n"))
-        confirm = str(time.time())[:-6]
+        confirm = str(time.time())[0:6]
         prompt = prompt.replace('"yes"', f'"{confirm}"')
     should_proceed = ask(prompt).lower() == confirm
     if should_proceed:

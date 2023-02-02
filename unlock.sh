@@ -1,4 +1,4 @@
-if [ "$CTX" = "dev" ] || [ "$CTX" = "stage"]; then
+if [ "$CTX" = "dev" ] || [ "$CTX" = "stage" ]; then
   printf "Short-circuited passcode since this is not a production wallet.\n"
   export TYPED_PASSCODE="111111111111111111111"
 else
