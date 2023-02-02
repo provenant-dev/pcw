@@ -342,7 +342,7 @@ def _get_pending_upgraders():
     for u in _get_upgrader_files():
         print("checking on upgrader %s" % u)
         u_path = os.path.join(UPGRADER_PATH, u)
-        done_path = _get_done_file_path(u)
+        done_path = _get_done_file_path(u_path)
         if not os.path.isfile(done_path):
             print("yep, needs to run; %s doesn't exist" % done_path)
             pending.append(u_path)
