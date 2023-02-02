@@ -12,7 +12,6 @@ rm -f ~/.sudo_as_admin_successful
 rm -f ~/.viminfo
 rm -f ~/.python_history
 rm -f ~/.passcode-hash
-rm -f ~/.os-patch-check
 rm -f ~/*.log
 rm -f ~/.*.log
 rm -f ~/.restart-url
