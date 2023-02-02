@@ -45,5 +45,6 @@ else
   printf "messages shown on the screen.\n"
 fi
 cd ~/
-pkli local watch
+describe-wallet-on-ec2
+printf "Syncing wallet with witnesses.\n\n" && pkli local watch
 
