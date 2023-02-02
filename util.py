@@ -219,9 +219,9 @@ def protect_by_passcode(hardcode=False):
     # Temporarily undo dimness of maintenance text.
     with TempColor(term.normal):
         if hardcode:
-            cout(HARDCODED_PROTECT_PROMPT)
             passcode = HARDCODED_PASSCODE
-            cout(passcode + "\n")
+            cout(term.yellow(HARDCODED_PROTECT_PROMPT))
+            sys.stdout.write(term.red(passcode) + "\n")
         else:
             cout(term.yellow(PROTECT_PROMPT))
             sys.stdout.write(term.red(passcode))
