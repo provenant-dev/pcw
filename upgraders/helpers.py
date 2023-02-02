@@ -3,9 +3,20 @@ import shutil
 import sys
 
 MY_FOLDER = os.path.dirname(os.path.abspath(__file__))
-XAR_FOLDER = os.path.expanduser("~/xar")
-KERIPY_FOLDER = os.path.expanduser("~/keripy")
-PCW_FOLDER = os.path.expanduser("~/pcw")
+HOME_FOLDER = os.path.expanduser("~/")
+XAR_FOLDER = os.path.join(HOME_FOLDER, "xar")
+KERIPY_FOLDER = os.path.join(HOME_FOLDER, "keripy")
+PCW_FOLDER = os.path.join(HOME_FOLDER, "pcw")
+
+
+def run(cmd):
+    print(cmd)
+    return os.system(cmd)
+
+
+def run_or_die(cmd):
+    if run(cmd):
+        sys.exit(1)
 
 
 def nuke(path):
@@ -22,7 +33,7 @@ def reset_from_git(repo, path_in_repo):
         prev_cwd = os.getcwd()
         os.chdir(folder)
         try:
-            exit_code = os.system(f"git checkout {path_in_repo}")
+            exit_code = run(f"git checkout {path_in_repo}")
             if exit_code:
                 print(f"Unable to reset ~/{repo}/{path_in_repo}.")
                 sys.exit(1)

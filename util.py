@@ -359,7 +359,7 @@ def _run_upgrader(u):
         os.rename(done_file, err_file)
         print(f"Errors during upgrade. See {err_file} for details.")
     else:
-        num = os.path.split(u)[:-3]
+        num = os.path.split(u)[1][:-3]
         print(f"Successfully ran upgrader/{num}.")
 
 
@@ -369,7 +369,7 @@ def run_upgrade_scripts():
     clean = True if pending else None
     for u in pending:
         if not _run_upgrader(u):
-            print("Upgrade script %s is failing. Troubleshoot with support.")
+            print(f"Upgrade script {u} is failing. Troubleshoot with support.")
             clean = False
             break
     if clean:
