@@ -229,8 +229,6 @@ def update_xar_code(ctx, owner):
     updated = refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
     if stash:
         os.system("cd xar && git stash pop >>~/stash.log 2>&1")
-    else:
-        patch_config(ctx)
     return updated, not stash
 
 
@@ -269,7 +267,6 @@ def do_maintenance():
                     updated, first_time = update_xar_code(ctx, owner)
                     if first_time:
                         patch_config(ctx)
-                        patch_source(owner, 'xar/source.sh')
 
                     config_wallet_commands()
                     configure_auto_shutdown()
