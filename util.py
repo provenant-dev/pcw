@@ -305,6 +305,6 @@ def configure_auto_shutdown():
         with open(f, "wb"): pass
         if is_hosted_on_provenant_aws():
             print(AUTO_SHUTDOWN_EXPLANATION)
-            run(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
+            os.system(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
         else:
             print(NO_AUTO_SHUTDOWN_EXPLANATION)
