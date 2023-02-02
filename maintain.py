@@ -225,7 +225,7 @@ def update_pcw_code():
     return updated
 
 
-def update_xar_code():
+def update_xar_code(ctx, owner):
     stash = os.path.isdir('xar')
     if stash:
         os.system("cd xar && git stash save >~/stash.log 2>&1")
@@ -265,7 +265,7 @@ def do_maintenance():
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
                     guarantee_venv()
 
-                    updated, first_time = update_xar_code()
+                    updated, first_time = update_xar_code(ctx, owner)
                     if first_time:
                         patch_config(ctx)
                         patch_source(owner, 'xar/source.sh')

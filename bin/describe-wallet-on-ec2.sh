@@ -15,4 +15,4 @@ zone = try_get("availabilityZone", d)
 ami = try_get("imageId", d)
 instance = try_get("instanceId", d)
 
-print(f"This is EC2 instance {instance} from ami {ami} on account {account} at {zone}.")
+print(f"EC2 instance {instance} from ami {ami} on account {account} at {zone}.")
