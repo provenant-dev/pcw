@@ -273,7 +273,7 @@ def is_hosted_on_provenant_aws():
     return bool(get_ec2_metadata().get("accountId","") == "607632564583")
 
 
-SHUTDOWN_EXPLANATION_TAG = "~/.shutdown-explanation"
+RESTART_URL = "~/.restart-url"
 
 NO_AUTO_SHUTDOWN_EXPLANATION = """
 This wallet is not hosted on Provenant's AWS cloud. That means your org incurs
@@ -288,7 +288,7 @@ costs by shutting itself off automatically when no SSH sessions are active for
 more than 30 minutes. To restart it, visit your wallet start page in a
 browser:
 
-    http://start.wallet.provenant.net/youremail@your.org
+    %s
     
 You'll have to replace the last part of the URL with your own email address.
 Once you see a web page confirming that your wallet is restarting, allow 2-5
@@ -296,17 +296,23 @@ minutes before attempting to access it.
 
 If you have troubles with this mechanism, contact vlei-support@provenant.net.
 """
+
 AUTO_SHUTDOWN_LOG = "/var/log/shutdown-if-inactive.log"
 
 
 def configure_auto_shutdown():
-    f = os.path.expanduser(SHUTDOWN_EXPLANATION_TAG)
-    if not os.path.isfile(f):
+    restart_url = os.path.expanduser(RESTART_URL)
+    if not os.path.isfile(restart_url):
         print("Configuring auto shutdown behavior.")
-        with open(f, "wb"): pass
-        with TempColor(term.dim_white, MAINTENANCE_COLOR):
+        with open(restart_url, "wb") as f:
             if is_hosted_on_provenant_aws():
-                print(AUTO_SHUTDOWN_EXPLANATION)
+                f.write("https://start.wallet.provenant.net/youremail@your.org")
                 os.system(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
             else:
-                print(NO_AUTO_SHUTDOWN_EXPLANATION)
+                restart_url = ""
+    else:
+        with open(restart_url, "rb") as f:
+            restart_url = f.read().strip()
+    with TempColor(term.dim_white, MAINTENANCE_COLOR):
+        advice = AUTO_SHUTDOWN_EXPLANATION % restart_url if restart_url else NO_AUTO_SHUTDOWN_EXPLANATION
+        print(advice)
