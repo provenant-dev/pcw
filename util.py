@@ -300,11 +300,14 @@ AUTO_SHUTDOWN_LOG = "/var/log/shutdown-if-inactive.log"
 
 
 def configure_auto_shutdown():
+    print("config auto shutdown")
     f = os.path.expanduser(SHUTDOWN_EXPLANATION_TAG)
     if not os.path.isfile(f):
         with open(f, "wb"): pass
         if is_hosted_on_provenant_aws():
+            print("hosted on pr aws")
             print(AUTO_SHUTDOWN_EXPLANATION)
             os.system(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
         else:
+            print("not hosted on pr ws")
             print(NO_AUTO_SHUTDOWN_EXPLANATION)
