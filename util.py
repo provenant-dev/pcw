@@ -326,9 +326,7 @@ UPGRADER_PATH = os.path.join(MY_FOLDER, "upgraders")
 def _get_upgrader_files():
     upgraders = []
     for item in os.listdir(UPGRADER_PATH):
-        print("found item in upgrader folder: " + item)
         if UPGRADER_PAT.match(item):
-            print("was an upgrader")
             upgraders.append(item)
     return sorted(upgraders, key=lambda x: int(x[:-3]))
 
@@ -340,11 +338,9 @@ def _get_done_file_path(upgrader_path):
 def _get_pending_upgraders():
     pending = []
     for u in _get_upgrader_files():
-        print("checking on upgrader %s" % u)
         u_path = os.path.join(UPGRADER_PATH, u)
         done_path = _get_done_file_path(u_path)
         if not os.path.isfile(done_path):
-            print("yep, needs to run; %s doesn't exist" % done_path)
             pending.append(u_path)
     return pending
 
