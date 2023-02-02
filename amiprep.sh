@@ -14,7 +14,9 @@ rm -f ~/.python_history
 rm -f ~/.passcode-hash
 rm -f ~/.os-patch-check
 rm -f ~/*.log
-rm -f ~/.maintain.log
+rm -f ~/.*.log
+rm -f ~/.restart-url
+rm -rf ~/pcw/upgraders/__pycache__
 rm -rf ~/vlei-qvi
 rm -rf ~/xar
 rm -rf ~/keripy
@@ -22,3 +24,5 @@ rm -rf ~/.cache
 rm -rf ~/.vim
 rm -rf ~/bin
 mkdir ~/bin
+sudo crontab -r
+crontab -r
