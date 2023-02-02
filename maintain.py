@@ -279,7 +279,7 @@ def do_maintenance():
                     configure_auto_shutdown()
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
-        cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
+        cout(term.red("--- Exited script early. Wallet may not be fully functional.\n"))
         sys.exit(1)
     except:
         cout(term.red("--- Error.\n" + traceback.format_exc() + "---\n"))
