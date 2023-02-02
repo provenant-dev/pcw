@@ -344,7 +344,7 @@ def _get_pending_upgraders():
         u_path = os.path.join(UPGRADER_PATH, u)
         done_path = _get_done_file_path(u)
         if not os.path.isfile(done_path):
-            print("yep, needs to run")
+            print("yep, needs to run; %s doesn't exist" % done_path)
             pending.append(u_path)
     return pending
 
@@ -361,6 +361,7 @@ def _run_upgrader(u):
     else:
         num = os.path.split(u)[1][:-3]
         print(f"Successfully ran upgrader/{num}.")
+    return exit_code == 0
 
 
 def run_upgrade_scripts():
