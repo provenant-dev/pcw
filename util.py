@@ -331,22 +331,22 @@ def _get_upgrader_files():
     return sorted(upgraders, key=lambda x: int(x[:-3]))
 
 
-def get_done_file_path(upgrader_path):
+def _get_done_file_path(upgrader_path):
     return upgrader_path[:-3] + '.done'
 
 
-def get_pending_upgraders():
+def _get_pending_upgraders():
     pending = []
-    for u in get_upgraders():
+    for u in _get_upgrader_files():
         u_path = os.path.join(UPGRADER_PATH, u)
-        done_path = get_done_file_path(u)
+        done_path = _get_done_file_path(u)
         if not os.path.isfile(done_path):
             pending.append(u_path)
     return pending
 
 
-def run_upgrader(u):
-    done_file = get_done_file_path(u)
+def _run_upgrader(u):
+    done_file = _get_done_file_path(u)
     exit_code = os.system(f"python3 {u} >{done_file}")
     if exit_code:
         err_file = done_file[:-5] + '.err'
@@ -359,10 +359,10 @@ def run_upgrader(u):
 
 def run_upgrade_scripts():
     clean = None
-    pending = get_pending_upgraders()
+    pending = _get_pending_upgraders()
     clean = True if pending else None
     for u in pending:
-        if not run_upgrader(u):
+        if not _run_upgrader(u):
             print("Upgrade script %s is failing. Troubleshoot with support.")
             clean = False
             break
