@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -162,6 +163,10 @@ def shell_variable_pat(variable):
     return re.compile(r'^[ \t]*(export\s+)?' + variable + r'\s*=\s*"([^"]+)"[ \t]*(\n|\r|$)', re.MULTILINE)
 
 
+def is_executable(path):
+    return bool(os.stat(path).st_mode & stat.S_IXUSR)
+
+
 def get_shell_variable(variable, script):
     var_pat = shell_variable_pat(variable)
     m = var_pat.search(script)
@@ -180,7 +185,7 @@ def set_or_update_shell_variable(variable, script, value, export=False, top=True
         return (new_line + script.lstrip()) if top else (script.rstrip() + new_line)
 
 
-def is_protected():
+def is_protected_by_passcode():
     return os.path.isfile(PASSCODE_FILE)
 
 
@@ -195,7 +200,37 @@ def get_passcode():
     return "".join(code)
 
 
-def protect():
+def get_ec2_metadata():
+    """
+    Expect something like this:
+{
+  "accountId" : "607632564583",
+  "architecture" : "x86_64",
+  "availabilityZone" : "us-east-1e",
+  "billingProducts" : null,
+  "devpayProductCodes" : null,
+  "marketplaceProductCodes" : null,
+  "imageId" : "ami-0ff0f2edab8a12775",
+  "instanceId" : "i-099981241c77999b3",
+  "instanceType" : "t2.micro",
+  "kernelId" : null,
+  "pendingTime" : "2023-02-02T11:51:36Z",
+  "privateIp" : "172.31.60.196",
+  "ramdiskId" : null,
+  "region" : "us-east-1",
+  "version" : "2017-09-30"
+}
+    """
+    exit_code, output = sys_call_with_output("get-ec2-metadata")
+    if not exit_code:
+        try:
+            return json.loads(output)
+        except:
+            return {}
+    return {}
+
+
+def protect_by_passcode():
     # In this function, we switch between sys.stdout and cout very deliberately.
     # cout() writes to the log, whereas sys.stdout only writes to the screen.
     # We want the log to contain almost, but not quite, what we write to the

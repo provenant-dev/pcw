@@ -94,21 +94,22 @@ def personalize():
             sh = "export " + name + '="' + val + '"\n\n' + sh
         return val, sh
 
+    _, s = get_var("WALLET_DB_NAME", None, s, "XAR")
     owner, s = get_var("OWNER", "What is your first name?", s)
     org, s = get_var("ORG", "What org do you represent (one word)?", s)
     ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
-    _, s = get_var("WALLET_DB_NAME", None, s, "XAR")
+    ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
+    ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
+    ctx = ctx.lower()[0]
     _, s = get_var("S3_ACCESS_KEY_ID", "S3_ACCESS_KEY_ID (ask vlei-support@provenant.net)", s)
     _, s = get_var("S3_SECRET_ACCESS_KEY", "S3_SECRET_ACCESS_KEY (ask vlei-support@provenant.net)", s)
-    ctx = ctx.lower()[0]
-    ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
         s = fix_prompt(s)
         with open(bashrc, 'wt') as f:
             f.write(s)
         run(f"touch {semaphore}")
-    if not is_protected():
-        protect()
+    if not is_protected_by_passcode():
+        protect_by_passcode()
     return owner, org, ctx
 
 
@@ -130,8 +131,6 @@ def guarantee_venv():
         os.chdir("keripy")
         try:
             run("python3 -m venv venv")
-            # Add some extra dependencies needed by S3 script
-            run("pip3 install boto pyinotify")
         finally:
             os.chdir(os.path.expanduser("~/"))
 
@@ -144,10 +143,22 @@ def patch_source(owner, source_to_patch):
         f.write(source_script.replace('QAR_ALIAS=""', f'QAR_ALIAS="{owner}"'))
 
 
-def reset():
+def reset_wallet():
     run("rm -rf ~/keripy ~/vlei-qvi ~/xar ~/.keri ~/.passcode-hash")
     if os.path.exists(os.path.expanduser("~/.bashrc.bak")):
         run("mv ~/.bashrc.bak ~/.bashrc")
+
+
+def reset_after_confirm():
+    cout("Wallet reset requested.\n" + term.normal)
+    should_proceed = ask(RESET_PROMPT).lower() == "yes"
+    if should_proceed:
+        cout("\nResetting wallet. This will destroy all saved state.\n")
+        reset_wallet()
+        cout(term.normal + term.red("You must log out and log back in again to start over.\n"))
+    else:
+        cout("Abandoning request to reset.\n")
+    return should_proceed
 
 
 def make_script(src_path, dest_path, cwd):
@@ -157,21 +168,28 @@ def make_script(src_path, dest_path, cwd):
     os.chmod(dest_path, SCRIPT_PERMISSIONS)
 
 
+def cleanup_old_scripts():
+    for item in os.listdir(BIN_PATH):
+        script = os.path.join(BIN_PATH, item)
+        if os.path.isfile(script) and is_executable(script):
+            os.remove(script)
+
+
 def add_scripts_to_path(folder, cwd):
     cout("Configuring commands.\n")
     if not os.path.exists(BIN_PATH):
         os.makedirs(BIN_PATH)
     for script in os.listdir(folder):
         src_path = os.path.join(folder, script)
-        if os.path.isfile(src_path):
-            if bool(os.stat(src_path).st_mode & stat.S_IXUSR):
-                basename = os.path.splitext(script)[0]
-                dest_path = os.path.join(BIN_PATH, basename)
-                log.write("Making command %s to run %s.\n" % (dest_path, src_path))
-                make_script(src_path, dest_path, cwd)
+        if os.path.isfile(src_path) and is_executable(src_path):
+            basename = os.path.splitext(script)[0]
+            dest_path = os.path.join(BIN_PATH, basename)
+            log.write("Making command %s to run %s.\n" % (dest_path, src_path))
+            make_script(src_path, dest_path, cwd)
 
 
 def break_rerun_cycle():
+    cout("Detected rerun flag; removing.\n")
     # Simply deleting the rerunner should work. However,
     # testing showed that sometimes the file wasn't quite
     # deletable -- so switch to a slower but more reliable
@@ -179,62 +197,80 @@ def break_rerun_cycle():
     bak = RERUNNER + '.bak'
     if os.path.exists(bak):
         os.remove(bak)
-    #print(f"Renaming {RERUNNER} to {bak}")
+    # print(f"Renaming {RERUNNER} to {bak}")
     os.rename(RERUNNER, bak)
-    #print(f"Removing {bak}")
+    # print(f"Removing {bak}")
     os.remove(bak)
+
+
+def patch_config(ctx):
+    config_files = {
+        'qar-config.json': 'scripts/keri/cf/',
+        'qar-local-incept.json': 'scripts'
+    }
+    prefix = 'prod' if ctx == 'prod' else 'stage'
+    for fname, folder in config_files.items():
+        src = os.path.join(MY_FOLDER, prefix + '-' + fname)
+        dest = os.path.join('xar', folder, fname)
+        shutil.copyfile(src, dest)
+
+
+def update_pcw_code():
+    updated = refresh_repo("https://github.com/provenant-dev/pcw.git")
+    if updated:
+        cout("Wallet software updated. Requesting re-launch of maintenance script with latest code.\n")
+        run(f"touch {RERUNNER}")
+        # Give file buffers time to flush.
+        time.sleep(1)
+    return updated
+
+
+def update_xar_code():
+    stash = os.path.isdir('xar')
+    if stash:
+        os.system("cd xar && git stash save >~/stash.log 2>&1")
+    updated = refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
+    if stash:
+        os.system("cd xar && git stash pop >>~/stash.log 2>&1")
+    else:
+        patch_config(ctx)
+        patch_source(owner, 'xar/source.sh')
+    return updated, not stash
+
+
+def config_wallet_commands():
+    cleanup_old_scripts()
+    add_scripts_to_path(os.path.expanduser("~/xar/scripts"), os.path.expanduser("~/xar"))
+    add_scripts_to_path(os.path.expanduser("~/pcw/bin"), os.path.expanduser("~/"))
 
 
 def do_maintenance():
     os.chdir(os.path.expanduser("~/"))
     log.write("\n\n" + "-" * 50 + "\nScript launched " + time.asctime())
     sys.stdout.write(term.normal)
-    cout("\n--- Doing wallet maintenance.")
+    cout("\n--- Doing wallet maintenance.\n")
     try:
         with TempColor(MAINTENANCE_COLOR):
-            cout("\n")
             if os.path.exists(RERUNNER):
-                cout("Detected rerun flag; removing.\n")
                 break_rerun_cycle()
             if len(sys.argv) == 2 and sys.argv[1] == '--reset':
-                cout("Wallet reset requested.\n" + term.normal)
-                if ask(RESET_PROMPT).lower() != "yes":
-                    cout("Abandoning request to reset.\n")
-                else:
-                    cout("\nResetting state.\n")
-                    reset()
-                    cout(term.normal + term.red("You must log out and log back in again to start over.\n"))
+                reset_after_confirm()
             else:
-                if refresh_repo("https://github.com/provenant-dev/pcw.git"):
-                    cout("Wallet software updated. Requesting re-launch.\n")
-                    run(f"touch {RERUNNER}")
-                    # Give file buffers time to flush.
-                    time.sleep(1)
+                if update_pcw_code():
+                    # Script will be re-launched, doing remaining maintenance with new code.
+                    pass
                 else:
                     owner, org, ctx = personalize()
                     patch_os()
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
                     guarantee_venv()
 
-                    stash = os.path.isdir('xar')
-                    if stash:
-                        os.system("cd xar && git stash save >~/stash.log 2>&1")
-                    refresh_repo("https://github.com/provenant-dev/vlei-qvi.git", "xar")
-                    if stash:
-                        os.system("cd xar && git stash pop >>~/stash.log 2>&1")
-                    else:
-                        config_files = {
-                            'qar-config.json': 'scripts/keri/cf/',
-                            'qar-local-incept.json': 'scripts'
-                        }
-                        prefix = 'prod' if ctx == 'prod' else 'stage'
-                        for fname, folder in config_files.items():
-                            src = os.path.join(MY_FOLDER, prefix + '-' + fname)
-                            dest = os.path.join('xar', folder, fname)
-                            shutil.copyfile(src, dest)
+                    updated, first_time = update_xar_code()
+                    if first_time:
+                        patch_config(ctx)
                         patch_source(owner, 'xar/source.sh')
-                    add_scripts_to_path(os.path.expanduser("~/xar/scripts"), os.path.expanduser("~/xar"))
-                    add_scripts_to_path(os.path.expanduser("~/pcw/bin"), os.path.expanduser("~/"))
+
+                    config_wallet_commands()
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))
@@ -244,4 +280,4 @@ def do_maintenance():
 
 
 if __name__ == '__main__':
-   do_maintenance()
+    do_maintenance()

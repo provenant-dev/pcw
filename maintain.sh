@@ -25,7 +25,7 @@ if test $maintain_err -eq 0; then
   # Even though blessings is installed in the OS, it's not installed
   # in the venv. Force it to be there as well, so we can run our
   # maintenance script cleanly.
-  pip install blessings >/dev/null 2>&1
+  pip install blessings boto pyinotify>/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
     unlock && printf "\nReady. Try 'help' if you need guidance.\n\n"
