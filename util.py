@@ -44,6 +44,16 @@ way to recover if you forget it, since we do not keep a copy for you.
 
 Your passcode is:
   """
+HARDCODED_PROTECT_PROMPT = """
+Since this is NOT currently being used as a production wallet, we use a hard-
+coded passcode to decrease friction, and we mostly short-circuit the places
+where it's needed. If you reset this wallet and put it in production mode,
+you'll get a new passcode that actually matters, and it will be vital that
+you remember it. In the meantime, the passcode for this wallet is just the
+1 digit, repeated 21 times): 
+
+  """
+HARDCODED_PASSCODE = '111111111111111111111'
 RERUNNER = '.rerun'
 ESC_SEQ_PAT = re.compile("(?:\007|\033)\\[[0-9;]+[Bm]")
 BIN_PATH = os.path.expanduser("~/bin")
@@ -200,6 +210,31 @@ def get_passcode():
     return "".join(code)
 
 
+def protect_by_passcode(hardcode=False):
+    # In this function, we switch between sys.stdout and cout very deliberately.
+    # cout() writes to the log, whereas sys.stdout only writes to the screen.
+    # We want the log to contain almost, but not quite, what we write to the
+    # screen, so that the passcode is not stored in the log.
+
+    # Temporarily undo dimness of maintenance text.
+    with TempColor(term.normal):
+        if hardcode:
+            cout(HARDCODED_PROTECT_PROMPT)
+            passcode = HARDCODED_PASSCODE
+            cout(passcode + "\n")
+        else:
+            cout(term.yellow(PROTECT_PROMPT))
+            sys.stdout.write(term.red(passcode))
+            sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode.\n"))
+            input()
+            sys.stdout.write(term.move_up + term.move_up + "  ")
+            cout("*" * 21)
+            sys.stdout.write(" " * (term.width - 24) + "\n")
+    digest = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
+    with open(PASSCODE_FILE, 'wt') as f:
+        f.write(digest)
+
+
 def get_ec2_metadata():
     """
     Expect something like this:
@@ -228,24 +263,3 @@ def get_ec2_metadata():
         except:
             return {}
     return {}
-
-
-def protect_by_passcode():
-    # In this function, we switch between sys.stdout and cout very deliberately.
-    # cout() writes to the log, whereas sys.stdout only writes to the screen.
-    # We want the log to contain almost, but not quite, what we write to the
-    # screen, so that the passcode is not stored in the log.
-
-    # Temporarily undo dimness of maintenance text.
-    with TempColor(term.normal):
-        cout(term.yellow(PROTECT_PROMPT))
-        passcode = get_passcode()
-        sys.stdout.write(term.red(passcode))
-        sys.stdout.write(term.white("  << Press ENTER when you've saved this passcode.\n"))
-        input()
-        sys.stdout.write(term.move_up + term.move_up + "  ")
-        cout("*" * 21)
-        sys.stdout.write(" " * (term.width - 24) + "\n")
-    digest = hashlib.sha256(passcode.encode("ASCII")).hexdigest()
-    with open(PASSCODE_FILE, 'wt') as f:
-        f.write(digest)

@@ -109,7 +109,7 @@ def personalize():
             f.write(s)
         run(f"touch {semaphore}")
     if not is_protected_by_passcode():
-        protect_by_passcode()
+        protect_by_passcode(ctx != "prod")
     return owner, org, ctx
 
 
