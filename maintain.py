@@ -1,5 +1,4 @@
 import os.path
-import re
 import traceback
 
 from util import *
@@ -151,9 +150,13 @@ def reset_wallet():
 
 def reset_after_confirm():
     cout("Wallet reset requested.\n" + term.normal)
+    prompt = RESET_PROMPT
+    confirm = "yes"
     if os.getenv("CTX") not in ["dev", "stage"]:
         cout(term.red("\n\nTHIS IS A PRODUCTION WALLET. BE VERY, VERY CAREFUL!\n\n"))
-    should_proceed = ask(RESET_PROMPT).lower() == "yes"
+        confirm = str(time.time())[:-6]
+        prompt = prompt.replace('"yes"', f'"{confirm}"')
+    should_proceed = ask(prompt).lower() == confirm
     if should_proceed:
         cout("\nResetting wallet. This will destroy all saved state.\n")
         reset_wallet()
