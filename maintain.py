@@ -151,6 +151,8 @@ def reset_wallet():
 
 def reset_after_confirm():
     cout("Wallet reset requested.\n" + term.normal)
+    if os.getenv("CTX") not in ["dev", "stage"]:
+        cout(term.red("\n\nTHIS IS A PRODUCTION WALLET. BE VERY, VERY CAREFUL!\n\n"))
     should_proceed = ask(RESET_PROMPT).lower() == "yes"
     if should_proceed:
         cout("\nResetting wallet. This will destroy all saved state.\n")
