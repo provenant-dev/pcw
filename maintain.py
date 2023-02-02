@@ -181,7 +181,7 @@ def cleanup_old_scripts():
 
 
 def add_scripts_to_path(folder, cwd):
-    cout("Configuring commands.\n")
+    cout(f"Adding scripts in {folder} to path.\n")
     if not os.path.exists(BIN_PATH):
         os.makedirs(BIN_PATH)
     for script in os.listdir(folder):

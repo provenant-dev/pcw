@@ -276,10 +276,10 @@ def is_hosted_on_provenant_aws():
 SHUTDOWN_EXPLANATION_TAG = "~/.shutdown-explanation"
 
 NO_AUTO_SHUTDOWN_EXPLANATION = """
-This wallet is not hosted on Provenant's AWS cloud. That means your
-org incurs the cost of keeping it running. You may wish to work with
-your devops team to optimize those costs by shutting down the wallet
-when no active work is needed.
+This wallet is not hosted on Provenant's AWS cloud. That means your org incurs
+the cost of keeping it running. You may wish to work with your devops team to
+optimize those costs by shutting down the wallet when no active work is
+needed.
 """
 
 AUTO_SHUTDOWN_EXPLANATION = """
