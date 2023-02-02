@@ -28,7 +28,7 @@ if test $maintain_err -eq 0; then
   pip install blessings boto pyinotify>/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
-    unlock && printf "\nReady. Try 'help' if you need guidance.\n\n"
+    unlock
   else
     printf "\nError: kli is not on the path. Check ~/venv.log and ~/requirements.log.\n\nSupport: vlei-support@provenant.net\n\n"
   fi
@@ -47,4 +47,4 @@ fi
 cd ~/
 describe-wallet-on-ec2
 watch
-
+printf "\nReady. Try 'help' if you need guidance.\n\n"
