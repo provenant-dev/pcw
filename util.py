@@ -325,7 +325,7 @@ UPGRADER_PATH = os.path.join(MY_FOLDER, "upgraders")
 
 def _get_upgrader_files():
     upgraders = []
-    for item in os.path.listdir(UPGRADER_PATH):
+    for item in os.listdir(UPGRADER_PATH):
         if UPGRADER_PAT.match(item):
             upgraders.append(item)
     return sorted(upgraders, key=lambda x: int(x[:-3]))
