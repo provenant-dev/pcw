@@ -276,6 +276,7 @@ def do_maintenance():
                         patch_source(owner, 'xar/source.sh')
 
                     config_wallet_commands()
+                    configure_auto_shutdown()
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Run maintain --reset to clean up.\n"))

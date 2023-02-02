@@ -236,6 +236,7 @@ def protect_by_passcode(hardcode=False):
         f.write(digest)
 
 
+_ec2_metadata = {}
 def get_ec2_metadata():
     """
     Expect something like this:
@@ -257,10 +258,53 @@ def get_ec2_metadata():
   "version" : "2017-09-30"
 }
     """
-    exit_code, output = sys_call_with_output("get-ec2-metadata")
-    if not exit_code:
-        try:
-            return json.loads(output)
-        except:
-            return {}
-    return {}
+    global _ec2_metadata
+    if not _ec2_metadata:
+        exit_code, output = sys_call_with_output("get-ec2-metadata")
+        if not exit_code:
+            try:
+                _ec2_metadata = json.loads(output)
+            except:
+                pass
+    return _ec2_metadata
+
+
+def is_hosted_on_provenant_aws():
+    return bool(get_ec2_metadata().get("accountId","") == "607632564583")
+
+
+SHUTDOWN_EXPLANATION_TAG = "~/.shutdown-explanation"
+
+NO_AUTO_SHUTDOWN_EXPLANATION = """
+This wallet is not hosted on Provenant's AWS cloud. That means your
+org incurs the cost of keeping it running. You may wish to work with
+your devops team to optimize those costs by shutting down the wallet
+when no active work is needed.
+"""
+
+AUTO_SHUTDOWN_EXPLANATION = """
+Because this wallet is hosted on Provenant's AWS cloud, it tries to minimize
+costs by shutting itself off automatically when no SSH sessions are active for
+more than 30 minutes. To restart it, visit your wallet start page in a
+browser:
+
+    http://start.wallet.provenant.net/youremail@your.org
+    
+You'll have to replace the last part of the URL with your own email address.
+Once you see a web page confirming that your wallet is restarting, allow 2-5
+minutes before attempting to access it.
+
+If you have troubles with this mechanism, contact vlei-support@provenant.net.
+"""
+AUTO_SHUTDOWN_LOG = "/var/log/shutdown-if-inactive.log"
+
+
+def configure_auto_shutdown():
+    f = os.path.expanduser(SHUTDOWN_EXPLANATION_TAG)
+    if not os.path.isfile(f):
+        with open(f, "wb"): pass
+        if is_hosted_on_provenant_aws():
+            print(AUTO_SHUTDOWN_EXPLANATION)
+            run(f'sudo touch {AUTO_SHUTDOWN_LOG} && sudo crontab /home/ubuntu/pcw/shutdown-if-inactive.crontab')
+        else:
+            print(NO_AUTO_SHUTDOWN_EXPLANATION)

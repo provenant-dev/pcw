@@ -8,8 +8,7 @@
 # the last ssh session was closed more than 30 minutes ago. That prevents an
 # undesirable shutdown when the machine was just started, or on a brief disconnect.
 #
-# To enable, add this entry to /etc/crontab:
-# */30 *   * * *     /root/shutdown-if-inactive.sh >> /var/log/shutdown-if-inactive.log 2>&1
+# To enable, run sudo crontab -l /home/ubuntu/pcw/shutdown-if-inactive.crontab
 #
 
 MARKER_FILE="/tmp/ssh-inactive-flag"
