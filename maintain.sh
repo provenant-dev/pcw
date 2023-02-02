@@ -46,5 +46,5 @@ else
 fi
 cd ~/
 describe-wallet-on-ec2
-printf "Syncing wallet with witnesses.\n\n" && pkli local watch
+watch
 
