@@ -1,3 +1,3 @@
 import os
 
-os.system('sudo apt install net-tools')
+os.system('sudo DEBIAN_FRONTEND=noninteractive apt-get install -y net-tools')
