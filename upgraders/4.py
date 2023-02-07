@@ -20,8 +20,8 @@ txt = txt.rstrip() + """
 
 # Used by share-via-s3 to access a public bucket. This is low security
 # and low stakes, primarily used as a convenient transfer method.
-export S3_SECRET_ACCESS_KEY="/W6bv5C5hymUoqLc8s8EqLYcI5UMXHjQPuvSvLJx"
-export S3_ACCESS_KEY_ID="AKIAY26NZEFT73QNUWGJ"
+export PCW_SHARE_S3_ACCESS_KEY_ID="AKIAY26NZEFT73QNUWGJ"
+export PCW_SHARE_S3_ACCESS_KEY="/W6bv5C5hymUoqLc8s8EqLYcI5UMXHjQPuvSvLJx"
 """
 
 with open(bashrc, 'wt') as f:
