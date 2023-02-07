@@ -26,3 +26,6 @@ export PCW_SHARE_S3_ACCESS_KEY="/W6bv5C5hymUoqLc8s8EqLYcI5UMXHjQPuvSvLJx"
 
 with open(bashrc, 'wt') as f:
     f.write(txt)
+
+printf "\033[0;37mYour environment variables have been updated.\n"
+printf "Please run \033[0;33m source ~/.bashrc\033[00m or log in again to activate the change.\n"
