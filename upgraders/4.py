@@ -1,6 +1,6 @@
 from helpers import *
 import sys
-sys.path.append(PCW_folder)
+sys.path.append(PCW_FOLDER)
 
 from util import get_shell_variable
 
