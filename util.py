@@ -360,10 +360,10 @@ def _run_upgrader(u):
         cout(f"Successfully ran upgrader/{num}.\n")
         if os.path.exists(err_file):
             with open(err_file, "rt") as f:
-                msg = f.read().strip()
+                msg = f.read().strip() + "\n"
             os.remove(err_file)
             if msg:
-                with TempColor(term.white, MAINTENANCE_COLOR):
+                with TempColor(term.bright_white, MAINTENANCE_COLOR):
                     cout(msg)
     return exit_code == 0
 
