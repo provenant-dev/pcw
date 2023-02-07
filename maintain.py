@@ -267,6 +267,7 @@ def do_maintenance():
 
                     config_wallet_commands()
                     configure_auto_shutdown()
+                    mention_whats_new()
         cout("--- Maintenance tasks succeeded.\n")
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Wallet may not be fully functional.\n"))

@@ -379,3 +379,30 @@ def run_upgrade_scripts():
             break
     if clean:
         print("All upgrade scripts ran cleanly.")
+
+
+WHATS_NEW_SEMAPHORE = os.path.expanduser("~/.whatsnew-hash")
+WHATS_NEW_FILE = os.path.expanduser("~/pcw/whatsnew.md")
+
+
+def whats_new_has_changed():
+    old_hash = None
+    if os.path.exists(WHATS_NEW_SEMAPHORE):
+        with open(WHATS_NEW_SEMAPHORE, "rt") as f:
+            old_hash = f.read().strip()
+    md5 = hashlib.md5()
+    with open(WHATS_NEW_FILE, "rt") as f:
+        md5.update(f.read())
+    new_hash = md5.hexdigest()
+    if new_hash != old_hash:
+        return new_hash
+
+
+def mention_whats_new():
+    new_hash = whats_new_has_changed()
+    if new_hash:
+        with open(WHATS_NEW_SEMAPHORE, "wt") as f:
+            f.write(new_hash)
+        with TempColor(term.white, MAINTENANCE_COLOR):
+            cout(term.white("The wallet has new features. Run the ") +
+                term.blue("whatsnew") + "command to learn more.\n")

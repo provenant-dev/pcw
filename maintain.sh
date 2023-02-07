@@ -4,6 +4,7 @@ alias unlock='source ~/pcw/unlock.sh'
 alias lock='unset TYPED_PASSCODE && printf "Wallet locked. Run \"unlock\" to make kli usable again.\n"'
 alias set-person='source ~/pcw/set-person.sh'
 alias set-org='source ~/pcw/set-org.sh'
+alias whatsnew='less ~/pcw/whatsnew.md'
 
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.
