@@ -347,16 +347,17 @@ def _get_pending_upgraders():
 
 def _run_upgrader(u):
     done_file = _get_done_file_path(u)
+    err_file = done_file[:-5] + '.err'
     cmd = f"python3 {u} >{done_file}"
-    print(cmd)
+    cout(cmd)
     exit_code = os.system(cmd)
     if exit_code:
-        err_file = done_file[:-5] + '.err'
         os.rename(done_file, err_file)
-        print(f"Errors during upgrade. See {err_file} for details.")
+        cout(f"Errors during upgrade. See {err_file} for details.")
     else:
         num = os.path.split(u)[1][:-3]
-        print(f"Successfully ran upgrader/{num}.")
+        cout(f"Successfully ran upgrader/{num}.")
+        os.system(f"rm {err_file}")
     return exit_code == 0
 
 
