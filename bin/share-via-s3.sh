@@ -3,7 +3,7 @@
     This script is used by Provenant's Command-line Wallet (PCW) to upload or
       download a file via S3.
     You must have boto (the AWS lib for python) installed to run it.
-    Uploaded files are stored in the bucket pcw-share.
+    Uploaded files are stored in the bucket public-pcw-share.
     Uploaded files will be renamed to prevent spurious collisions (two wallets
       uploading a file with the same name at the same time). The name that's
       chosen is echoed to the screen and must be supplied as a command-line
@@ -11,7 +11,7 @@
     Downloaded files will be renamed back to their original name.
 Usage:
     python s3_file_share.py upload --file ~/xar/data/le.json
-       > echoes to the screen: "Uploading le.json. Tell others to download package abc123xyz.
+       > echoes to the screen: "Uploading ~/xar/data/le.json to s3 as abc123xyz. Give the latter name to others for download."
     python s3_file_share.py download --pkg abc123xyz --file ~/xar/data/le.json
 
 """
@@ -60,7 +60,7 @@ def download_file(obj, file_path):
 def upload_file(file_path):
     obj = get_obj_name(file_path)
     rel_path = os.path.relpath(file_path, os.getcwd())
-    print(f"Uploading {rel_path} to s3 as {obj}. Give the latter name to collaborators for download.")
+    print(f"Uploading {rel_path} to s3 as {obj}. Give the latter name to others for download.")
 
     # For safety, wait 5s. This helps protect against cases where
     # the file is still being modified after it's initially written.

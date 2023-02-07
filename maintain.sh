@@ -24,7 +24,7 @@ if test $maintain_err -eq 0; then
   cd ~/keripy && source venv/bin/activate >~/venv.log 2>&1 && pip install -r requirements.txt >~/requirements.log 2>&1; cd ~/
   # Even though several python packages are installed in the OS, they're not installed
   # in the venv. Force it to be there as well, so we can run our scripts cleanly.
-  pip install blessings boto pyinotify>/dev/null 2>&1
+  pip install blessings boto3 pyinotify>/dev/null 2>&1
   which kli >/dev/null 2>&1
   if test $? -eq 0; then
     unlock

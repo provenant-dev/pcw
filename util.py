@@ -170,7 +170,7 @@ def time_since(file_modified):
 
 
 def shell_variable_pat(variable):
-    return re.compile(r'^[ \t]*(export\s+)?' + variable + r'\s*=\s*"([^"]+)"[ \t]*(\n|\r|$)', re.MULTILINE)
+    return re.compile(r'^[ \t]*(export\s+)?' + variable + r'\s*=\s*"([^"]*)"[ \t]*(\n|\r|$)', re.MULTILINE)
 
 
 def is_executable(path):
