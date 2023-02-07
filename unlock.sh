@@ -5,7 +5,7 @@ hash=`printf "$TYPED_PASSCODE" | sha256sum | cut -f1 -d' '`
 if [ "$hash" = "$saved_hash" ]; then
   # Make sure that TYPED_PASSCODE is exported so it can be used elsewhere.
   export TYPED_PASSCODE=$TYPED_PASSCODE
-  printf "\rWallet unlocked."
+  printf "Wallet unlocked.\n"
   return
 fi
 
