@@ -363,7 +363,7 @@ def _run_upgrader(u):
                 msg = f.read().strip() + "\n"
             os.remove(err_file)
             if msg:
-                with TempColor(term.bright_white, MAINTENANCE_COLOR):
+                with TempColor(term.white, MAINTENANCE_COLOR):
                     cout(msg)
     return exit_code == 0
 
