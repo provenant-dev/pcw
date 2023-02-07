@@ -39,3 +39,6 @@ def reset_from_git(repo, path_in_repo):
                 sys.exit(1)
         finally:
             os.chdir(prev_cwd)
+
+def warn(msg):
+    sys.stdout.write(msg)
