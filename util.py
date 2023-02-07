@@ -404,4 +404,4 @@ def mention_whats_new():
         with open(WHATS_NEW_SEMAPHORE, "wt") as f:
             f.write(new_hash)
         with TempColor(term.white, MAINTENANCE_COLOR):
-            cout("\033[00mThe wallet has new features. Run the \033[0;34mwhatsnew\033[0;37m command to learn more.\n")
+            cout("\033[00mThe wallet has new features. Run the \033[0;34mwhatsnew\033[0;37m command to learn more.\n\n")
