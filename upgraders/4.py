@@ -30,4 +30,4 @@ if "PCW_SHARE_S3_ACCESS_KEY_ID" not in txt:
         f.write(txt)
 
     sys.stderr.write("\033[0;37mYour environment variables have been updated.\n")
-    sys.stderr.write("Please run \033[0;33m source ~/.bashrc\033[00m or log in again to activate the change.\n")
+    sys.stderr.write("Please run \033[0;34msource ~/.bashrc\033[00m or log in again to activate the change.\033[0;37m\n")
