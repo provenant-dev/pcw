@@ -1,9 +1,3 @@
-function ctrl_c() {
-  printf "\r\033[0;31mUnknown passcode makes wallet temporarily unusable for KERI tasks.\033[00m\n"
-  trap - INT
-  return
-}
-
 saved_hash=`head -n 1 ~/.passcode-hash`
 if [ "$saved_hash" = "4aa6892909e369933b9f1babc10519121e2dfd1042551f6b9bdd4eae51f1f0c2" ] ; then
   printf "Using hard-coded passcode.\n"
@@ -12,11 +6,16 @@ else
   if [ "$1" = "--debug" ]; then printf "Saved passcode hash = $saved_hash.\n"; fi
   printf "\n"
   hash=""
-  trap ctrl_c INT
-  while true
+  reprompt="true"
+  trap 'reprompt="false"' INT
+  while :
   do
       printf "\033[0;33mEnter 21-char passcode to unlock wallet:\033[00m "
       read -s TYPED_PASSCODE
+      if [ "$reprompt" = "false" ]; then
+        printf "\r\033[0;31mUnknown passcode makes wallet temporarily unusable for KERI tasks.\033[00m\n"
+        return
+      fi
       hash=`printf "$TYPED_PASSCODE" | sha256sum | cut -f1 -d' '`
       if [ "$1" = "--debug" ]; then printf "Hash of that passcode = $hash.\n"; fi
       if [ "$hash" = "$saved_hash" ]; then
