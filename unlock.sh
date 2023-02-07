@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
-# If we're using a hardcoded passcode for developer convenience, short-circuit script.
+# If wallet is already unlocked, short-circuit.
+hash=`printf "$TYPED_PASSCODE" | sha256sum | cut -f1 -d' '`
+if [ "$hash" = "$saved_hash" ]; then
+  # Make sure that TYPED_PASSCODE is exported so it can be used elsewhere.
+  export TYPED_PASSCODE=$TYPED_PASSCODE
+  printf "\rWallet unlocked."
+  return
+fi
+
+# Also short-circuit if we're using a hardcoded passcode for developer convenience.
 saved_hash=`head -n 1 ~/.passcode-hash`
 if [ "$saved_hash" = "4aa6892909e369933b9f1babc10519121e2dfd1042551f6b9bdd4eae51f1f0c2" ] ; then
   printf "Using hard-coded passcode.\n"
@@ -9,8 +18,8 @@ if [ "$saved_hash" = "4aa6892909e369933b9f1babc10519121e2dfd1042551f6b9bdd4eae51
 fi
 
 if [ "$1" = "--debug" ]; then printf "Saved passcode hash = $saved_hash.\n"; fi
-printf "\n"
 
+printf "\n"
 hash=""
 reprompt="true"
 trap 'reprompt="false"' INT
@@ -37,7 +46,7 @@ do
       # Clear till end of line
       tput el
       printf "\n"
-      export TYPED_PASSCODE=$TYPED_PASSCODE
+      export TYPED_PASSCODE="$TYPED_PASSCODE"
       break
     else
       len=${#TYPED_PASSCODE}
@@ -54,4 +63,3 @@ done
 
 # Make sure CTRL+C is no longer trapped by the handler from this script.
 trap - INT
-
