@@ -391,7 +391,7 @@ def whats_new_has_changed():
         with open(WHATS_NEW_SEMAPHORE, "rt") as f:
             old_hash = f.read().strip()
     md5 = hashlib.md5()
-    with open(WHATS_NEW_FILE, "rt") as f:
+    with open(WHATS_NEW_FILE, "rb") as f:
         md5.update(f.read())
     new_hash = md5.hexdigest()
     if new_hash != old_hash:
