@@ -359,7 +359,7 @@ def _run_upgrader(u):
         num = os.path.split(u)[1][:-3]
         cout(f"Successfully ran upgrader/{num}.\n")
         if os.path.exists(err_file):
-            with open(err_file, "wt") as f:
+            with open(err_file, "rt") as f:
                 msg = f.read().strip()
             os.remove(err_file)
             if msg:
