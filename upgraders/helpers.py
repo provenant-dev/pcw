@@ -58,7 +58,7 @@ def get_fragment_of_auk():
     with open(authkeys_file, "rt") as f:
         txt = f.read()
     m = AUTHK_PAT.search(txt)
-    return m.group(1)
+    return m.group(1).encode('ASCII')
 
 
 def cut_var(script, var):
