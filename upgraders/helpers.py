@@ -11,7 +11,7 @@ PCW_FOLDER = os.path.join(HOME_FOLDER, "pcw")
 
 
 sys.path.append(PCW_FOLDER)
-#import util
+import util
 
 
 def run(cmd):
