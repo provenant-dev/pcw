@@ -62,5 +62,5 @@ def get_fragment_of_auk():
 
 
 def cut_var(script, var):
-    val, exported, start, end = util.get_shell_variable("S3_SECRET_ACCESS_KEY", script)
+    val, exported, start, end = util.get_shell_variable(var, script)
     return script if end == 0 else script[0:start].rstrip() + "\n" + script[end:].lstrip()
