@@ -32,8 +32,8 @@ TIMEOUT = 30  # seconds
 
 s3 = boto3.client(
     "s3",
-    aws_access_key_id=os.environ['PCW_SHARE_S3_ACCESS_KEY_ID'],
-    aws_secret_access_key=os.environ['PCW_SHARE_S3_ACCESS_KEY'],
+    aws_access_key_id=os.environ['PCW_SHARE_S3_ACCESS_KEY_ID2'],
+    aws_secret_access_key=os.environ['PCW_SHARE_S3_ACCESS_KEY2'],
     region_name="us-east-1"
 )
 

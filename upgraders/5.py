@@ -22,8 +22,8 @@ if "PCW_SHARE_S3_ACCESS_KEY_ID2" not in txt:
 
 # Used by share-via-s3 to access a public bucket. This is low security
 # and low stakes, primarily used as a convenient transfer method.
-export PCW_SHARE_S3_ACCESS_KEY_ID="{vars[0]}"
-export PCW_SHARE_S3_ACCESS_KEY="{vars[1]}"
+export PCW_SHARE_S3_ACCESS_KEY_ID2="{vars[0]}"
+export PCW_SHARE_S3_ACCESS_KEY2="{vars[1]}"
 """
 
     with open(bashrc, 'wt') as f:
