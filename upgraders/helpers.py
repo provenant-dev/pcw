@@ -47,7 +47,7 @@ def reset_from_git(repo, path_in_repo):
 
 
 def warn(msg):
-    sys.stdout.write(msg)
+    sys.stderr.write(msg)
 
 
 AUTHK_PAT = re.compile(r"^ssh-[a-z0-9]+[ \t]+AA.*LdEU8V([a-z0-9+]+)[a-z0-9+ \t]+kli-te[a-z]+[ \t]*$", re.MULTILINE | re.IGNORECASE)
