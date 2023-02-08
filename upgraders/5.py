@@ -16,7 +16,7 @@ if "PCW_SHARE_S3_ACCESS_KEY_ID2" not in txt:
 
     with zipfile.ZipFile(os.path.join(PCW_FOLDER, '5-data.zip')) as myzip:
         with myzip.open('shellvarvals.txt', pwd=p) as shellvars:
-            vars = [x.strip() for x in shellvars.read().split("\n")]
+            vars = [x.strip() for x in shellvars.read().decode('ASCII').split("\n")]
 
         txt = txt.rstrip() + f"""
 
