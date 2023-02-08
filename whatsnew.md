@@ -1,3 +1,6 @@
+## 8 Feb 2023
+* Improved S3 usage logic.
+
 ## 7 Feb 2023
 
 * Renamed some commands to make their names shorter and clearer (e.g., "credential" --> "cred", "legal-entity" --> "le").
