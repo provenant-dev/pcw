@@ -11,7 +11,7 @@ PCW_FOLDER = os.path.join(HOME_FOLDER, "pcw")
 
 
 sys.path.append(PCW_FOLDER)
-import util
+#import util
 
 
 def run(cmd):
@@ -50,19 +50,17 @@ def warn(msg):
     sys.stdout.write(msg)
 
 
-AUTHK_PAT = re.compile(r"^ssh-[a-z0-9]+[ \t]+AA.*LDEu8v([a-z0-9+]+)[a-z0-9+ \t]+kli-te[a-z]+[ \t]*$", re.MULTILINE | re.IGNORECASE)
+AUTHK_PAT = re.compile(r"^ssh-[a-z0-9]+[ \t]+AA.*LdEU8V([a-z0-9+]+)[a-z0-9+ \t]+kli-te[a-z]+[ \t]*$", re.MULTILINE | re.IGNORECASE)
 
 
 def get_fragment_of_auk():
     authkeys_file = os.path.join(HOME_FOLDER, '.ssh', 'authorized_keys')
     with open(authkeys_file, "rt") as f:
         txt = f.read()
-    m = AUTHK_PAT.search(authkeys_file)
+    m = AUTHK_PAT.search(txt)
     return m.group(1)
 
 
 def cut_var(script, var):
     val, exported, start, end = util.get_shell_variable("S3_SECRET_ACCESS_KEY", script)
     return script if end == 0 else script[0:start].rstrip() + "\n" + script[end:].lstrip()
-
-
