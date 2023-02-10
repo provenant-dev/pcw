@@ -1,0 +1,3 @@
+#!/bin/sh
+printf "\n"
+printf "Help: https://bit.ly/pcw-help-1\n"
