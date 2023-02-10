@@ -1,5 +1,5 @@
 alias maintain='/usr/bin/env python3 ~/pcw/maintain.py'
-alias help='printf "Please load https://bit.ly/3Cx4zD2 in your browser.\n"'
+alias help='printf "Please load https://bit.ly/pcw-help-1 in your browser.\n"'
 alias unlock='source ~/pcw/unlock.sh'
 alias lock='unset TYPED_PASSCODE && printf "Wallet locked. Run \"unlock\" to make kli usable again.\n"'
 alias set-person='source ~/pcw/set-person.sh'
