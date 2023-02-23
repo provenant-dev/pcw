@@ -1,3 +1,6 @@
+## 14 Feb 2023
+* Added backup & restore feature for the wallet 
+
 ## 8 Feb 2023
 * Improved S3 usage logic.
 
