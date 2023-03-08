@@ -28,6 +28,8 @@ if [ "$STATUS" == "inactive" ]; then
     # If someone logged in within the last 30 minutes, don't shut down.
     if ! last --since "30 minutes ago" | grep -q "pts/"; then
       echo $(date) ": Shutting down due to no ssh activity for 30 minutes."
+      # If this is a guest wallet, reset who has it checked out.
+      rm -f "/tmp/guest.txt"
       poweroff
     fi
 

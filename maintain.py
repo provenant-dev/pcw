@@ -82,21 +82,27 @@ def personalize():
     with open(bashrc, 'rt') as f:
         script = f.read()
     s = script
+    is_guest = guest_mode_is_active()
 
-    def get_var(name, prompt, sh, no_prompt=None):
+    def get_var(name, prompt, sh, default_value=None, force_for_guest=True):
         val, exported, start, end = get_shell_variable(name, sh)
-        if (not val) or (not exported):
-            if not val:
-                val = ask(prompt).strip() if prompt else no_prompt
+        # If there's any reason that the shell script isn't currently what it should be...
+        if (not val) or (not exported) or (force_for_guest and val != default_value):
+            if is_guest and force_for_guest and default_value:
+                val = default_value
+            elif not val:
+                val = ask(prompt).strip() if prompt else default_value
             else: # variable exists but was not exported; rewrite
                 sh = sh[:start] + sh[end:]
             sh = "export " + name + '="' + val + '"\n\n' + sh
         return val, sh
 
+    # Set this variable once and don't let user have input on it.
     _, s = get_var("WALLET_DB_NAME", None, s, "XAR")
-    owner, s = get_var("OWNER", "What is your first name?", s)
-    org, s = get_var("ORG", "What org do you represent (one word)?", s)
-    ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
+    # Find out who is using this wallet -- but use default values and skip the questions for guests.
+    owner, s = get_var("OWNER", "What is your first name?", s, "guest")
+    org, s = get_var("ORG", "What org do you represent (one word)?", s, "provenant")
+    ctx, s, = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", "dev")
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
@@ -105,7 +111,10 @@ def personalize():
             f.write(s)
         run(f"touch {semaphore}")
     if not is_protected_by_passcode():
-        protect_by_passcode(ctx != "prod")
+        protect_by_passcode(ctx != "prod", is_guest)
+    if is_guest:
+        print(GUEST_BANNER)
+
     return owner, org, ctx
 
 

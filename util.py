@@ -54,6 +54,35 @@ you remember it. In the meantime, the passcode for this wallet is just the
 
   """
 HARDCODED_PASSCODE = '111111111111111111111'
+GUEST_BANNER = """
+Welcome. This guest wallet is a tool you can use to do KERI experiments with
+low risk. Feel free to create AIDs, connect them to one another, issue
+credentials, try various commands with the KERI kli tool, and so forth. All
+operations use stage witnesses rather than production ones.
+
+Guest wallets are checked out for the duration of a single SSH session. When
+you log off, all wallet state is reset.
+
+Terms of Use -- If you continue to use this wallet, you agree that:
+
+1. You'll only use the wallet for KERI experiments, not as a platform for
+hacking, random downloads, DOS attacks, SSH tunnels, etc. You won't install
+new stuff or sabotage the wallet.
+
+2. You understand that we offer no warranties or guarantees, and make no
+commitment to provide support. Use at your own risk. However, if something
+seems broken or you have a burning question, please email pcw-guest@provenant.net.
+
+3. You have a license to use the code on this machine ONLY on this machine,
+and only while you are in the current SSH session. You may not copy it
+elsewhere.
+
+4. You have no support rights. You can ask us questions, but we might ignore you.
+
+5. We make no warranties or guarantees of any kind. Use at your own risk.
+
+Type YES to accept.
+"""
 RERUNNER = '.rerun'
 ESC_SEQ_PAT = re.compile("(?:\007|\033)\\[[0-9;]+[Bm]")
 BIN_PATH = os.path.expanduser("~/bin")
@@ -115,6 +144,11 @@ def sys_call_with_output_or_die(cmd):
         print(f"Ran {cmd}. Expected success; got code {exit_code} with this output instead:\n" + output)
         sys.exit(127)
     return output
+
+
+def guest_mode_is_active():
+    exit_code, hostname = sys_call_with_output('hostname')
+    return 'guest' in hostname if hostname else False
 
 
 def cout(txt):
@@ -210,7 +244,7 @@ def get_passcode():
     return "".join(code)
 
 
-def protect_by_passcode(hardcode=False):
+def protect_by_passcode(hardcode=False, quiet=False):
     # In this function, we switch between sys.stdout and cout very deliberately.
     # cout() writes to the log, whereas sys.stdout only writes to the screen.
     # We want the log to contain almost, but not quite, what we write to the
@@ -220,8 +254,9 @@ def protect_by_passcode(hardcode=False):
     with TempColor(term.normal, MAINTENANCE_COLOR):
         if hardcode:
             passcode = HARDCODED_PASSCODE
-            cout(term.yellow(HARDCODED_PROTECT_PROMPT))
-            sys.stdout.write(term.red(passcode) + "\n")
+            if not quiet:
+                cout(term.yellow(HARDCODED_PROTECT_PROMPT))
+                sys.stdout.write(term.red(passcode) + "\n")
         else:
             cout(term.yellow(PROTECT_PROMPT))
             passcode = get_passcode()
