@@ -79,17 +79,13 @@ def upload_file(file_path):
 # as quickly as inotify -- but it also has no dependencies, and it's much easier to
 # debug and to achieve success.
 def watch_file(path, timeout=30):
-    first = True
     print(f"Watching for {path} to become available.")
     while timeout > 0:
         if os.path.isfile(path):
             time.sleep(1.0)
-            print("\nFile {path} is now available.")
+            print(f"\nFile {path} is now available.")
             return True
         time.sleep(1.0)
-        if first:
-            sys.stdout.write("\n")
-            first = False
         sys.stdout.write('.')
     return False
 
