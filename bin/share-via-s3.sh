@@ -111,7 +111,7 @@ def main():
             print("Need --file <path of file before upload>.")
             exit(1)
 
-        path = os.path.abspath(file)
+        path = os.path.abspath(args.file)
         if not args.now:
             if not watch_file(path):
                 print(f"Timed out before {path} became available.")
