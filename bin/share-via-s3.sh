@@ -107,13 +107,12 @@ def main():
             print("Need --file <path of file before upload>.")
             exit(1)
 
-        path = os.path.abspath(args.file)
         if not args.now:
-            if not watch_file(path):
-                print(f"Timed out before {path} became available.")
+            if not watch_file(args.file):
+                print(f"Timed out before {args.file} became available.")
                 exit(1)
 
-        upload_file(path)
+        upload_file(args.file)
 
     elif args.command == 'download':
         if not args.obj:
