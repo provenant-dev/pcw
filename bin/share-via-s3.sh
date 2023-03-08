@@ -2,13 +2,13 @@
 """
     This script is used by Provenant's Command-line Wallet (PCW) to upload or
       download a file via S3.
-    You must have boto (the AWS lib for python) installed to run it.
+    You must have boto3 (the AWS lib for python) installed to run it.
     Uploaded files are stored in the bucket public-pcw-share.
     Uploaded files will be renamed to prevent spurious collisions (two wallets
       uploading a file with the same name at the same time). The name that's
       chosen is echoed to the screen and must be supplied as a command-line
       argument by remote parties who wish to download.
-    Downloaded files will be renamed back to their original name.
+    Downloaded files will automatically be renamed back to their original name.
 Usage:
     python s3_file_share.py upload --file ~/xar/data/le.json
        > echoes to the screen: "Uploading ~/xar/data/le.json to s3 as abc123xyz. Give the latter name to others for download."
@@ -23,12 +23,8 @@ import time
 import warnings
 
 import boto3
-import pyinotify
-
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 BUCKET_NAME = 'public-pcw-share'
-TIMEOUT = 30  # seconds
 
 s3 = boto3.client(
     "s3",
@@ -73,48 +69,23 @@ def upload_file(file_path):
     exit(0)
 
 
-# noinspection PyPep8Naming,PyMethodMayBeStatic
-class EventHandler(pyinotify.ProcessEvent):
-    def __init__(self, file_name):
-        print("Watching for file: {}".format(file_name))
-
-        super(EventHandler, self).__init__()
-        self.file_name = file_name
-
-    def process_IN_MODIFY(self, event):
-        upload_file(event.pathname)
-
-
-class CustomThreadedNotifier(pyinotify.ThreadedNotifier):
-    def __init__(self, watch_manager, default_proc_fun=None, read_freq=1):
-        super(CustomThreadedNotifier, self).__init__(watch_manager, default_proc_fun, read_freq)
-        self.start_time = time.time()
-
-    def loop(self):
-        while not self._stop_event.isSet():
-
-            self.process_events()
-            ref_time = time.time()
-
-            if self.check_events():
-                self._sleep(ref_time)
-                self.read_events()
-
-            if time.time() - self.start_time > TIMEOUT:
-                print("Timeout reached")
-                break
-
-
-def watch_dir(path, file_name):
-    wm = pyinotify.WatchManager()
-    notifier = CustomThreadedNotifier(wm, EventHandler(file_name=file_name))
-    notifier.start()
-
-    # watch for all events in the path
-    wm.add_watch(path, pyinotify.ALL_EVENTS)
-
-    # wait for the thread to finish
-    notifier.join(TIMEOUT)
+# This class is a simple replacement for pyinotify. The word "simple" is important.
+# When we originally wrote this script, we actually used pyinotify. However, this turned
+# out to be problematic. For one, pyinotify is an old library that is not maintained well.
+# For another, it depends on kernel features that are sensitive to configuration and
+# context (e.g., how many open file handles can be used by the current user). What we
+# found was that lots of things could go wrong, and our rate of success was very low.
+# We needed something simpler. That's what we have here. It doesn't react to events
+# as quickly as inotify -- but it also has no dependencies, and it's much easier to
+# debug and to achieve success.
+def watch_file(path, timeout=30):
+    print(f"Watching for {path} to become available.")
+    while timeout > 0:
+        if os.path.isfile(path):
+            time.sleep(1.0)
+            return True
+        time.sleep(1.0)
+    return False
 
 
 parser = argparse.ArgumentParser(description='Upload or download a file')
@@ -134,11 +105,12 @@ def main():
             print("Need --file <path of file before upload>.")
             exit(1)
 
-        if args.now:
-            upload_file(args.file)
-        else:
-            folder, file = os.path.split(args.file)
-            watch_dir(folder, file)
+        if not args.now:
+            if not watch_file(args.file):
+                print(f"Timed out before {args.file} became available.")
+                exit(1)
+
+        upload_file(args.file)
 
     elif args.command == 'download':
         if not args.obj:
