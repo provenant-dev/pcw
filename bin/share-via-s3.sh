@@ -87,9 +87,9 @@ def watch_file(path, timeout=30):
             print("\nFile {path} is now available.")
             return True
         time.sleep(1.0)
-        if First:
+        if first:
             sys.stdout.write("\n")
-            First = False
+            first = False
         sys.stdout.write('.')
     return False
 
