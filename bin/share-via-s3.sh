@@ -58,15 +58,12 @@ def upload_file(file_path):
     rel_path = os.path.relpath(file_path, os.getcwd())
     print(f"Uploading {rel_path} to s3 as {obj}. Give the latter name to others for download.")
 
-    # For safety, wait 5s. This helps protect against cases where
+    # For safety, wait 2s. This helps protect against cases where
     # the file is still being modified after it's initially written.
-    time.sleep(5)
+    time.sleep(2)
 
     s3.upload_file(file_path, BUCKET_NAME, obj)
     print("Upload complete.")
-
-    # forcefully quit
-    exit(0)
 
 
 # This class is a simple replacement for pyinotify. The word "simple" is important.
@@ -82,11 +79,11 @@ def watch_file(path, timeout=30):
     print(f"Watching for {path} to become available.")
     while timeout > 0:
         if os.path.isfile(path):
-            time.sleep(1.0)
             print(f"\nFile {path} is now available.")
             return True
         time.sleep(1.0)
         sys.stdout.write('.')
+        timeout -= 1
     return False
 
 
@@ -105,28 +102,28 @@ def main():
 
         if not args.file:
             print("Need --file <path of file before upload>.")
-            exit(1)
+            sys.exit(1)
 
         if not args.now:
             if not watch_file(args.file):
                 print(f"Timed out before {args.file} became available.")
-                exit(1)
+                sys.exit(1)
 
         upload_file(args.file)
 
     elif args.command == 'download':
         if not args.obj:
             print("Need --obj <identifier for object on S3>.")
-            exit(1)
+            sys.exit(1)
         if not args.file:
             print("Need --file <path of file after download>.")
-            exit(1)
+            sys.exit(1)
 
         download_file(args.obj, args.file)
 
     else:
         print("Command not recognized")
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == '__main__':
