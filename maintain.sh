@@ -5,6 +5,7 @@ alias lock='unset TYPED_PASSCODE && printf "Wallet locked. Run \"unlock\" to mak
 alias set-person='source ~/pcw/set-person.sh'
 alias set-org='source ~/pcw/set-org.sh'
 alias whatsnew='head -n 10 ~/pcw/whatsnew.md && printf "\n\n(Use less ~/pcw/whatsnew.md for full info.)\n"'
+alias guest-checkin='rm -f /tmp/guest.txt && exit'
 
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.

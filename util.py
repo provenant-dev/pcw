@@ -466,6 +466,8 @@ PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
             email = get_email()
             if not email:
                 return False
+            else:
+                print(f"This guest wallet now checked out to {email}. To relinquish, run:\n  guest-checkin")
             with open(GUESTFILE, "wt") as f:
                 f.write(email)
         return True
