@@ -112,8 +112,6 @@ def personalize():
         run(f"touch {semaphore}")
     if not is_protected_by_passcode():
         protect_by_passcode(ctx != "prod", is_guest)
-    if is_guest:
-        print(GUEST_BANNER)
 
     return owner, org, ctx
 
