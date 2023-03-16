@@ -285,6 +285,9 @@ def do_maintenance():
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Wallet may not be fully functional.\n"))
         sys.exit(1)
+    except SystemExit:
+        cout(term.red("--- Maintenance aborted."))
+        raise
     except:
         cout(term.red("--- Error.\n" + traceback.format_exc() + "---\n"))
 
