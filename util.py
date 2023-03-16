@@ -477,7 +477,7 @@ PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
                 else:
                     # Undo dimness of maintenance text again.
                     sys.stdout.write(term.normal)
-                    print(term.normal + term.white("\nThis guest wallet now checked out to {email}."))
+                    print(term.normal + term.white(f"\nThis guest wallet now checked out to {email}."))
                     print(term.white("To relinquish, run:\n  ") + term.blue("guest-checkin") + "\n")
                 with open(GUESTFILE, "wt") as f:
                     f.write(email)
