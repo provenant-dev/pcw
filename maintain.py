@@ -116,7 +116,7 @@ def personalize():
     return owner, org, ctx
 
 
-def patch_os(cache_secs=86400):
+def patch_os(cache_secs=86400*3):
     if time_since(PATCH_CHECK_FILE) > cache_secs:
         cout("Making sure your wallet OS is fully patched.\n")
         if os.path.isfile(PATCH_CHECK_FILE):
@@ -267,7 +267,7 @@ def do_maintenance():
 
                     if guest_mode_is_active():
                         if not enforce_guest_checkout():
-                            pass
+                            sys.exit(111)
 
                     owner, org, ctx = personalize()
                     patch_os()

@@ -324,9 +324,10 @@ def configure_auto_shutdown():
     else:
         with open(restart_url, "rt") as f:
             restart_url = f.read().strip()
-    with TempColor(term.dim_white, MAINTENANCE_COLOR):
-        advice = AUTO_SHUTDOWN_EXPLANATION % restart_url if restart_url else NO_AUTO_SHUTDOWN_EXPLANATION
-        print(advice)
+    if not guest_mode_is_active():
+        with TempColor(term.dim_white, MAINTENANCE_COLOR):
+            advice = AUTO_SHUTDOWN_EXPLANATION % restart_url if restart_url else NO_AUTO_SHUTDOWN_EXPLANATION
+            print(advice)
 
 
 UPGRADER_PAT = re.compile(r'^\d+[.]py$')
@@ -471,7 +472,8 @@ PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
             if not email:
                 return False
             else:
-                print(f"This guest wallet now checked out to {email}. To relinquish, run:\n  guest-checkin")
+                print("This guest wallet now checked out to " + term.white(email) + ".")
+                print("To relinquish, run:\n  " + term.blue("guest-checkin"))
             with open(GUESTFILE, "wt") as f:
                 f.write(email)
         return True
