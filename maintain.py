@@ -221,7 +221,7 @@ def patch_config(ctx):
 def update_pcw_code():
     updated = refresh_repo("https://github.com/provenant-dev/pcw.git")
     if updated:
-        cout("Wallet software updated. Requesting re-launch of maintenance script with latest code.\n")
+        cout("Wallet software updated. Restarting maintenance script with latest code.\n")
         run(f"touch {RERUNNER}")
         # Give file buffers time to flush.
         time.sleep(1)
