@@ -418,6 +418,9 @@ GUESTFILE="/tmp/guest.txt"
 
 
 def enforce_guest_checkout():
+    # Undo dimness of maintenance text.
+    sys.stdout.write(term.normal)
+
     with TempColor(term.white, MAINTENANCE_COLOR):
         if os.path.isfile(GUESTFILE):
             with open(GUESTFILE, 'rt') as f:
@@ -430,15 +433,13 @@ wallet, or check back in an hour to see if this one frees up."""))
                 return False
         else:
             print("""
-Welcome. This guest wallet is a tool you can use to do KERI experiments with
-low risk. Feel free to create AIDs, connect them to one another, issue
-credentials, try various commands with the KERI kli tool, and so forth. All
-operations use stage witnesses rather than production ones. Any data you
-create is temporary.
+Welcome. You can use this guest wallet to do KERI experiments with low risk.
+Feel free to create and connect AIDs, issue credentials, try various commands
+with the KERI kli tool, and so forth. All operations use stage witnesses rather
+than production ones. Any data you create is temporary.
 
 Guest wallets are checked out for the duration of a single SSH session plus a
 few minutes (to give you a chance to log back in quickly if you get disconnected).
-Wallet state is automatically reset thereafter.
 """)
             print(term.red("TERMS OF USE") + """ -- If you continue to use this wallet, you agree that:
 
