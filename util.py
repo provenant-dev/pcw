@@ -54,35 +54,6 @@ you remember it. In the meantime, the passcode for this wallet is just the
 
   """
 HARDCODED_PASSCODE = '111111111111111111111'
-GUEST_BANNER = """
-Welcome. This guest wallet is a tool you can use to do KERI experiments with
-low risk. Feel free to create AIDs, connect them to one another, issue
-credentials, try various commands with the KERI kli tool, and so forth. All
-operations use stage witnesses rather than production ones.
-
-Guest wallets are checked out for the duration of a single SSH session. When
-you log off, all wallet state is reset.
-
-Terms of Use -- If you continue to use this wallet, you agree that:
-
-1. You'll only use the wallet for KERI experiments, not as a platform for
-hacking, random downloads, DOS attacks, SSH tunnels, etc. You won't install
-new stuff or sabotage the wallet.
-
-2. You understand that we offer no warranties or guarantees, and make no
-commitment to provide support. Use at your own risk. However, if something
-seems broken or you have a burning question, please email pcw-guest@provenant.net.
-
-3. You have a license to use the code on this machine ONLY on this machine,
-and only while you are in the current SSH session. You may not copy it
-elsewhere.
-
-4. You have no support rights. You can ask us questions, but we might ignore you.
-
-5. We make no warranties or guarantees of any kind. Use at your own risk.
-
-Type YES to accept.
-"""
 RERUNNER = '.rerun'
 ESC_SEQ_PAT = re.compile("(?:\007|\033)\\[[0-9;]+[Bm]")
 BIN_PATH = os.path.expanduser("~/bin")
@@ -440,3 +411,57 @@ def mention_whats_new():
             f.write(new_hash)
         with TempColor(term.white, MAINTENANCE_COLOR):
             cout("\033[00mThe wallet has new features. Run the \033[0;34mwhatsnew\033[0;37m command to learn more.\n\n")
+
+
+
+GUESTFILE="/tmp/guest.txt"
+
+
+def enforce_guest_checkout():
+    if os.path.isfile(GUESTFILE):
+        with open(GUESTFILE, 'rt') as f:
+            email = f.read().strip().lower()
+        answer = input("Your email? ").strip().lower()
+        if email != answer:
+            print("""\
+This guest wallet is currently in use by someone else. Please try a different guest
+wallet, or check back in an hour to see if this one frees up.""")
+            return False
+    else:
+        print("""
+Welcome. This guest wallet is a tool you can use to do KERI experiments with
+low risk. Feel free to create AIDs, connect them to one another, issue
+credentials, try various commands with the KERI kli tool, and so forth. All
+operations use stage witnesses rather than production ones. Any data you
+create is temporary.
+
+Guest wallets are checked out for the duration of a single SSH session plus a
+few minutes (to give you a chance to log back in quickly if you get disconnected).
+Wallet state is automatically reset thereafter.
+
+TERMS OF USE -- If you continue to use this wallet, you agree that:
+
+1. You'll only use the wallet for KERI experiments, not as a platform for
+hacking, random downloads, DOS attacks, SSH tunnels, etc. You won't install
+new stuff or sabotage the wallet. You give your consent for Provenant to
+monitor your SSH session to hold you accountable for good behavior.
+
+2. You understand that we offer no warranties or guarantees, and make no
+commitment to provide support. Use at your own risk. However, if something
+seems broken or you have a burning question, please email pcw-guest@provenant.net.
+
+3. You have a license to use the code on this machine ONLY on this machine,
+and only while you are in the current SSH session. You may not copy it
+elsewhere.
+
+4. You have no support rights. You can ask us questions, but we might ignore you.
+
+5. We make no warranties or guarantees of any kind. Use at your own risk.
+
+IF YOU DO NOT AGREE TO THESE TERMS, LOG OFF NOW. OTHERWISE, CHECK OUT THIS WALLET
+BY PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
+""")
+        email = input("Your email? ").strip().lower()
+        with open(GUESTFILE, "wt") as f:
+            f.write(email)
+    return True

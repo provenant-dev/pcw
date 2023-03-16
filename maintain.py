@@ -266,6 +266,10 @@ def do_maintenance():
                     # wallet is built.
                     run_upgrade_scripts()
 
+                    if guest_mode_is_active():
+                        if not enforce_guest_checkout():
+                            pass
+
                     owner, org, ctx = personalize()
                     patch_os()
                     refresh_repo("https://github.com/provenant-dev/keripy.git")
