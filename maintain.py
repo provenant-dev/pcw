@@ -102,7 +102,7 @@ def personalize():
     # Find out who is using this wallet -- but use default values and skip the questions for guests.
     owner, s = get_var("OWNER", "What is your first name?", s, "guest")
     org, s = get_var("ORG", "What org do you represent (one word)?", s, "provenant")
-    ctx, s, = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", "dev")
+    ctx, s, = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s, "stage")
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:

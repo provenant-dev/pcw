@@ -119,7 +119,7 @@ def sys_call_with_output_or_die(cmd):
 
 def guest_mode_is_active():
     exit_code, hostname = sys_call_with_output('hostname')
-    return 'guest' in hostname if hostname else False
+    return 'guest' in hostname.lower() if hostname else False
 
 
 def cout(txt):
@@ -444,7 +444,7 @@ TERMS OF USE -- If you continue to use this wallet, you agree that:
 1. You'll only use the wallet for KERI experiments, not as a platform for
 hacking, random downloads, DOS attacks, SSH tunnels, etc. You won't install
 new stuff or sabotage the wallet. You give your consent for Provenant to
-monitor your SSH session to hold you accountable for good behavior.
+monitor your SSH session to hold you accountable for this good behavior.
 
 2. You understand that we offer no warranties or guarantees, and make no
 commitment to provide support. Use at your own risk. However, if something
@@ -453,10 +453,6 @@ seems broken or you have a burning question, please email pcw-guest@provenant.ne
 3. You have a license to use the code on this machine ONLY on this machine,
 and only while you are in the current SSH session. You may not copy it
 elsewhere.
-
-4. You have no support rights. You can ask us questions, but we might ignore you.
-
-5. We make no warranties or guarantees of any kind. Use at your own risk.
 
 IF YOU DO NOT AGREE TO THESE TERMS, LOG OFF NOW. OTHERWISE, CHECK OUT THIS WALLET
 BY PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
