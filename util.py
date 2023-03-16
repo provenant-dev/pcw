@@ -435,17 +435,17 @@ wallet, or check back in an hour to see if this one frees up."""))
             print("""
 Welcome. You can use this guest wallet to do KERI experiments with low risk.
 Feel free to create and connect AIDs, issue credentials, try various commands
-with the KERI kli tool, and so forth. All operations use stage witnesses rather
-than production ones. Any data you create is temporary.
+with the KERI kli tool, and so forth. All operations use stage witnesses
+rather than production ones. Any data you create is temporary.
 
 Guest wallets are checked out for the duration of a single SSH session plus a
-few minutes (to give you a chance to log back in quickly if you get disconnected).
+few minutes (so you can log back in quickly if you get disconnected).
 """)
             print(term.red("TERMS OF USE") + """ -- If you continue to use this wallet, you agree that:
 
 1. You'll only use the wallet for KERI experiments, not for hacking, random
-downloads, DOS attacks, SSH tunnels, etc. You won't install new stuff or sabotage
-the wallet. Provenant may monitor your behavior to hold you accountable.
+downloads, DOS attacks, SSH tunnels, etc. You won't install new stuff or
+break stuff. Provenant may monitor your behavior to hold you accountable.
 
 2. We offer no warranties or guarantees, and make no commitment to provide
 support. Use at your own risk. However, if something breaks or you have a
@@ -454,8 +454,8 @@ burning question, please email pcw-guest@provenant.net.
 3. You may use the code on this machine ONLY on this machine, and only while
 you are in the current SSH session. You may not copy it elsewhere.
 """)
-            print(term.red("""IF YOU DO NOT AGREE TO THESE TERMS, LOG OFF NOW. OTHERWISE, CHECK OUT THIS WALLET
-BY PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
+            print(term.red("""IF YOU DON'T AGREE, LOG OFF NOW. OTHERWISE, CHECK OUT THE WALLET BY
+PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
 """))
             email = ask("Your email?").strip().lower()
             with open(GUESTFILE, "wt") as f:
