@@ -436,6 +436,8 @@ def enforce_guest_checkout():
                 answer = get_email()
                 if not answer:
                     return False
+                # Undo dimness of maintenance text again.
+                sys.stdout.write(term.normal)
                 if email != answer:
                     print(term.red("""\
 Someone else has this wallet checked out. Please try a different guest wallet,
