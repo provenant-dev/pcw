@@ -415,6 +415,7 @@ def mention_whats_new():
 
 
 GUESTFILE="/tmp/guest.txt"
+EMAIL_REGEX = re.compile("^[a-z0-9.-]+@[a-z0-9-]+[.][a-z0-9-.]+$")
 
 
 def enforce_guest_checkout():
@@ -457,7 +458,13 @@ you are in the current SSH session. You may not copy it elsewhere.
             print(term.red("""IF YOU DON'T AGREE, LOG OFF NOW. OTHERWISE, CHECK OUT THE WALLET BY
 PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
 """))
-            email = ask("Your email?").strip().lower()
+            while True:
+                email = ask("Your email?").strip().lower()
+                if EMAIL_REGEX.match(email):
+                    print(f"Checking guest wallet out to {email}.")
+                    break
+                else:
+                    print("Bad email address.")
             with open(GUESTFILE, "wt") as f:
                 f.write(email)
         return True
