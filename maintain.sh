@@ -14,7 +14,10 @@ for i in 1 2 3; do
   maintain_err=$?
   if test $maintain_err -ne 0; then break; fi
   if ! test -f ".rerun"; then break; fi
-  if test $maintain_err -eq 111; then exit; fi
+  if test $maintain_err -eq 111; then
+    sleep 2
+    exit
+  fi
 done
 
 if test $maintain_err -eq 0; then
