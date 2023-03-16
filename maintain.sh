@@ -12,7 +12,10 @@ alias guest-checkin='rm /tmp/guest.txt && maintain --reset --noprompt && exit'
 for i in 1 2 3; do
   python3 ~/pcw/maintain.py
   maintain_err=$?
-  if test $maintain_err -ne 0; then break; fi
+  if test $maintain_err -ne 0; then
+    printf "Maintenance exit code $maintain_err."
+    break
+  fi
   if ! test -f ".rerun"; then break; fi
   if test $maintain_err -eq 111; then
     sleep 2
