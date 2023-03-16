@@ -25,11 +25,14 @@ fi
 if [ "$STATUS" == "inactive" ]; then
   if [ -f "$MARKER_FILE" ]; then
 
-    # If someone logged in within the last 30 minutes, don't shut down.
+    # If someone logged in within the last 30 minutes, don't shut down. Otherwise...
     if ! last --since "30 minutes ago" | grep -q "pts/"; then
       echo $(date) ": Shutting down due to no ssh activity for 30 minutes."
-      # If this is a guest wallet, reset who has it checked out.
-      rm -f "/tmp/guest.txt"
+      # If this is a guest wallet, reset who has it checked out, plus all other wallet state.
+      if test -f "/tmp/guest.txt"; then
+        rm "/tmp/guest.txt"
+        sudo runuser ubuntu -c '/usr/bin/env python3 /home/ubuntu/pcw/maintain.py --reset --noprompt'
+      fi
       poweroff
     fi
 
