@@ -167,7 +167,8 @@ def reset_after_confirm():
 def make_script(src_path, dest_path, cwd):
     src_path = os.path.abspath(src_path)
     with open(dest_path, 'wt') as f:
-        f.write(f'#!/bin/bash\ncd {cwd}\n{src_path} "$@"\n')
+        chdir_line = f"cd {cwd}\n" if cwd else ""
+        f.write(f'#!/bin/bash\n{chdir_line}{src_path} "$@"\n')
     os.chmod(dest_path, SCRIPT_PERMISSIONS)
 
 
@@ -178,7 +179,7 @@ def cleanup_old_scripts():
             os.remove(script)
 
 
-def add_scripts_to_path(folder, cwd):
+def add_scripts_to_path(folder, cwd=None):
     cout(f"Adding scripts in {folder} to path.\n")
     if not os.path.exists(BIN_PATH):
         os.makedirs(BIN_PATH)
@@ -241,7 +242,7 @@ def update_xar_code(ctx, owner):
 def config_wallet_commands():
     cleanup_old_scripts()
     add_scripts_to_path(os.path.expanduser("~/xar/scripts"), os.path.expanduser("~/xar"))
-    add_scripts_to_path(os.path.expanduser("~/pcw/bin"), os.path.expanduser("~/"))
+    add_scripts_to_path(os.path.expanduser("~/pcw/bin"))
 
 
 def do_maintenance():
