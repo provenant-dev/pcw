@@ -435,6 +435,8 @@ def enforce_guest_checkout():
 Someone else has this wallet checked out. Please try a different guest wallet,
 or check back in an hour to see if this one frees up."""))
                 return False
+            else:
+                print("Welcome back to your checked out guest wallet.")
         else:
             print("""
 Welcome. You can use this guest wallet to do KERI experiments with low risk.
