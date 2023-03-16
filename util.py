@@ -426,11 +426,14 @@ def enforce_guest_checkout():
         if os.path.isfile(GUESTFILE):
             with open(GUESTFILE, 'rt') as f:
                 email = f.read().strip().lower()
-            answer = input("Your email? ").strip().lower()
+            print("This wallet is currently in use by a guest.")
+            answer = get_email()
+            if not answer:
+                return False
             if email != answer:
                 print(term.red("""\
-This guest wallet is currently in use by someone else. Please try a different guest
-wallet, or check back in an hour to see if this one frees up."""))
+Someone else has this wallet checked out. Please try a different guest wallet,
+or check back in an hour to see if this one frees up."""))
                 return False
         else:
             print("""
@@ -458,13 +461,20 @@ you are in the current SSH session. You may not copy it elsewhere.
             print(term.red("""IF YOU DON'T AGREE, LOG OFF NOW. OTHERWISE, CHECK OUT THE WALLET BY
 PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
 """))
-            while True:
-                email = ask("Your email?").strip().lower()
-                if EMAIL_REGEX.match(email):
-                    print(f"Checking guest wallet out to {email}.")
-                    break
-                else:
-                    print("Bad email address.")
+            email = get_email()
+            if not email:
+                return False
             with open(GUESTFILE, "wt") as f:
                 f.write(email)
         return True
+
+
+def get_email():
+    i = 5
+    while i > 0:
+        email = ask("Your email?").strip().lower()
+        if EMAIL_REGEX.match(email):
+            return email
+        else:
+            print("Bad email address.")
+            i -= 1
