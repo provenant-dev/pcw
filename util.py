@@ -117,9 +117,13 @@ def sys_call_with_output_or_die(cmd):
     return output
 
 
+_guest_mode_active = None
 def guest_mode_is_active():
-    exit_code, hostname = sys_call_with_output('hostname')
-    return 'guest' in hostname.lower() if hostname else False
+    global _guest_mode_active
+    if _guest_mode_active is None:
+        exit_code, hostname = sys_call_with_output('hostname')
+        _guest_mode_active = bool('guest' in hostname.lower() if hostname else False)
+    return _guest_mode_active
 
 
 def cout(txt):

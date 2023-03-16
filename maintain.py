@@ -144,15 +144,16 @@ def reset_wallet():
         run("mv ~/.bashrc.bak ~/.bashrc")
 
 
-def reset_after_confirm():
+def reset_after_confirm(preconfirm = False):
     cout("Wallet reset requested.\n" + term.normal)
     prompt = RESET_PROMPT
     confirm = "yes"
     if os.getenv("CTX") not in ["dev", "stage"]:
+        preconfirm = False
         cout(term.red("\n\nTHIS IS A PRODUCTION WALLET. BE VERY, VERY CAREFUL!\n\n"))
         confirm = str(time.time())[0:6]
         prompt = prompt.replace('"yes"', f'"{confirm}"')
-    should_proceed = ask(prompt).lower() == confirm
+    should_proceed = True if preconfirm else (ask(prompt).lower() == confirm)
     if should_proceed:
         cout("\nResetting wallet. This will destroy all saved state.\n")
         reset_wallet()
@@ -252,8 +253,8 @@ def do_maintenance():
         with TempColor(MAINTENANCE_COLOR):
             if os.path.exists(RERUNNER):
                 break_rerun_cycle()
-            if len(sys.argv) == 2 and sys.argv[1] == '--reset':
-                reset_after_confirm()
+            if len(sys.argv) >= 2 and '--reset' in sys.argv:
+                reset_after_confirm('--noprompt' in sys.argv)
             else:
                 if update_pcw_code():
                     # Script will be re-launched, doing remaining maintenance with new code.
