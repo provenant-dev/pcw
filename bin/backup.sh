@@ -29,8 +29,8 @@ import boto3
 
 BUCKET_NAME = 'pcw-backups'
 
-AWS_ACCESS_KEY_ID=os.environ['PCW_SHARE_S3_ACCESS_KEY_ID']
-AWS_ACCESS_KEY=os.environ['PCW_SHARE_S3_ACCESS_KEY']
+AWS_ACCESS_KEY_ID=os.environ['PCW_SHARE_S3_ACCESS_KEY_ID2']
+AWS_ACCESS_KEY=os.environ['PCW_SHARE_S3_ACCESS_KEY2']
 AWS_REGION_NAME="us-east-1"
 
 class WalletBackupManager:
