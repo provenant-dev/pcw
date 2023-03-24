@@ -5,6 +5,7 @@
 Requirements:
   - pip3 install requests
   - pip3 install boto3
+  - sudo apt install zip
 
 Usage:
   $ ./backup.sh --passcode <PASSWORD-FOR-ZIP>

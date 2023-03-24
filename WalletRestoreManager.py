@@ -5,6 +5,7 @@
 Requirements:
   - pip3 install requests
   - pip3 install boto3
+  - sudo apt install zip
 
 """
 import os
@@ -80,11 +81,17 @@ class WalletRestoreManager:
       else:
         print(f"{index}: {i} (Remote)")
       index+=1
-    self.selected_backup = int(input("Please Enter the Serial no of backup you want to restore: "))
-    if self.selected_backup<0 and self.selected_backup>=len(self.backup_list):
-      print("Invalid Input")
+    
+  
+  def __select_backup(self):
+    try:
+      self.selected_backup = int(input("Please Enter the Serial no of backup you want to restore: "))
+      if self.selected_backup<0 and self.selected_backup>=len(self.backup_list):
+        print("Invalid Input")
+        exit()
+    except Exception as err:
+      print(err)
       exit()
-
 
   def __restore_warning(self):
     inp = input("WARNING: This restore process is destructive because it might overwrite some state that the user cares about. Are you sure you want to continue? (yes/no) ")
@@ -144,6 +151,7 @@ class WalletRestoreManager:
   def restore_backup(self):
     try:
       self.show_backup_list()
+      self.__select_backup()
       self.__restore_warning()
       self.__download_backup_from_s3()
       self.__unzip_backup()
