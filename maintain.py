@@ -82,21 +82,27 @@ def personalize():
     with open(bashrc, 'rt') as f:
         script = f.read()
     s = script
+    is_guest = guest_mode_is_active()
 
-    def get_var(name, prompt, sh, no_prompt=None):
+    def get_var(name, prompt, sh, default_value=None, force_for_guest=True):
         val, exported, start, end = get_shell_variable(name, sh)
-        if (not val) or (not exported):
-            if not val:
-                val = ask(prompt).strip() if prompt else no_prompt
+        # If there's any reason that the shell script isn't currently what it should be...
+        if (not val) or (not exported) or (force_for_guest and val != default_value):
+            if is_guest and force_for_guest and default_value:
+                val = default_value
+            elif not val:
+                val = ask(prompt).strip() if prompt else default_value
             else: # variable exists but was not exported; rewrite
                 sh = sh[:start] + sh[end:]
             sh = "export " + name + '="' + val + '"\n\n' + sh
         return val, sh
 
+    # Set this variable once and don't let user have input on it.
     _, s = get_var("WALLET_DB_NAME", None, s, "XAR")
-    owner, s = get_var("OWNER", "What is your first name?", s)
-    org, s = get_var("ORG", "What org do you represent (one word)?", s)
-    ctx, s = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s)
+    # Find out who is using this wallet -- but use default values and skip the questions for guests.
+    owner, s = get_var("OWNER", "What is your first name?", s, "guest")
+    org, s = get_var("ORG", "What org do you represent (one word)?", s, "provenant")
+    ctx, s, = get_var("CTX", "Is this wallet for use in dev, stage, or production contexts?", s, "stage")
     ctx = ctx.lower()[0]
     ctx = 'dev' if ctx == 'd' else 'stage' if ctx == 's' else 'prod'
     if s != script:
@@ -105,11 +111,12 @@ def personalize():
             f.write(s)
         run(f"touch {semaphore}")
     if not is_protected_by_passcode():
-        protect_by_passcode(ctx != "prod")
+        protect_by_passcode(ctx != "prod", is_guest)
+
     return owner, org, ctx
 
 
-def patch_os(cache_secs=86400):
+def patch_os(cache_secs=86400*3):
     if time_since(PATCH_CHECK_FILE) > cache_secs:
         cout("Making sure your wallet OS is fully patched.\n")
         if os.path.isfile(PATCH_CHECK_FILE):
@@ -137,15 +144,16 @@ def reset_wallet():
         run("mv ~/.bashrc.bak ~/.bashrc")
 
 
-def reset_after_confirm():
+def reset_after_confirm(preconfirm = False):
     cout("Wallet reset requested.\n" + term.normal)
     prompt = RESET_PROMPT
     confirm = "yes"
     if os.getenv("CTX") not in ["dev", "stage"]:
+        preconfirm = False
         cout(term.red("\n\nTHIS IS A PRODUCTION WALLET. BE VERY, VERY CAREFUL!\n\n"))
         confirm = str(time.time())[0:6]
         prompt = prompt.replace('"yes"', f'"{confirm}"')
-    should_proceed = ask(prompt).lower() == confirm
+    should_proceed = True if preconfirm else (ask(prompt).lower() == confirm)
     if should_proceed:
         cout("\nResetting wallet. This will destroy all saved state.\n")
         reset_wallet()
@@ -213,7 +221,7 @@ def patch_config(ctx):
 def update_pcw_code():
     updated = refresh_repo("https://github.com/provenant-dev/pcw.git")
     if updated:
-        cout("Wallet software updated. Requesting re-launch of maintenance script with latest code.\n")
+        cout("Wallet software updated. Restarting maintenance script with latest code.\n")
         run(f"touch {RERUNNER}")
         # Give file buffers time to flush.
         time.sleep(1)
@@ -245,8 +253,8 @@ def do_maintenance():
         with TempColor(MAINTENANCE_COLOR):
             if os.path.exists(RERUNNER):
                 break_rerun_cycle()
-            if len(sys.argv) == 2 and sys.argv[1] == '--reset':
-                reset_after_confirm()
+            if len(sys.argv) >= 2 and '--reset' in sys.argv:
+                reset_after_confirm('--noprompt' in sys.argv)
             else:
                 if update_pcw_code():
                     # Script will be re-launched, doing remaining maintenance with new code.
@@ -256,6 +264,10 @@ def do_maintenance():
                     # might need to do fixup of the wallet due to changes in how the
                     # wallet is built.
                     run_upgrade_scripts()
+
+                    if guest_mode_is_active():
+                        if not enforce_guest_checkout():
+                            sys.exit(111)
 
                     owner, org, ctx = personalize()
                     patch_os()
@@ -273,6 +285,9 @@ def do_maintenance():
     except KeyboardInterrupt:
         cout(term.red("--- Exited script early. Wallet may not be fully functional.\n"))
         sys.exit(1)
+    except SystemExit:
+        cout(term.red("--- Maintenance stopped.\n"))
+        raise
     except:
         cout(term.red("--- Error.\n" + traceback.format_exc() + "---\n"))
 

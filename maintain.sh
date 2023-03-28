@@ -5,13 +5,21 @@ alias lock='unset TYPED_PASSCODE && printf "Wallet locked. Run \"unlock\" to mak
 alias set-person='source ~/pcw/set-person.sh'
 alias set-org='source ~/pcw/set-org.sh'
 alias whatsnew='head -n 10 ~/pcw/whatsnew.md && printf "\n\n(Use less ~/pcw/whatsnew.md for full info.)\n"'
+alias guest-checkin='rm /tmp/guest.txt && maintain --reset --noprompt && exit'
 
 # Run the wallet maintenance script at least once, and
 # up to 3 times to account for relaunches for self patching.
 for i in 1 2 3; do
   python3 ~/pcw/maintain.py
   maintain_err=$?
-  if test $maintain_err -ne 0; then break; fi
+  if test "$maintain_err" -eq "111"; then
+    printf "Logging off.\n"
+    sleep 5
+    exit
+  fi
+  if test $maintain_err -ne 0; then
+    break
+  fi
   if ! test -f ".rerun"; then break; fi
 done
 

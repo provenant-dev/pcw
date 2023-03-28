@@ -117,6 +117,15 @@ def sys_call_with_output_or_die(cmd):
     return output
 
 
+_guest_mode_active = None
+def guest_mode_is_active():
+    global _guest_mode_active
+    if _guest_mode_active is None:
+        exit_code, hostname = sys_call_with_output('hostname')
+        _guest_mode_active = bool('guest' in hostname.lower() if hostname else False)
+    return _guest_mode_active
+
+
 def cout(txt):
     sys.stdout.write(txt)
     sys.stdout.flush()
@@ -210,7 +219,7 @@ def get_passcode():
     return "".join(code)
 
 
-def protect_by_passcode(hardcode=False):
+def protect_by_passcode(hardcode=False, quiet=False):
     # In this function, we switch between sys.stdout and cout very deliberately.
     # cout() writes to the log, whereas sys.stdout only writes to the screen.
     # We want the log to contain almost, but not quite, what we write to the
@@ -220,8 +229,9 @@ def protect_by_passcode(hardcode=False):
     with TempColor(term.normal, MAINTENANCE_COLOR):
         if hardcode:
             passcode = HARDCODED_PASSCODE
-            cout(term.yellow(HARDCODED_PROTECT_PROMPT))
-            sys.stdout.write(term.red(passcode) + "\n")
+            if not quiet:
+                cout(term.yellow(HARDCODED_PROTECT_PROMPT))
+                sys.stdout.write(term.red(passcode) + "\n")
         else:
             cout(term.yellow(PROTECT_PROMPT))
             passcode = get_passcode()
@@ -314,9 +324,10 @@ def configure_auto_shutdown():
     else:
         with open(restart_url, "rt") as f:
             restart_url = f.read().strip()
-    with TempColor(term.dim_white, MAINTENANCE_COLOR):
-        advice = AUTO_SHUTDOWN_EXPLANATION % restart_url if restart_url else NO_AUTO_SHUTDOWN_EXPLANATION
-        print(advice)
+    if not guest_mode_is_active():
+        with TempColor(term.dim_white, MAINTENANCE_COLOR):
+            advice = AUTO_SHUTDOWN_EXPLANATION % restart_url if restart_url else NO_AUTO_SHUTDOWN_EXPLANATION
+            print(advice)
 
 
 UPGRADER_PAT = re.compile(r'^\d+[.]py$')
@@ -405,3 +416,82 @@ def mention_whats_new():
             f.write(new_hash)
         with TempColor(term.white, MAINTENANCE_COLOR):
             cout("\033[00mThe wallet has new features. Run the \033[0;34mwhatsnew\033[0;37m command to learn more.\n\n")
+
+
+
+GUESTFILE="/tmp/guest.txt"
+EMAIL_REGEX = re.compile("^[a-z0-9.-]+@[a-z0-9-]+[.][a-z0-9-.]+$")
+
+
+def enforce_guest_checkout():
+    # Undo dimness of maintenance text.
+    sys.stdout.write(term.normal)
+
+    with TempColor(term.white, MAINTENANCE_COLOR):
+        try:
+            if os.path.isfile(GUESTFILE):
+                with open(GUESTFILE, 'rt') as f:
+                    email = f.read().strip().lower()
+                print("This wallet is currently in use by a guest.")
+                answer = get_email()
+                if not answer:
+                    return False
+                # Undo dimness of maintenance text again.
+                sys.stdout.write(term.normal)
+                if email != answer:
+                    print(term.red("""\
+Someone else has this wallet checked out. Please try a different guest wallet,
+or check back in an hour to see if this one frees up."""))
+                    return False
+                else:
+                    print("Welcome back to your checked out guest wallet.")
+            else:
+                print("""
+Welcome. You can use this guest wallet to do KERI experiments with low risk.
+Feel free to create and connect AIDs, issue credentials, try various commands
+with the KERI kli tool, and so forth. All operations use stage witnesses
+rather than production ones. Any data you create is temporary.
+
+Guest wallets are checked out for the duration of a single SSH session plus a
+few minutes (so you can log back in quickly if you get disconnected).
+""")
+                print(term.red("TERMS OF USE") + """ -- If you continue to use this wallet, you agree that:
+    
+1. You'll only use the wallet for KERI experiments, not for hacking, random
+downloads, DOS attacks, SSH tunnels, etc. You won't install new stuff or
+break stuff. Provenant may monitor your behavior to hold you accountable.
+
+2. We offer no warranties or guarantees, and make no commitment to provide
+support. Use at your own risk. However, if something breaks or you have a
+burning question, please email pcw-guest@provenant.net.
+
+3. You may use the code on this machine ONLY on this machine, and only while
+you are in the current SSH session. You may not copy it elsewhere.
+""")
+                print(term.red("""IF YOU DON'T AGREE, LOG OFF NOW. OTHERWISE, CHECK OUT THE WALLET BY
+PROVIDING YOUR EMAIL ADDRESS AS THE RESPONSIBLE PARTY.
+    """))
+                email = get_email()
+                if not email:
+                    return False
+                else:
+                    # Undo dimness of maintenance text again.
+                    sys.stdout.write(term.normal)
+                    print(term.normal + term.white(f"\nThis guest wallet now checked out to {email}."))
+                    print(term.white("To relinquish, run:\n  ") + term.blue("guest-checkin") + "\n")
+                with open(GUESTFILE, "wt") as f:
+                    f.write(email)
+            return True
+        except KeyboardInterrupt:
+            return False
+
+
+def get_email():
+    i = 5
+    while i > 0:
+        email = ask("Your email?").strip().lower()
+        if EMAIL_REGEX.match(email):
+            return email
+        else:
+            print("Bad email address.")
+            i -= 1
