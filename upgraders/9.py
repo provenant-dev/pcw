@@ -1,4 +1,4 @@
 import os
 
 # Install backup dependencies
-os.system('sudo apt install zip -y')
+os.system('sudo apt-get install zip -y')
